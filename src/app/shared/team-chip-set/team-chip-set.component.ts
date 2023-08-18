@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TeamService } from '../../team/services/team.service';
 import { AuthStore } from '../../services/auth.store';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-team-chip-set',
@@ -12,24 +13,25 @@ export class TeamChipSetComponent implements OnInit {
   teamBudget = 0;
   salaryCap = 0;
 
+  show$: Observable<boolean> = of(false);
+
   constructor(
-    private auth: AuthStore,
-    private teamService: TeamService
+    private readonly auth: AuthStore,
+    private readonly teamService: TeamService
   ) {}
 
   ngOnInit() {
-    this.auth.user$.subscribe(user => {
-      this.loadTeamIfPossible(user?.id);
+    this.auth.user$.subscribe(() => {
+      this.loadTeamIfPossible();
     });
+    this.show$ = this.auth.isLoggedIn$;
   }
 
-  private loadTeamIfPossible(userId: number | undefined) {
-    if (userId) {
-      this.teamService.loadTeamForUser(userId).subscribe(team => {
-        this.coins = team.credits;
-        this.teamBudget = team.budget;
-        this.salaryCap = team.salaryCap;
-      });
-    }
+  private loadTeamIfPossible() {
+    this.teamService.loadTeam().subscribe(team => {
+      this.coins = team.credits;
+      this.teamBudget = team.budget;
+      this.salaryCap = team.salaryCap;
+    });
   }
 }

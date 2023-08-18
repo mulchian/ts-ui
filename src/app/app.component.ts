@@ -9,26 +9,11 @@ import { Router } from '@angular/router';
 })
 export class AppComponent implements OnInit {
   constructor(
-    private auth: AuthStore,
+    protected readonly auth: AuthStore,
     private router: Router
   ) {}
 
-  ngOnInit() {
-    this.auth.isLoggedOut$.subscribe(isLoggedOut => {
-      if (isLoggedOut) {
-        this.auth
-          .login('Mulchian', 'jannik0097@gmail.com', 'BHedmVUM1?')
-          .subscribe(
-            () => {
-              console.log('Login successful!');
-            },
-            err => {
-              console.error('Login failed!');
-            }
-          );
-      }
-    });
-  }
+  ngOnInit() {}
 
   logout() {
     this.auth.logout();

@@ -7,11 +7,6 @@
       Touchdown Stars
     </div>
 
-    <span fxFlex fxHide fxShow.xs></span>
-    <button mat-button (click)="sidenav.toggle()" fxHide fxShow.xs>
-      <mat-icon class="menu-icon">menu</mat-icon>
-    </button>
-
     <div class="toolbar-tools" fxShow fxHide.xs fxLayoutGap="10px">
       <a
         class="menu-item"
@@ -23,6 +18,7 @@
         <mat-icon class="menu-icon">home</mat-icon>
       </a>
       <a
+        *ngIf="auth.isLoggedIn$ | async"
         class="menu-item"
         mat-icon-button
         matTooltip="Büro"
@@ -32,6 +28,7 @@
         <mat-icon class="menu-icon">business_center</mat-icon>
       </a>
       <a
+        *ngIf="auth.isLoggedIn$ | async"
         class="menu-item"
         mat-icon-button
         matTooltip="Finanzen"
@@ -41,6 +38,7 @@
         <mat-icon class="menu-icon">wallet</mat-icon>
       </a>
       <a
+        *ngIf="auth.isLoggedIn$ | async"
         class="menu-item"
         mat-icon-button
         matTooltip="Team"
@@ -50,6 +48,7 @@
         <mat-icon class="menu-icon">groups</mat-icon>
       </a>
       <a
+        *ngIf="auth.isLoggedIn$ | async"
         class="menu-item"
         mat-icon-button
         matTooltip="Liga"
@@ -59,7 +58,22 @@
         <mat-icon class="menu-icon">table_chart</mat-icon>
       </a>
     </div>
-    <span fxFlex fxShow fxHide.xs></span>
+    <span fxFlex fxShow></span>
+
+    <div class="toolbar-tools" fxShow fxLayoutGap="10px">
+      <button
+        *ngIf="auth.isLoggedIn$ | async"
+        class="menu-item"
+        mat-icon-button
+        matTooltip="Logout"
+        (click)="logout()">
+        <mat-icon class="menu-icon">logout</mat-icon>
+      </button>
+    </div>
+
+    <button mat-button (click)="sidenav.toggle()" fxHide fxShow.xs>
+      <mat-icon class="menu-icon">menu</mat-icon>
+    </button>
   </mat-toolbar-row>
   <mat-toolbar-row>
     <!-- hier dann money stuff nach rechts -->
@@ -112,7 +126,7 @@
       >
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content fxLayoutAlign="start start">
+  <mat-sidenav-content fxLayoutAlign="center start">
     <!--  <messages></messages>-->
     <app-loading [detectRoutingOngoing]="true"></app-loading>
     <router-outlet></router-outlet>

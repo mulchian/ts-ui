@@ -7,6 +7,12 @@ import { Team } from '../../model/team';
 export class TeamService {
   constructor(private http: HttpClient) {}
 
+  loadTeam() {
+    return this.http
+      .get<Team>('/api/team' + '/getTeam.php')
+      .pipe(shareReplay());
+  }
+
   loadTeamForUser(userId: number) {
     return this.http
       .get<Team>('/api/team' + '/getTeam.php', {

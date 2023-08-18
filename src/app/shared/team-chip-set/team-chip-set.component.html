@@ -1,9 +1,14 @@
-<mat-chip-set disabled>
-  <mat-chip>TS-Coins: {{ coins | currency: 'EUR' : 'symbol' : '.0' }}</mat-chip>
-  <mat-chip
-    >Budget: {{ teamBudget | currency: 'EUR' : 'symbol' : '.0-2' }}</mat-chip
-  >
-  <mat-chip
-    >Salary Cap: {{ salaryCap | currency: 'EUR' : 'symbol' : '.0-2' }}</mat-chip
-  >
-</mat-chip-set>
+<ng-container *ngIf="show$ | async">
+  <mat-chip-set disabled>
+    <mat-chip
+      >TS-Coins: {{ coins | currency: 'EUR' : 'symbol' : '.0' }}</mat-chip
+    >
+    <mat-chip
+      >Budget: {{ teamBudget | currency: 'EUR' : 'symbol' : '.0-2' }}</mat-chip
+    >
+    <mat-chip
+      >Salary Cap:
+      {{ salaryCap | currency: 'EUR' : 'symbol' : '.0-2' }}</mat-chip
+    >
+  </mat-chip-set>
+</ng-container>

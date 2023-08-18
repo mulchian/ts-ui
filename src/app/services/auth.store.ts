@@ -46,7 +46,12 @@ export class AuthStore {
   }
 
   logout() {
-    this.subject.next(null);
-    localStorage.removeItem(AUTH_DATA);
+    this.http.post('/api/user/logout.php', {}).pipe(
+      tap(() => {
+        this.subject.next(null);
+        localStorage.removeItem(AUTH_DATA);
+      }),
+      shareReplay()
+    );
   }
 }
