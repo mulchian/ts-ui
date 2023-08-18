@@ -1,16 +1,43 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { shareReplay } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  of,
+  shareReplay,
+  takeUntil,
+  takeWhile,
+} from 'rxjs';
 import { Team } from '../../model/team';
+import { AuthStore } from '../../services/auth.store';
+import { User } from '../../model/user';
+import { tap } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class TeamService {
-  constructor(private http: HttpClient) {}
+  private subject = new BehaviorSubject<Team | null>(null);
+  team$: Observable<Team | null> = this.subject.asObservable();
 
-  loadTeam() {
-    return this.http
+  constructor(
+    private http: HttpClient,
+    private auth: AuthStore
+  ) {
+    this.auth.isLoggedIn$.subscribe(loggedIn => {
+      if (loggedIn && !this.subject.getValue()) {
+        this.loadTeam();
+      } else if (!loggedIn) {
+        this.subject.next(null);
+      }
+    });
+  }
+
+  private loadTeam() {
+    this.http
       .get<Team>('/api/team' + '/getTeam.php')
-      .pipe(shareReplay());
+      .pipe(tap(), shareReplay())
+      .subscribe(team => {
+        this.subject.next(team);
+      });
   }
 
   loadTeamForUser(userId: number) {

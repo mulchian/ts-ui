@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class AppComponent implements OnInit {
   constructor(
     protected readonly auth: AuthStore,
-    private router: Router
+    private readonly router: Router
   ) {}
 
   ngOnInit() {}

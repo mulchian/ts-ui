@@ -1,15 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthStore } from '../../services/auth.store';
+import { catchError, EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
+  private passwordPattern =
+    /^((?=.*[^A-Za-z0-9])(?=.*[0-9])(?=.*[A-Z])|(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])|(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9])|(?=.*[^A-Za-z0-9])(?=.*[0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])).{8,}$/;
   form: FormGroup;
+
+  error: string | undefined;
 
   constructor(
     private readonly formBuilder: NonNullableFormBuilder,
@@ -18,26 +28,45 @@ export class LoginComponent implements OnInit {
   ) {
     this.form = this.formBuilder.group({
       username: ['', [Validators.required]],
-      password: ['', [Validators.required]],
+      password: [
+        '',
+        [Validators.required, Validators.pattern(this.passwordPattern)],
+      ],
     });
   }
 
-  ngOnInit() {}
+  get passwordControl(): FormControl {
+    return this.form.get('password') as FormControl;
+  }
 
   login() {
     const val = this.form.value;
 
-    this.auth.isLoggedOut$.subscribe(isLoggedOut => {
-      if (isLoggedOut) {
-        this.auth.login(val.username, null, val.password).subscribe(
-          () => {
-            console.log('Login successful!');
-          },
-          err => {
-            console.error('Login failed!');
-          }
-        );
-      }
-    });
+    this.auth
+      .login(val.username, null, val.password)
+      .pipe(
+        catchError(error => {
+          this.handleError(JSON.parse(error.message));
+          return EMPTY;
+        })
+      )
+      .subscribe(() => {
+        console.log('Login successful!');
+      });
+  }
+
+  handleError(message: string) {
+    this.error = message;
+    this.passwordControl?.reset();
+  }
+
+  getWrongPasswordMessage() {
+    if (this.error) {
+      return this.error;
+    }
+    if (this.passwordControl.hasError('pattern')) {
+      return 'Das Passwort muss mindestens 8 Zeichen lang sein und mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.';
+    }
+    return 'Das Passwort ist ein Pflichtfeld.';
   }
 }

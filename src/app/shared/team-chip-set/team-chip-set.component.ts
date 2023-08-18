@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { TeamService } from '../../team/services/team.service';
 import { AuthStore } from '../../services/auth.store';
-import { Observable, of } from 'rxjs';
+import { Observable, of, takeUntil, takeWhile } from 'rxjs';
+import { Team } from '../../model/team';
 
 @Component({
   selector: 'app-team-chip-set',
@@ -9,10 +10,6 @@ import { Observable, of } from 'rxjs';
   styleUrls: ['./team-chip-set.component.scss'],
 })
 export class TeamChipSetComponent implements OnInit {
-  coins = 0;
-  teamBudget = 0;
-  salaryCap = 0;
-
   show$: Observable<boolean> = of(false);
 
   constructor(
@@ -21,17 +18,10 @@ export class TeamChipSetComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.auth.user$.subscribe(() => {
-      this.loadTeamIfPossible();
-    });
     this.show$ = this.auth.isLoggedIn$;
   }
 
-  private loadTeamIfPossible() {
-    this.teamService.loadTeam().subscribe(team => {
-      this.coins = team.credits;
-      this.teamBudget = team.budget;
-      this.salaryCap = team.salaryCap;
-    });
+  get team(): Observable<Team | null> {
+    return this.teamService.team$;
   }
 }
