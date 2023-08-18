@@ -26,13 +26,9 @@ export class AuthStore {
     }
   }
 
-  login(
-    username: string | null,
-    email: string | null,
-    password: string
-  ): Observable<User> {
+  login(username: string, password: string): Observable<User> {
     return this.http
-      .post<User>('/api/user/login.php', { username, email, password })
+      .post<User>('/api/user/login.php', { username, password })
       .pipe(
         tap(user => {
           if (user.id) {
@@ -66,5 +62,29 @@ export class AuthStore {
           console.log('logged out');
         });
     }
+  }
+
+  register(
+    username: string,
+    email: string,
+    password: string
+  ): Observable<User> {
+    return this.http
+      .post<User>('/api/user/register.php', { username, email, password })
+      .pipe(
+        tap(user => {
+          if (user.id) {
+            this.subject.next(user);
+            localStorage.setItem(AUTH_DATA, JSON.stringify(user));
+          } else {
+            // PHP is sending an error message instead of a user-object
+            throw new Error(JSON.stringify(user));
+          }
+        }),
+        catchError(err => {
+          throw err;
+        }),
+        shareReplay()
+      );
   }
 }

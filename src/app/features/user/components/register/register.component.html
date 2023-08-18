@@ -1,14 +1,23 @@
-<form [formGroup]="form" class="login-form">
+<form [formGroup]="form" class="register-form">
   <mat-form-field>
     <mat-label>Username</mat-label>
-    <input matInput type="text" formControlName="username" />
+    <input
+      matInput
+      autocomplete="username"
+      type="text"
+      formControlName="username" />
     <span matTextPrefix><mat-icon>person</mat-icon></span>
   </mat-form-field>
 
-  <mat-form-field>
+  <mat-form-field
+    [ngClass]="{
+      hasLongErrorMessages: isLongErrorMessage(passwordControl),
+      hasShortErrorMessages: !isLongErrorMessage(passwordControl)
+    }">
     <mat-label>Passwort</mat-label>
     <input
       matInput
+      autocomplete="new-password"
       [type]="hidePassword ? 'password' : 'text'"
       formControlName="password" />
     <span matTextPrefix><mat-icon>password</mat-icon></span>
@@ -20,10 +29,72 @@
       [attr.aria-pressed]="hidePassword">
       <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
+    <mat-error *ngIf="passwordControl.invalid">
+      {{ getWrongPasswordMessage(passwordControl) }}
+    </mat-error>
   </mat-form-field>
 
+  <mat-form-field
+    [ngClass]="{
+      hasLongErrorMessages: isLongErrorMessage(repeatPasswordControl),
+      hasShortErrorMessages: !isLongErrorMessage(repeatPasswordControl)
+    }">
+    <mat-label>Passwort wiederholen</mat-label>
+    <input
+      matInput
+      autocomplete="new-password"
+      [type]="hideConfirmPassword ? 'password' : 'text'"
+      formControlName="repeatPassword" />
+    <span matTextPrefix><mat-icon>password</mat-icon></span>
+    <button
+      mat-icon-button
+      matSuffix
+      (click)="hideConfirmPassword = !hideConfirmPassword"
+      [attr.aria-label]="'Hide password'"
+      [attr.aria-pressed]="hideConfirmPassword">
+      <mat-icon>{{
+        hideConfirmPassword ? 'visibility_off' : 'visibility'
+      }}</mat-icon>
+    </button>
+    <mat-error *ngIf="repeatPasswordControl.invalid">
+      {{ getWrongPasswordMessage(repeatPasswordControl) }}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    [ngClass]="{
+      hasShortErrorMessages: emailControl.invalid
+    }">
+    <mat-label>E-Mail</mat-label>
+    <input matInput autocomplete="email" type="text" formControlName="email" />
+    <span matTextPrefix><mat-icon>email</mat-icon></span>
+    <mat-error *ngIf="emailControl.invalid">
+      {{ getWrongEmailMessage(emailControl) }}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field
+    [ngClass]="{
+      hasShortErrorMessages: repeatEmailControl.invalid
+    }">
+    <mat-label>E-Mail wiederholen</mat-label>
+    <input
+      matInput
+      autocomplete="email"
+      type="text"
+      formControlName="repeatEmail" />
+    <span matTextPrefix><mat-icon>email</mat-icon></span>
+    <mat-error *ngIf="repeatEmailControl.invalid">
+      {{ getWrongEmailMessage(repeatEmailControl) }}
+    </mat-error>
+  </mat-form-field>
+
+  <ng-container *ngIf="error">
+    <span class="error">{{ error }}</span>
+  </ng-container>
+
   <button
-    class="login-button"
+    class="register-button"
     mat-raised-button
     color="primary"
     (click)="register()"

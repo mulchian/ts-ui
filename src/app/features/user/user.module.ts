@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { UserComponent } from './user.component';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { UserComponent } from './user.component';
     MatIconModule,
     MatInputModule,
     MatButtonModule,
+    MatSelectModule,
   ],
   exports: [],
 })

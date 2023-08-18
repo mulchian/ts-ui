@@ -5,9 +5,24 @@
   .login-button {
     margin-top: 50px;
     padding: 20px;
+    width: 50%;
+    left: 25%;
   }
 }
 
 span mat-icon {
   margin-right: 10px;
+}
+
+.error {
+  color: red;
+  font-size: 10px;
+}
+
+.hasLongErrorMessages.mat-form-field-invalid {
+  margin-bottom: 30px;
+}
+
+hasShortErrorMessage.mat-form-field-invalid {
+  margin-bottom: 15px;
 }

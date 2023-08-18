@@ -1,14 +1,24 @@
 <form [formGroup]="form" class="login-form">
   <mat-form-field appearance="outline">
     <mat-label>Username</mat-label>
-    <input matInput type="text" formControlName="username" />
+    <input
+      matInput
+      autocomplete="username"
+      type="text"
+      formControlName="username" />
     <span matTextPrefix><mat-icon>person</mat-icon></span>
   </mat-form-field>
 
-  <mat-form-field appearance="outline">
+  <mat-form-field
+    appearance="outline"
+    [ngClass]="{
+      hasLongErrorMessages: isLongErrorMessage(passwordControl),
+      hasShortErrorMessages: !isLongErrorMessage(passwordControl)
+    }">
     <mat-label>Passwort</mat-label>
     <input
       matInput
+      autocomplete="current-password"
       [type]="hidePassword ? 'password' : 'text'"
       formControlName="password" />
     <span matTextPrefix><mat-icon>password</mat-icon></span>
@@ -20,10 +30,14 @@
       [attr.aria-pressed]="hidePassword">
       <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
-    <mat-error *ngIf="passwordControl.invalid || this.error">{{
+    <mat-error *ngIf="passwordControl.invalid">{{
       getWrongPasswordMessage()
     }}</mat-error>
   </mat-form-field>
+
+  <ng-container *ngIf="error">
+    <span class="error">{{ error }}</span>
+  </ng-container>
 
   <button
     class="login-button"

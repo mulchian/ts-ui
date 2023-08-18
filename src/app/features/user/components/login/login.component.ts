@@ -43,11 +43,11 @@ export class LoginComponent {
     return this.form.get('password') as FormControl;
   }
 
-  login() {
+  login(): void {
     const val = this.form.value;
 
     this.auth
-      .login(val.username, null, val.password)
+      .login(val.username, val.password)
       .pipe(
         catchError(error => {
           this.handleError(JSON.parse(error.message));
@@ -60,15 +60,12 @@ export class LoginComponent {
       });
   }
 
-  handleError(message: string) {
+  handleError(message: string): void {
     this.error = message;
     this.passwordControl?.reset();
   }
 
-  getWrongPasswordMessage() {
-    if (this.error) {
-      return this.error;
-    }
+  getWrongPasswordMessage(): string {
     if (this.passwordControl.hasError('minlength')) {
       return 'Das Passwort muss mindestens 8 Zeichen lang sein.';
     }
@@ -76,5 +73,12 @@ export class LoginComponent {
       return 'Das Passwort muss mindestens drei der folgenden Kategorien erfüllen: Großbuchstabe, Kleinbuchstabe, Zahl oder Sonderzeichen';
     }
     return 'Das Passwort ist ein Pflichtfeld.';
+  }
+
+  isLongErrorMessage(formControl: FormControl) {
+    return (
+      formControl.hasError('pattern') &&
+      !(formControl.hasError('minlength') || formControl.hasError('required'))
+    );
   }
 }

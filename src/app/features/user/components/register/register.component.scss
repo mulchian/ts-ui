@@ -1,47 +1,12 @@
-.register-card {
-  width: 50vh;
-  margin-top: 70px;
-  margin-bottom: auto;
-  position: relative;
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  flex-direction: column;
-  padding: 10px;
-  box-shadow:
-    0 4px 8px 0 rgba(0, 0, 0, 0.2),
-    0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  -webkit-box-shadow:
-    0 4px 8px 0 rgba(0, 0, 0, 0.2),
-    0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  -moz-box-shadow:
-    0 4px 8px 0 rgba(0, 0, 0, 0.2),
-    0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  border-radius: 5px;
-}
-
-.logo-container {
-  position: absolute;
-  top: -50px;
-  width: 30%;
-  border-radius: 50%;
-  padding: 10px;
-  text-align: center;
-  vertical-align: middle;
-  display: flex;
-}
-
-.logo {
-  width: 100%;
-}
-
-.login-form {
+.register-form {
   display: flex;
   flex-direction: column;
 
-  .login-button {
+  .register-button {
     margin-top: 50px;
     padding: 20px;
+    width: 50%;
+    left: 25%;
   }
 }
 
@@ -51,4 +16,17 @@ span mat-icon {
 
 .actions-row {
   margin: 10px 0 10px auto;
+}
+
+.error {
+  color: red;
+  font-size: 10px;
+}
+
+.hasLongErrorMessages.mat-form-field-invalid {
+  margin-bottom: 30px;
+}
+
+hasShortErrorMessage.mat-form-field-invalid {
+  margin-bottom: 15px;
 }
