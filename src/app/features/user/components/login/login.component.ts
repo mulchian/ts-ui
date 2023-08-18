@@ -6,8 +6,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthStore } from '../services/auth.store';
+import { AuthStore } from '../../../../services/auth.store';
 import { catchError, EMPTY } from 'rxjs';
+import { VALIDATOR_PATTERNS } from '../../../../shared/forms/validators/validator-patterns';
 
 @Component({
   selector: 'app-login',
@@ -15,8 +16,6 @@ import { catchError, EMPTY } from 'rxjs';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-  private passwordPattern =
-    /^((?=.*[^A-Za-z0-9])(?=.*[0-9])(?=.*[A-Z])|(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])|(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9])|(?=.*[^A-Za-z0-9])(?=.*[0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])).{8,}$/;
   form: FormGroup;
 
   hidePassword = true;
@@ -31,7 +30,11 @@ export class LoginComponent {
       username: ['', [Validators.required]],
       password: [
         '',
-        [Validators.required, Validators.pattern(this.passwordPattern)],
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(VALIDATOR_PATTERNS.password),
+        ],
       ],
     });
   }
@@ -57,8 +60,6 @@ export class LoginComponent {
       });
   }
 
-  register() {}
-
   handleError(message: string) {
     this.error = message;
     this.passwordControl?.reset();
@@ -68,8 +69,11 @@ export class LoginComponent {
     if (this.error) {
       return this.error;
     }
+    if (this.passwordControl.hasError('minlength')) {
+      return 'Das Passwort muss mindestens 8 Zeichen lang sein.';
+    }
     if (this.passwordControl.hasError('pattern')) {
-      return 'Das Passwort muss mindestens 8 Zeichen lang sein und mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.';
+      return 'Das Passwort muss mindestens drei der folgenden Kategorien erfüllen: Großbuchstabe, Kleinbuchstabe, Zahl oder Sonderzeichen';
     }
     return 'Das Passwort ist ein Pflichtfeld.';
   }

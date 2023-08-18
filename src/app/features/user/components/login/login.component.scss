@@ -1,0 +1,13 @@
+.login-form {
+  display: flex;
+  flex-direction: column;
+
+  .login-button {
+    margin-top: 50px;
+    padding: 20px;
+  }
+}
+
+span mat-icon {
+  margin-right: 10px;
+}

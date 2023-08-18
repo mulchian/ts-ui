@@ -1,4 +1,4 @@
-.login-card {
+.register-card {
   width: 50vh;
   margin-top: 70px;
   margin-bottom: auto;
@@ -21,8 +21,9 @@
 }
 
 .logo-container {
-  //height: 50%;
-  width: 50%;
+  position: absolute;
+  top: -50px;
+  width: 30%;
   border-radius: 50%;
   padding: 10px;
   text-align: center;
@@ -32,13 +33,11 @@
 
 .logo {
   width: 100%;
-  border: 2px solid white;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  padding-top: 20px;
 
   .login-button {
     margin-top: 50px;
@@ -51,11 +50,5 @@ span mat-icon {
 }
 
 .actions-row {
-  display: flex;
-  margin: 10px auto;
-
-  button {
-    width: 200px;
-    margin: 8px;
-  }
+  margin: 10px 0 10px auto;
 }

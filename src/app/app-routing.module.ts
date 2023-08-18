@@ -2,7 +2,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CustomPreloadingStrategy } from './services/custom-preloading.strategy';
 import { authGuard, authGuardChild } from './services/auth.guard';
-import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   {
@@ -18,13 +17,33 @@ const routes: Routes = [
     },
   },
   {
-    path: 'login',
-    component: LoginComponent,
+    path: 'user',
+    loadChildren: () =>
+      import('./features/user/user.module').then(m => m.UserModule),
   },
   {
     path: 'office',
     loadChildren: () =>
       import('./office/office.module').then(m => m.OfficeModule),
+    canActivate: [authGuard],
+    canActivateChild: [authGuardChild],
+  },
+  {
+    path: 'finances',
+    loadChildren: () =>
+      import('./office/office.module').then(m => m.OfficeModule),
+    canActivate: [authGuard],
+    canActivateChild: [authGuardChild],
+  },
+  {
+    path: 'team',
+    loadChildren: () => import('./team/team.module').then(m => m.TeamModule),
+    canActivate: [authGuard],
+    canActivateChild: [authGuardChild],
+  },
+  {
+    path: 'league',
+    loadChildren: () => import('./team/team.module').then(m => m.TeamModule),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
   },

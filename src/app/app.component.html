@@ -74,7 +74,7 @@
         class="menu-item"
         mat-icon-button
         matTooltip="Login"
-        routerLink="/login"
+        [routerLink]="['user', 'login']"
         routerLinkActive="menu-item-active"
         [routerLinkActiveOptions]="{ exact: true }">
         <mat-icon class="menu-icon">login</mat-icon>

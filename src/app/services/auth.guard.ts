@@ -30,6 +30,6 @@ function checkIfAuthenticated(
   router: Router
 ): Observable<boolean | UrlTree> {
   return auth.isLoggedIn$.pipe(
-    map(loggedIn => (loggedIn ? true : router.parseUrl('/login')))
+    map(loggedIn => (loggedIn ? true : router.parseUrl('/user/login')))
   );
 }

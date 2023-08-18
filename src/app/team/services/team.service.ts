@@ -1,16 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  BehaviorSubject,
-  Observable,
-  of,
-  shareReplay,
-  takeUntil,
-  takeWhile,
-} from 'rxjs';
+import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
 import { Team } from '../../model/team';
 import { AuthStore } from '../../services/auth.store';
-import { User } from '../../model/user';
 import { tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })

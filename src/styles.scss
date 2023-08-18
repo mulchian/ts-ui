@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@use 'app/login/login.component-theme' as login;
+@use 'app/features/user/user-theme' as user;
 @use 'app/_app.component-theme' as app;
 
 html {
@@ -104,7 +104,7 @@ $theme: mat.define-light-theme(
 );
 
 @include mat.all-component-themes($theme);
-@include login.color($theme);
+@include user.color($theme);
 @include app.color($theme);
 
 .mat-elevation-z7 {
