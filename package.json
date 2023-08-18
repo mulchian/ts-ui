@@ -7,14 +7,14 @@
     "build": "ng build --localize",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint",
+    "lint": "npx lint --fix",
     "prettier": "npx prettier --write .",
     "prepare": "husky install"
   },
   "lint-staged": {
     "*.{js,ts,css,scss,md}": [
-      "prettier --write",
-      "git add"
+      "npx prettier --write",
+      "npx lint --fix"
     ]
   },
   "private": true,
