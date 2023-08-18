@@ -69,9 +69,24 @@
         (click)="logout()">
         <mat-icon class="menu-icon">logout</mat-icon>
       </button>
+      <button
+        *ngIf="auth.isLoggedOut$ | async"
+        class="menu-item"
+        mat-icon-button
+        matTooltip="Login"
+        routerLink="/login"
+        routerLinkActive="menu-item-active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <mat-icon class="menu-icon">login</mat-icon>
+      </button>
     </div>
 
-    <button mat-button (click)="sidenav.toggle()" fxHide fxShow.xs>
+    <button
+      mat-button
+      *ngIf="this.auth.isLoggedIn$ | async"
+      (click)="sidenav.toggle()"
+      fxHide
+      fxShow.xs>
       <mat-icon class="menu-icon">menu</mat-icon>
     </button>
   </mat-toolbar-row>
@@ -83,7 +98,7 @@
 </mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav #sidenav [autoFocus]="false">
-    <mat-nav-list>
+    <mat-nav-list *ngIf="this.auth.isLoggedIn$ | async">
       <a
         mat-list-item
         routerLinkActive="active"

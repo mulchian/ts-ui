@@ -1,0 +1,61 @@
+.login-card {
+  width: 50vh;
+  margin-top: 70px;
+  margin-bottom: auto;
+  position: relative;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+  box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -webkit-box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -moz-box-shadow:
+    0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 5px;
+}
+
+.logo-container {
+  //height: 50%;
+  width: 50%;
+  border-radius: 50%;
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+  display: flex;
+}
+
+.logo {
+  width: 100%;
+  border: 2px solid white;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+
+  .login-button {
+    margin-top: 50px;
+    padding: 20px;
+  }
+}
+
+span mat-icon {
+  margin-right: 10px;
+}
+
+.actions-row {
+  display: flex;
+  margin: 10px auto;
+
+  button {
+    width: 200px;
+    margin: 8px;
+  }
+}

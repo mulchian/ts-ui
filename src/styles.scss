@@ -1,4 +1,6 @@
 @use '@angular/material' as mat;
+@use 'app/login/login.component-theme' as login;
+@use 'app/_app.component-theme' as app;
 
 html {
   min-height: 100%;
@@ -102,6 +104,8 @@ $theme: mat.define-light-theme(
 );
 
 @include mat.all-component-themes($theme);
+@include login.color($theme);
+@include app.color($theme);
 
 .mat-elevation-z7 {
   box-shadow:

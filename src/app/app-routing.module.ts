@@ -1,6 +1,8 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CustomPreloadingStrategy } from './services/custom-preloading.strategy';
+import { authGuard, authGuardChild } from './services/auth.guard';
+import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   {
@@ -16,12 +18,15 @@ const routes: Routes = [
     },
   },
   {
+    path: 'login',
+    component: LoginComponent,
+  },
+  {
     path: 'office',
     loadChildren: () =>
       import('./office/office.module').then(m => m.OfficeModule),
-    data: {
-      preload: true,
-    },
+    canActivate: [authGuard],
+    canActivateChild: [authGuardChild],
   },
   {
     path: '**',

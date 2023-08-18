@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthStore } from '../../services/auth.store';
+import { AuthStore } from '../services/auth.store';
 import { catchError, EMPTY } from 'rxjs';
 
 @Component({
@@ -19,6 +19,7 @@ export class LoginComponent {
     /^((?=.*[^A-Za-z0-9])(?=.*[0-9])(?=.*[A-Z])|(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])|(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9])|(?=.*[^A-Za-z0-9])(?=.*[0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])).{8,}$/;
   form: FormGroup;
 
+  hidePassword = true;
   error: string | undefined;
 
   constructor(
@@ -52,8 +53,11 @@ export class LoginComponent {
       )
       .subscribe(() => {
         console.log('Login successful!');
+        this.router.navigateByUrl('/home');
       });
   }
+
+  register() {}
 
   handleError(message: string) {
     this.error = message;
