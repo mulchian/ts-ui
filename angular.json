@@ -60,7 +60,8 @@
               "browserTarget": "ts-ui:build:production"
             },
             "development": {
-              "browserTarget": "ts-ui:build:development"
+              "browserTarget": "ts-ui:build:development",
+              "proxyConfig": "proxy.json"
             }
           },
           "defaultConfiguration": "development"

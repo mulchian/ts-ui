@@ -1,77 +1,71 @@
 <mat-toolbar color="primary" fxLayout="row wrap" fxLayoutAlign="center center">
-  <div class="logo">
-    <img
-      alt="Touchdown Stars"
-      src="{{ '/assets/logo_transparent_inverted.png' }}" />
-    Touchdown Stars
-  </div>
+  <mat-toolbar-row>
+    <div class="logo" routerLink="/home">
+      <img
+        alt="Touchdown Stars"
+        src="{{ '/assets/logo_transparent_inverted.png' }}" />
+      Touchdown Stars
+    </div>
 
-  <span fxFlex fxHide fxShow.xs></span>
-  <button mat-button (click)="sidenav.toggle()" fxHide fxShow.xs>
-    <mat-icon class="menu-icon">menu</mat-icon>
-  </button>
+    <span fxFlex fxHide fxShow.xs></span>
+    <button mat-button (click)="sidenav.toggle()" fxHide fxShow.xs>
+      <mat-icon class="menu-icon">menu</mat-icon>
+    </button>
 
-  <div class="toolbar-tools" fxShow fxHide.xs fxLayoutGap="10px">
-    <a
-      class="menu-item"
-      mat-button
-      routerLink="/home"
-      routerLinkActive="menu-item-active"
-      [routerLinkActiveOptions]="{ exact: true }">
-      <div class="toolbar-box">
+    <div class="toolbar-tools" fxShow fxHide.xs fxLayoutGap="10px">
+      <a
+        class="menu-item"
+        mat-icon-button
+        matTooltip="Home"
+        routerLink="/home"
+        routerLinkActive="menu-item-active"
+        [routerLinkActiveOptions]="{ exact: true }">
         <mat-icon class="menu-icon">home</mat-icon>
-        Home
-      </div>
-    </a>
-    <a
-      class="menu-item"
-      mat-button
-      routerLink="/office"
-      routerLinkActive="menu-item-active"
-      [routerLinkActiveOptions]="{ exact: true }">
-      <div class="toolbar-box">
+      </a>
+      <a
+        class="menu-item"
+        mat-icon-button
+        matTooltip="Büro"
+        routerLink="/office"
+        routerLinkActive="menu-item-active"
+        [routerLinkActiveOptions]="{ exact: true }">
         <mat-icon class="menu-icon">business_center</mat-icon>
-        Büro
-      </div>
-    </a>
-    <a
-      class="menu-item"
-      mat-button
-      routerLink="/finances"
-      routerLinkActive="menu-item-active"
-      [routerLinkActiveOptions]="{ exact: true }">
-      <div class="toolbar-box">
+      </a>
+      <a
+        class="menu-item"
+        mat-icon-button
+        matTooltip="Finanzen"
+        routerLink="/finances"
+        routerLinkActive="menu-item-active"
+        [routerLinkActiveOptions]="{ exact: true }">
         <mat-icon class="menu-icon">wallet</mat-icon>
-        Finanzen
-      </div>
-    </a>
-    <a
-      class="menu-item"
-      mat-button
-      routerLink="/team"
-      routerLinkActive="menu-item-active"
-      [routerLinkActiveOptions]="{ exact: true }">
-      <div class="toolbar-box">
+      </a>
+      <a
+        class="menu-item"
+        mat-icon-button
+        matTooltip="Team"
+        routerLink="/team"
+        routerLinkActive="menu-item-active"
+        [routerLinkActiveOptions]="{ exact: true }">
         <mat-icon class="menu-icon">groups</mat-icon>
-        Team
-      </div>
-    </a>
-    <a
-      class="menu-item"
-      mat-button
-      routerLink="/league"
-      routerLinkActive="menu-item-active"
-      [routerLinkActiveOptions]="{ exact: true }">
-      <div class="toolbar-box">
+      </a>
+      <a
+        class="menu-item"
+        mat-icon-button
+        matTooltip="Liga"
+        routerLink="/league"
+        routerLinkActive="menu-item-active"
+        [routerLinkActiveOptions]="{ exact: true }">
         <mat-icon class="menu-icon">table_chart</mat-icon>
-        Liga
-      </div>
-    </a>
-  </div>
-  <span fxFlex fxShow fxHide.xs></span>
-  <!--  <mat-toolbar-row>-->
-  <!-- hier dann money stuff nach rechts -->
-  <!--  </mat-toolbar-row>-->
+      </a>
+    </div>
+    <span fxFlex fxShow fxHide.xs></span>
+  </mat-toolbar-row>
+  <mat-toolbar-row>
+    <!-- hier dann money stuff nach rechts -->
+    <span fxFlex></span>
+    <app-team-chip-set></app-team-chip-set>
+  </mat-toolbar-row>
 </mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav #sidenav [autoFocus]="false">
@@ -118,9 +112,9 @@
       >
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content fxLayoutAlign="center center">
+  <mat-sidenav-content fxLayoutAlign="start start">
     <!--  <messages></messages>-->
-    <!--  <loading [detectRoutingOngoing]="true"></loading>-->
+    <app-loading [detectRoutingOngoing]="true"></app-loading>
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

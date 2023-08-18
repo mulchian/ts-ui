@@ -19,70 +19,71 @@ $dark-primary-text: rgba(black, 0.87);
 $light-primary-text: white;
 
 // made with http://mcg.mbitson.com/#!?primary=%23000888&accent=%23cc6600&themename=touchdownstars
+// made with http://mcg.mbitson.com/#!?mcgpalette0=%23393a4f&mcgpalette1=%23cc8844&themename=touchdownstars
 $mat-primary: (
-        50 : #e0e1f1,
-        100 : #b3b5db,
-        200 : #8084c4,
-        300 : #4d52ac,
-        400 : #262d9a,
-        500 : #000888,
-        600 : #000780,
-        700 : #000675,
-        800 : #00046b,
-        900 : #000258,
-        A100 : #8a8aff,
-        A200 : #5757ff,
-        A400 : #2424ff,
-        A700 : #0a0aff,
-        contrast: (
-                50 : #000000,
-                100 : #000000,
-                200 : #000000,
-                300 : #ffffff,
-                400 : #ffffff,
-                500 : #ffffff,
-                600 : #ffffff,
-                700 : #ffffff,
-                800 : #ffffff,
-                900 : #ffffff,
-                A100 : #000000,
-                A200 : #ffffff,
-                A400 : #ffffff,
-                A700 : #ffffff,
-        )
+  50: #e7e7ea,
+  100: #c4c4ca,
+  200: #9c9da7,
+  300: #747584,
+  400: #575869,
+  500: #393a4f,
+  600: #333448,
+  700: #2c2c3f,
+  800: #242536,
+  900: #171826,
+  A100: #6b77ff,
+  A200: #3849ff,
+  A400: #051aff,
+  A700: #0014eb,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #ffffff,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #ffffff,
+    A400: #ffffff,
+    A700: #ffffff,
+  ),
 );
 
 $mat-accent: (
-        50 : #f9ede0,
-        100 : #f0d1b3,
-        200 : #e6b380,
-        300 : #db944d,
-        400 : #d47d26,
-        500 : #cc6600,
-        600 : #c75e00,
-        700 : #c05300,
-        800 : #b94900,
-        900 : #ad3800,
-        A100 : #ffe1d7,
-        A200 : #ffbaa4,
-        A400 : #ff9471,
-        A700 : #ff8158,
-        contrast: (
-                50 : #000000,
-                100 : #000000,
-                200 : #000000,
-                300 : #000000,
-                400 : #000000,
-                500 : #ffffff,
-                600 : #ffffff,
-                700 : #ffffff,
-                800 : #ffffff,
-                900 : #ffffff,
-                A100 : #000000,
-                A200 : #000000,
-                A400 : #000000,
-                A700 : #000000,
-        )
+  50: #f9f1e9,
+  100: #f0dbc7,
+  200: #e6c4a2,
+  300: #dbac7c,
+  400: #d49a60,
+  500: #cc8844,
+  600: #c7803e,
+  700: #c07535,
+  800: #b96b2d,
+  900: #ad581f,
+  A100: #fff0e6,
+  A200: #ffd0b3,
+  A400: #ffaf80,
+  A700: #ff9f67,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #000000,
+    600: #000000,
+    700: #000000,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000,
+  ),
 );
 
 $primary: mat.define-palette($mat-primary, 500);
@@ -90,26 +91,28 @@ $primary: mat.define-palette($mat-primary, 500);
 $accent: mat.define-palette($mat-accent, A200, A100, A400);
 
 $theme: mat.define-light-theme(
-                (
-                        color: (
-                                primary: $primary,
-                                accent: $accent,
-                        ),
-                        typography: mat.define-typography-config(),
-                        density: 0,
-                )
+  (
+    color: (
+      primary: $primary,
+      accent: $accent,
+    ),
+    typography: mat.define-typography-config(),
+    density: 0,
+  )
 );
 
 @include mat.all-component-themes($theme);
 
 .mat-elevation-z7 {
-  box-shadow: 0 4px 5px -2px #0003,
-  0 7px 10px 1px #00000024,
-  0 2px 16px 1px #0000001f !important;
+  box-shadow:
+    0 4px 5px -2px #0003,
+    0 7px 10px 1px #00000024,
+    0 2px 16px 1px #0000001f !important;
 }
 
 .mat-elevation-z10 {
-  box-shadow: 0 6px 6px -3px #0003,
-  0 10px 14px 1px #00000024,
-  0 4px 18px 3px #0000001f !important;
+  box-shadow:
+    0 6px 6px -3px #0003,
+    0 10px 14px 1px #00000024,
+    0 4px 18px 3px #0000001f !important;
 }

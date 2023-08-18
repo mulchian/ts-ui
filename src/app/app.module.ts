@@ -1,4 +1,5 @@
-import { NgModule } from '@angular/core';
+import '@angular/common/locales/global/de';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -15,10 +16,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatListModule } from '@angular/material/list';
-import { RosterComponent } from './team/roster/roster.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatChipsModule } from '@angular/material/chips';
+import { SharedModule } from './shared/shared.module';
+import { TeamService } from './team/services/team.service';
 
 @NgModule({
-  declarations: [AppComponent, RosterComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -34,8 +38,11 @@ import { RosterComponent } from './team/roster/roster.component';
     AppRoutingModule,
     FlexLayoutModule,
     MatListModule,
+    MatTooltipModule,
+    MatChipsModule,
+    SharedModule,
   ],
-  providers: [],
+  providers: [TeamService, { provide: LOCALE_ID, useValue: 'de' }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
