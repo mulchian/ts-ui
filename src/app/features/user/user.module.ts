@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { UserComponent } from './user.component';
 import { MatSelectModule } from '@angular/material/select';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
     RegisterComponent,
     ForgotPasswordComponent,
     UserComponent,
+    ChangePasswordComponent,
   ],
   imports: [
     CommonModule,

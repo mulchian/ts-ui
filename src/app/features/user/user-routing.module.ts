@@ -6,6 +6,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { authGuard } from '../../services/auth.guard';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { UserComponent } from './user.component';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
 
 const routes: Routes = [
   {
@@ -34,6 +35,14 @@ const routes: Routes = [
       {
         path: 'forgot-password',
         component: ForgotPasswordComponent,
+      },
+      {
+        path: 'change-password',
+        component: ChangePasswordComponent,
+      },
+      {
+        path: '**',
+        redirectTo: '/home',
       },
     ],
   },

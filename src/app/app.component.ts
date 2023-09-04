@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { AuthStore } from './services/auth.store';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -8,10 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  constructor(
-    protected readonly auth: AuthStore,
-    private readonly router: Router
-  ) {}
+  constructor(protected readonly auth: AuthStore) {}
 
   logout() {
     this.auth.logout();

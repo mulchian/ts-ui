@@ -87,4 +87,14 @@ export class AuthStore {
         shareReplay()
       );
   }
+
+  requestNewPasswort(username: string, email: string, link: string) {
+    return this.http
+      .post<boolean>('/api/user/requestNewPassword.php', {
+        username,
+        email,
+        link,
+      })
+      .pipe(shareReplay());
+  }
 }
