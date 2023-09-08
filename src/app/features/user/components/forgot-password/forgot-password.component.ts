@@ -50,17 +50,19 @@ export class ForgotPasswordComponent {
   requestNewPassword() {
     const val = this.form.value;
     const link = this.router.url.replace('forgot-password', 'change-password');
+    console.log(link);
 
     this.auth
       .requestNewPasswort(val.username, val.email, link)
-      .subscribe(requested => {
+      .subscribe((requested: boolean) => {
         if (requested) {
           this.successful = true;
           this.message =
             'Eine E-Mail mit einem Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.';
         } else {
+          this.successful = false;
           this.message =
-            'Die E-Mail-Adresse oder der Username ist nicht registriert.';
+            'Die Kombination aus User und E-Mail-Adresse ist nicht bekannt.';
         }
       });
   }

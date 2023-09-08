@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,13 +7,17 @@ import {
 } from '@angular/forms';
 import { VALIDATOR_PATTERNS } from '../../../../shared/forms/validators/validator-patterns';
 import { confirmValidator } from '../../../../shared/forms/validators/validator';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthStore } from '../../../../services/auth.store';
 
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss'],
 })
-export class ChangePasswordComponent {
+export class ChangePasswordComponent implements OnInit {
+  userId = 0;
+  valid = 0;
   hidePassword = true;
   hideConfirmPassword = true;
   successful = false;
@@ -21,7 +25,12 @@ export class ChangePasswordComponent {
 
   form: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+    private readonly auth: AuthStore,
+    private fb: FormBuilder
+  ) {
     this.form = this.fb.group({
       password: [
         '',
@@ -38,12 +47,44 @@ export class ChangePasswordComponent {
     });
   }
 
+  ngOnInit(): void {
+    this.auth.isLoggedIn$.subscribe(loggedIn => {
+      if (loggedIn) {
+        // user is already logged in, so we show extra field for old password
+      } else {
+        // read user and valid from the get params
+        this.route.queryParamMap.subscribe(params => {
+          if (params.has('user') && params.has('valid')) {
+            this.userId = Number(params.get('user'));
+            this.valid = Number(params.get('valid'));
+            // test that validation time is not over
+            if (
+              this.userId <= 0 ||
+              this.valid < Math.floor(Date.now() / 1000)
+            ) {
+              this.router.navigateByUrl('/');
+            }
+          } else {
+            this.router.navigateByUrl('/');
+          }
+        });
+      }
+    });
+  }
+
   changePassword() {
     const val = this.form.value;
 
     if (val.password && val.password === val.repeatPassword) {
-      this.successful = true;
-      this.message = 'Passwort erfolgreich geändert.';
+      this.auth.changePassword(this.userId, val.password).subscribe(changed => {
+        if (changed) {
+          this.successful = true;
+          this.message = 'Passwort erfolgreich geändert.';
+        } else {
+          this.successful = false;
+          this.message = 'Passwort konnte nicht geändert werden.';
+        }
+      });
     }
   }
 

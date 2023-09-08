@@ -3,6 +3,8 @@ import { BehaviorSubject, catchError, Observable } from 'rxjs';
 import { User } from '../model/user';
 import { map, shareReplay, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+import { LoadingService } from '../shared/loading/loading.service';
+import { Router } from '@angular/router';
 
 const AUTH_DATA = 'auth_data';
 
@@ -16,7 +18,11 @@ export class AuthStore {
   isLoggedIn$: Observable<boolean>;
   isLoggedOut$: Observable<boolean>;
 
-  constructor(private readonly http: HttpClient) {
+  constructor(
+    private readonly http: HttpClient,
+    private readonly router: Router,
+    private readonly loadingService: LoadingService
+  ) {
     this.isLoggedIn$ = this.user$.pipe(map(user => !!user));
     this.isLoggedOut$ = this.isLoggedIn$.pipe(map(loggedIn => !loggedIn));
 
@@ -27,10 +33,12 @@ export class AuthStore {
   }
 
   login(username: string, password: string): Observable<User> {
+    this.loadingService.loadingOn();
     return this.http
       .post<User>('/api/user/login.php', { username, password })
       .pipe(
         tap(user => {
+          this.loadingService.loadingOff();
           if (user.id) {
             this.subject.next(user);
             localStorage.setItem(AUTH_DATA, JSON.stringify(user));
@@ -48,6 +56,7 @@ export class AuthStore {
 
   logout() {
     if (this.isLoggedIn$) {
+      this.loadingService.loadingOn();
       this.http
         .post('/api/user/logout.php', null)
         .pipe(
@@ -60,6 +69,7 @@ export class AuthStore {
         .subscribe(data => {
           console.log(data);
           console.log('logged out');
+          this.router.navigateByUrl('/');
         });
     }
   }
@@ -93,8 +103,14 @@ export class AuthStore {
       .post<boolean>('/api/user/requestNewPassword.php', {
         username,
         email,
-        link,
+        activationLink: link,
       })
+      .pipe(shareReplay());
+  }
+
+  changePassword(userId: number, password: string) {
+    return this.http
+      .post<boolean>('/api/user/changePassword.php', { userId, password })
       .pipe(shareReplay());
   }
 }
