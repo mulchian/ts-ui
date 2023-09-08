@@ -1,4 +1,4 @@
-<ng-container *ngIf="(this.auth.isLoggedOut$ | async) && !showProfile()">
+<ng-container *ngIf="!showProfile()">
   <mat-card class="login-card">
     <div class="logo-container">
       <img
@@ -30,7 +30,7 @@
             Registrieren
           </button>
           <button
-            *ngIf="!isLoginPath()"
+            *ngIf="!isLoginPath() && !loggedIn"
             mat-raised-button
             color="primary"
             [routerLink]="['login']"

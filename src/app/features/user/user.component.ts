@@ -8,16 +8,22 @@ import { AuthStore } from '../../services/auth.store';
   styleUrls: ['./user.component.scss'],
 })
 export class UserComponent {
+  loggedIn = false;
+
   constructor(
     protected readonly auth: AuthStore,
     private readonly route: ActivatedRoute
-  ) {}
+  ) {
+    this.auth.isLoggedIn$.subscribe(loggedIn => {
+      this.loggedIn = loggedIn;
+    });
+  }
 
-  showProfile() {
+  showProfile(): boolean {
     return this.route.snapshot.firstChild?.routeConfig?.path === 'profile';
   }
 
-  isLoginPath() {
+  isLoginPath(): boolean {
     return this.route.snapshot.firstChild?.routeConfig?.path === 'login';
   }
 }

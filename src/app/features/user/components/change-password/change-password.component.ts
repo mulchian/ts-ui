@@ -16,8 +16,10 @@ import { AuthStore } from '../../../../services/auth.store';
   styleUrls: ['./change-password.component.scss'],
 })
 export class ChangePasswordComponent implements OnInit {
+  isLoggedIn = false;
   userId = 0;
   valid = 0;
+  hideOldPassword = true;
   hidePassword = true;
   hideConfirmPassword = true;
   successful = false;
@@ -32,6 +34,7 @@ export class ChangePasswordComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.form = this.fb.group({
+      oldPassword: ['', []],
       password: [
         '',
         [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.password)],
@@ -45,31 +48,34 @@ export class ChangePasswordComponent implements OnInit {
         ],
       ],
     });
+    this.auth.isLoggedIn$.subscribe(loggedIn => {
+      this.isLoggedIn = loggedIn;
+    });
   }
 
   ngOnInit(): void {
-    this.auth.isLoggedIn$.subscribe(loggedIn => {
-      if (loggedIn) {
-        // user is already logged in, so we show extra field for old password
-      } else {
-        // read user and valid from the get params
-        this.route.queryParamMap.subscribe(params => {
-          if (params.has('user') && params.has('valid')) {
-            this.userId = Number(params.get('user'));
-            this.valid = Number(params.get('valid'));
-            // test that validation time is not over
-            if (
-              this.userId <= 0 ||
-              this.valid < Math.floor(Date.now() / 1000)
-            ) {
-              this.router.navigateByUrl('/');
-            }
-          } else {
+    if (this.isLoggedIn) {
+      // user is already logged in, so we show extra field for old password
+      this.oldPasswordControl.addValidators([
+        Validators.required,
+        Validators.pattern(VALIDATOR_PATTERNS.password),
+      ]);
+      this.oldPasswordControl.updateValueAndValidity();
+    } else {
+      // read user and valid from the get params
+      this.route.queryParamMap.subscribe(params => {
+        if (params.has('user') && params.has('valid')) {
+          this.userId = Number(params.get('user'));
+          this.valid = Number(params.get('valid'));
+          // test that validation time is not over
+          if (this.userId <= 0 || this.valid < Math.floor(Date.now() / 1000)) {
             this.router.navigateByUrl('/');
           }
-        });
-      }
-    });
+        } else {
+          this.router.navigateByUrl('/');
+        }
+      });
+    }
   }
 
   changePassword() {
@@ -86,6 +92,10 @@ export class ChangePasswordComponent implements OnInit {
         }
       });
     }
+  }
+
+  get oldPasswordControl(): FormControl {
+    return this.form.get('oldPassword') as FormControl;
   }
 
   get passwordControl(): FormControl {

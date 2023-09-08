@@ -60,6 +60,7 @@ const routes: Routes = [
       preloadingStrategy: CustomPreloadingStrategy,
       scrollPositionRestoration: 'enabled',
       paramsInheritanceStrategy: 'always', // having paramMap of all parent routes
+      // enableTracing: true,
     }),
   ],
   exports: [RouterModule],
