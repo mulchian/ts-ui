@@ -18,7 +18,7 @@
         <mat-icon class="menu-icon">home</mat-icon>
       </a>
       <a
-        *ngIf="auth.isLoggedIn$ | async"
+        *ngIf="loggedIn"
         class="menu-item"
         mat-icon-button
         matTooltip="Büro"
@@ -28,7 +28,7 @@
         <mat-icon class="menu-icon">business_center</mat-icon>
       </a>
       <a
-        *ngIf="auth.isLoggedIn$ | async"
+        *ngIf="loggedIn"
         class="menu-item"
         mat-icon-button
         matTooltip="Finanzen"
@@ -38,7 +38,7 @@
         <mat-icon class="menu-icon">wallet</mat-icon>
       </a>
       <a
-        *ngIf="auth.isLoggedIn$ | async"
+        *ngIf="loggedIn"
         class="menu-item"
         mat-icon-button
         matTooltip="Team"
@@ -48,7 +48,7 @@
         <mat-icon class="menu-icon">groups</mat-icon>
       </a>
       <a
-        *ngIf="auth.isLoggedIn$ | async"
+        *ngIf="loggedIn"
         class="menu-item"
         mat-icon-button
         matTooltip="Liga"
@@ -62,7 +62,7 @@
 
     <div class="toolbar-tools" fxShow fxLayoutGap="10px">
       <button
-        *ngIf="auth.isLoggedIn$ | async"
+        *ngIf="loggedIn"
         class="menu-item"
         mat-icon-button
         matTooltip="Logout"
@@ -70,7 +70,7 @@
         <mat-icon class="menu-icon">logout</mat-icon>
       </button>
       <button
-        *ngIf="auth.isLoggedOut$ | async"
+        *ngIf="!loggedIn"
         class="menu-item"
         mat-icon-button
         matTooltip="Login"
@@ -83,7 +83,7 @@
 
     <button
       mat-button
-      *ngIf="this.auth.isLoggedIn$ | async"
+      *ngIf="loggedIn"
       (click)="sidenav.toggle()"
       fxHide
       fxShow.xs>
@@ -91,14 +91,27 @@
     </button>
   </mat-toolbar-row>
   <mat-toolbar-row>
+    <span fxFlex="0 1 50px" fxHide.xs fxHide.sm></span>
+    <mat-chip-set *ngIf="isOffice()" fxFlex="1 1 30%" fxShow fxHide.xs>
+      <mat-chip [routerLink]="['office', 'personal']" routerLinkActive="active">
+        Personal
+      </mat-chip>
+      <mat-chip [routerLink]="['office', 'friendly']" routerLinkActive="active">
+        Freundschaftsspiel
+      </mat-chip>
+    </mat-chip-set>
     <!-- hier dann money stuff nach rechts -->
-    <span fxFlex></span>
-    <app-team-chip-set></app-team-chip-set>
+    <span fxFlex fxHide.xs fxHide.sm></span>
+    <app-team-chip-set
+      fxLayoutAlign="end center"
+      fxFlex="1 0 40%"
+      fxFlex.sm="1 0 60%"
+      fxFlex.xs="auto"></app-team-chip-set>
   </mat-toolbar-row>
 </mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav #sidenav [autoFocus]="false">
-    <mat-nav-list *ngIf="this.auth.isLoggedIn$ | async">
+    <mat-nav-list *ngIf="loggedIn">
       <a
         mat-list-item
         routerLinkActive="active"

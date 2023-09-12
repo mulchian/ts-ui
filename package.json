@@ -31,7 +31,9 @@
     "@angular/router": "^16.2.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "masonry-layout": "^4.2.2",
     "ngx-build-plus": "^16.0.0",
+    "ngx-masonry": "^14.0.1",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"

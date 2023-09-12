@@ -24,14 +24,14 @@ const routes: Routes = [
   {
     path: 'office',
     loadChildren: () =>
-      import('./office/office.module').then(m => m.OfficeModule),
+      import('./features/office/office.module').then(m => m.OfficeModule),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
   },
   {
     path: 'finances',
     loadChildren: () =>
-      import('./office/office.module').then(m => m.OfficeModule),
+      import('./features/finance/finance.module').then(m => m.FinanceModule),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
   },

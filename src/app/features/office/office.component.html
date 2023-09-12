@@ -1,0 +1,6 @@
+<ng-container *ngIf="showOverview(); else components">
+  Büro Übersicht folgt...
+</ng-container>
+<ng-template #components>
+  <router-outlet></router-outlet>
+</ng-template>

@@ -1,0 +1,44 @@
+<ngx-masonry [ordered]="true" [options]="masonryOptions" class="masonry">
+  <div ngxMasonryItem class="masonry-item">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Bürogebäude</mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+      <mat-card-content>
+        <div class="card-content">
+          <mat-grid-list cols="2" rowHeight="4:1">
+            <mat-grid-tile>Stufe</mat-grid-tile>
+            <mat-grid-tile>x / max</mat-grid-tile>
+            <mat-grid-tile>Personal</mat-grid-tile>
+            <mat-grid-tile>x / max Mitarbeiter</mat-grid-tile>
+            <mat-grid-tile>Gehalt</mat-grid-tile>
+            <mat-grid-tile>salary</mat-grid-tile>
+          </mat-grid-list>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div ngxMasonryItem class="masonry-item" *ngFor="let job of jobs | async">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{ job.name }}</mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+      <mat-card-content>
+        <div class="card-content">
+          <ng-container *ngIf="hasEmployeeForJob(job) | async; else defaultJob">
+            Hier sollte man eig nicht landen...
+          </ng-container>
+          <ng-template #defaultJob>
+            <button
+              mat-raised-button
+              [disabled]="(hasFreePositions() | async) === false">
+              EINSTELLEN
+            </button>
+          </ng-template>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</ngx-masonry>

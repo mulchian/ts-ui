@@ -14,6 +14,11 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
+// we need this to have a pointer on the noninteractive mat-chip
+span[matchipaction] {
+  cursor: pointer;
+}
+
 @include mat.core();
 
 $dark-primary-text: rgba(black, 0.87);

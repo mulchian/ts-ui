@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PersonalComponent } from './personal/personal.component';
-import { OfficeComponent } from './office/office.component';
+import { PersonalComponent } from './components/personal/personal.component';
+import { OfficeComponent } from './office.component';
+import { FriendlyComponent } from './components/friendly/friendly/friendly.component';
 
 const routes: Routes = [
   {
@@ -11,6 +12,10 @@ const routes: Routes = [
   {
     path: 'personal',
     component: PersonalComponent,
+  },
+  {
+    path: 'friendly',
+    component: FriendlyComponent,
   },
 ];
 
