@@ -27,7 +27,7 @@ import { OverlayLoadingComponent } from '../shared/loading/overlay-loading/overl
 export class DynamicOverlayService extends Overlay {
   private readonly _dynamicOverlayContainer: DynamicOverlayContainerService;
   private readonly renderer: Renderer2;
-  private overlayRef: OverlayRef | undefined;
+  private overlayRefs: OverlayRef[] = [];
 
   constructor(
     scrollStrategies: ScrollStrategyOptions,
@@ -73,15 +73,19 @@ export class DynamicOverlayService extends Overlay {
     });
   }
 
-  showOverlay(nativeElement: HTMLElement) {
-    this.overlayRef = this.createWithDefaultConfig(nativeElement);
-    this.overlayRef.attach(new ComponentPortal(OverlayLoadingComponent));
+  showOverlay(nativeElement: HTMLElement): OverlayRef {
+    const overlayRef = this.createWithDefaultConfig(nativeElement);
+    overlayRef.attach(new ComponentPortal(OverlayLoadingComponent));
+    this.overlayRefs.push(overlayRef);
+    return overlayRef;
   }
 
-  hideOverlay() {
-    if (this.overlayRef) {
-      this.overlayRef.detach();
-    }
+  hideOverlay(overlayRef: OverlayRef) {
+    overlayRef.detach();
+  }
+
+  hideAllOverlays() {
+    this.overlayRefs.forEach(overlayRef => overlayRef.detach());
   }
 
   private setContainerElement(containerElement: HTMLElement): void {

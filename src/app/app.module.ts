@@ -14,12 +14,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
 import { SharedModule } from './shared/shared.module';
-import { TeamService } from './team/services/team.service';
+import { TeamService } from './features/team/services/team.service';
+import { StadiumService } from './features/office/services/stadium.service';
+import {
+  popperVariation,
+  provideTippyConfig,
+  tooltipVariation,
+} from '@ngneat/helipopper';
 
 @NgModule({
   declarations: [AppComponent],
@@ -37,12 +42,39 @@ import { TeamService } from './team/services/team.service';
     MatListModule,
     MatTooltipModule,
     MatChipsModule,
-    FlexLayoutModule,
     ReactiveFormsModule,
     AppRoutingModule,
     SharedModule,
   ],
-  providers: [TeamService, { provide: LOCALE_ID, useValue: 'de' }],
+  providers: [
+    TeamService,
+    StadiumService,
+    { provide: LOCALE_ID, useValue: 'de' },
+    provideTippyConfig({
+      defaultVariation: 'popper',
+      variations: {
+        tooltip: tooltipVariation,
+        popper: popperVariation,
+        popperBorder: {
+          ...popperVariation,
+          theme: 'light-border',
+        },
+        material: {
+          ...popperVariation,
+          theme: 'material',
+          popperOptions: {
+            modifiers: [
+              {
+                options: {
+                  fallbackPlacements: ['bottom', 'right', 'top', 'left'],
+                },
+              },
+            ],
+          },
+        },
+      },
+    }),
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,0 +1,84 @@
+<h2 mat-dialog-title>Vertrag verhandeln!</h2>
+<mat-dialog-content>
+  <ng-container *ngIf="team | async as team">
+    <div class="employee-job-name">
+      {{ employee.job.name }}
+    </div>
+    <div class="employee-name">
+      {{ employee.firstName }} {{ employee.lastName }}
+    </div>
+    <mat-grid-list cols="2" rowHeight="10:1">
+      <mat-grid-tile class="accent-text">
+        {{ employee.ovr }}
+      </mat-grid-tile>
+      <mat-grid-tile class="accent-text">
+        {{ employee.age }}
+      </mat-grid-tile>
+      <mat-grid-tile><small>OVR</small></mat-grid-tile>
+      <mat-grid-tile><small>ALTER</small></mat-grid-tile>
+    </mat-grid-list>
+    <div class="time-of-contract">
+      <mat-form-field>
+        <mat-label>Laufzeit</mat-label>
+        <mat-select
+          [(ngModel)]="timeOfContract"
+          (selectionChange)="changeTimeOfContract()">
+          <mat-option value="1">1 Saison</mat-option>
+          <mat-option value="2">2 Saisons</mat-option>
+          <mat-option value="3">3 Saisons</mat-option>
+          <mat-option value="4">4 Saisons</mat-option>
+          <mat-option value="5">5 Saisons</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="salary-slider">
+      <mat-slider
+        class="always-on-indicator"
+        min="{{ minSalary }}"
+        max="{{ maxSalary }}"
+        step="{{ salaryStep }}"
+        showTickMarks
+        discrete="true"
+        color="primary"
+        [displayWith]="formatSalaryLabel">
+        <input
+          matSliderThumb
+          [value]="newSalary"
+          [(ngModel)]="newSalary"
+          (input)="changeSalary()" />
+      </mat-slider>
+    </div>
+    <div class="salary-head"><small>GEHALT</small></div>
+    <mat-grid-list cols="2" rowHeight="10:1">
+      <mat-grid-tile class="accent-text">
+        {{ signingBonus | currency: 'EUR' : 'symbol' : '1.0-0' }}
+      </mat-grid-tile>
+      <mat-grid-tile class="accent-text">
+        {{ newMoral | percent }}
+      </mat-grid-tile>
+      <mat-grid-tile><small>SIGNING BONUS</small></mat-grid-tile>
+      <mat-grid-tile><small>MORAL</small></mat-grid-tile>
+      <mat-grid-tile class="accent-text">
+        {{ totalOffer | currency: 'EUR' : 'symbol' : '1.0-0' }}
+      </mat-grid-tile>
+      <mat-grid-tile class="accent-text">
+        {{ team.salaryCap - totalOffer | currency: 'EUR' : 'symbol' : '1.0-0' }}
+      </mat-grid-tile>
+      <mat-grid-tile><small>GESAMTANGEBOT</small></mat-grid-tile>
+      <mat-grid-tile><small>NEUES SALARY CAP</small></mat-grid-tile>
+    </mat-grid-list>
+  </ng-container>
+  <mat-card
+    *ngIf="isLoading"
+    style="display: flex; justify-content: center; align-items: center">
+    <mat-progress-spinner color="primary" mode="indeterminate">
+    </mat-progress-spinner>
+  </mat-card>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onDismiss(false)">Abbrechen</button>
+  <!--    [mat-dialog-close]="employee"-->
+  <button mat-button (click)="negotiateContract()">
+    {{ newEmployee ? 'Einstellen' : 'Verlängern' }}
+  </button>
+</mat-dialog-actions>

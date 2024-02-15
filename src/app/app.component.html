@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" fxLayout="row wrap" fxLayoutAlign="center center">
+<mat-toolbar color="primary" class="flex-container">
   <mat-toolbar-row>
     <div class="logo" routerLink="/home">
       <img
@@ -7,7 +7,7 @@
       Touchdown Stars
     </div>
 
-    <div class="toolbar-tools" fxShow fxHide.xs fxLayoutGap="10px">
+    <div class="toolbar-tools hide-xs">
       <a
         class="menu-item"
         mat-icon-button
@@ -58,9 +58,9 @@
         <mat-icon class="menu-icon">table_chart</mat-icon>
       </a>
     </div>
-    <span fxFlex fxShow></span>
+    <span class="flex-span hide-xs"></span>
 
-    <div class="toolbar-tools" fxShow fxLayoutGap="10px">
+    <div class="toolbar-tools">
       <button
         *ngIf="loggedIn"
         class="menu-item"
@@ -83,16 +83,15 @@
 
     <button
       mat-button
+      class="menu-button"
       *ngIf="loggedIn"
-      (click)="sidenav.toggle()"
-      fxHide
-      fxShow.xs>
+      (click)="sidenav.toggle()">
       <mat-icon class="menu-icon">menu</mat-icon>
     </button>
   </mat-toolbar-row>
   <mat-toolbar-row>
-    <span fxFlex="0 1 50px" fxHide.xs fxHide.sm></span>
-    <mat-chip-set *ngIf="isOffice()" fxFlex="1 1 30%" fxShow fxHide.xs>
+    <span class="flex-span-big"></span>
+    <mat-chip-set *ngIf="isOffice()" class="flex-chip-set hide-xs">
       <mat-chip [routerLink]="['office', 'personal']" routerLinkActive="active">
         Personal
       </mat-chip>
@@ -101,12 +100,8 @@
       </mat-chip>
     </mat-chip-set>
     <!-- hier dann money stuff nach rechts -->
-    <span fxFlex fxHide.xs fxHide.sm></span>
-    <app-team-chip-set
-      fxLayoutAlign="end center"
-      fxFlex="1 0 40%"
-      fxFlex.sm="1 0 60%"
-      fxFlex.xs="auto"></app-team-chip-set>
+    <span class="flex-span hide-xs hide-sm"></span>
+    <app-team-chip-set class="team-chip-set"></app-team-chip-set>
   </mat-toolbar-row>
 </mat-toolbar>
 <mat-sidenav-container>
@@ -154,7 +149,7 @@
       >
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content fxLayoutAlign="center start">
+  <mat-sidenav-content class="side-nav">
     <!--  <messages></messages>-->
     <app-loading [detectRoutingOngoing]="true"></app-loading>
     <router-outlet></router-outlet>

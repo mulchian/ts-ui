@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class AppComponent {
   loggedIn = false;
+
   constructor(
     private readonly auth: AuthStore,
     private readonly route: ActivatedRoute

@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
-import { Team } from '../../model/team';
-import { AuthStore } from '../../services/auth.store';
-import { tap } from 'rxjs/operators';
+import { Team } from '../../../model/team';
+import { AuthStore } from '../../../services/auth.store';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class TeamService {
   private subject = new BehaviorSubject<Team | null>(null);
   team$: Observable<Team | null> = this.subject.asObservable();
@@ -16,8 +15,11 @@ export class TeamService {
   ) {
     this.auth.isLoggedIn$.subscribe(loggedIn => {
       if (loggedIn && !this.subject.getValue()) {
+        console.log(this.subject.getValue());
+        console.log('Load team from service');
         this.loadTeam();
       } else if (!loggedIn) {
+        console.log('Reset team');
         this.subject.next(null);
       }
     });
@@ -26,8 +28,9 @@ export class TeamService {
   private loadTeam() {
     this.http
       .get<Team>('/api/team' + '/getTeam.php')
-      .pipe(tap(), shareReplay())
+      .pipe(shareReplay())
       .subscribe(team => {
+        console.log('Team', team);
         this.subject.next(team);
       });
   }
@@ -40,5 +43,10 @@ export class TeamService {
         },
       })
       .pipe(shareReplay());
+  }
+
+  updateTeam() {
+    this.subject.next(null);
+    this.loadTeam();
   }
 }

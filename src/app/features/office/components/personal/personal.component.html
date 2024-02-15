@@ -7,13 +7,24 @@
       <mat-divider></mat-divider>
       <mat-card-content>
         <div class="card-content">
-          <mat-grid-list cols="2" rowHeight="4:1">
+          <mat-grid-list
+            cols="2"
+            [rowHeight]="rowHeight"
+            (window:resize)="onResize($event)">
             <mat-grid-tile>Stufe</mat-grid-tile>
-            <mat-grid-tile>x / max</mat-grid-tile>
+            <mat-grid-tile>
+              {{ officeBuilding?.level }} /
+              {{ officeBuilding?.maxLevel }}
+            </mat-grid-tile>
             <mat-grid-tile>Personal</mat-grid-tile>
-            <mat-grid-tile>x / max Mitarbeiter</mat-grid-tile>
+            <mat-grid-tile>
+              {{ employees.length }} /
+              {{ officeBuilding?.level }}
+            </mat-grid-tile>
             <mat-grid-tile>Gehalt</mat-grid-tile>
-            <mat-grid-tile>salary</mat-grid-tile>
+            <mat-grid-tile
+              >{{ calcEmployeeSalary() | currency: 'EUR' : 'symbol' : '1.0-0' }}
+            </mat-grid-tile>
           </mat-grid-list>
         </div>
       </mat-card-content>
@@ -25,17 +36,83 @@
         <mat-card-title>{{ job.name }}</mat-card-title>
       </mat-card-header>
       <mat-divider></mat-divider>
-      <mat-card-content>
+      <mat-card-content
+        inViewport
+        [inViewportOptions]="{ threshold: [0] }"
+        (inViewportAction)="onViewportAction($event)">
         <div class="card-content">
-          <ng-container *ngIf="hasEmployeeForJob(job) | async; else defaultJob">
-            Hier sollte man eig nicht landen...
+          <ng-container
+            *ngIf="getEmployeeForJob(job) as employee; else defaultJob">
+            <div class="employee-name">
+              {{ employee.firstName }} {{ employee.lastName }}
+            </div>
+            <mat-grid-list cols="2" rowHeight="5:1">
+              <mat-grid-tile class="accent-text">
+                {{ employee.ovr }}
+              </mat-grid-tile>
+              <mat-grid-tile class="accent-text">
+                {{ employee.age }}
+              </mat-grid-tile>
+              <mat-grid-tile><small>OVR</small></mat-grid-tile>
+              <mat-grid-tile><small>ALTER</small></mat-grid-tile>
+              <mat-grid-tile class="accent-text">
+                {{
+                  employee.contract?.salary
+                    | currency: 'EUR' : 'symbol' : '1.0-0'
+                }}
+              </mat-grid-tile>
+              <mat-grid-tile class="accent-text">
+                {{ employee.contract?.endOfContract }}
+              </mat-grid-tile>
+              <mat-grid-tile><small>GEHALT</small></mat-grid-tile>
+              <mat-grid-tile><small>VERTRAG</small></mat-grid-tile>
+            </mat-grid-list>
+            <mat-divider></mat-divider>
+            <mat-card-actions>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="openContractDialog(employee)">
+                NEUER VERTRAG
+              </button>
+              <button
+                mat-raised-button
+                color="warn"
+                [tp]="tplConfirm"
+                [tpPlacement]="'bottom'"
+                #tpRelease="tippy"
+                tpVariation="popperBorder">
+                ENTLASSEN
+              </button>
+            </mat-card-actions>
+            <ng-template #tplConfirm let-hide>
+              <app-confirm-modal
+                [title]="'Mitarbeiter entlassen'"
+                [message]="
+                  'Willst du deinen ' +
+                  employee.job.name +
+                  ' ' +
+                  employee.firstName +
+                  ' ' +
+                  employee.lastName +
+                  ' wirklich entlassen?'
+                "
+                [confirmBtnText]="'Entlassen'"
+                [tooltip]="tpRelease"
+                (confirm)="releaseEmployee(employee)">
+              </app-confirm-modal>
+            </ng-template>
           </ng-container>
           <ng-template #defaultJob>
-            <button
-              mat-raised-button
-              [disabled]="(hasFreePositions() | async) === false">
-              EINSTELLEN
-            </button>
+            <mat-card-actions>
+              <button
+                mat-raised-button
+                color="primary"
+                [disabled]="!hasFreePositions()"
+                (click)="openEmployeeDialog(job)">
+                EINSTELLEN
+              </button>
+            </mat-card-actions>
           </ng-template>
         </div>
       </mat-card-content>

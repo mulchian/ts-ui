@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { concatMap, finalize, tap } from 'rxjs/operators';
 import { DynamicOverlayService } from '../../services/dynamic-overlay.service';
+import { OverlayRef } from '@angular/cdk/overlay';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,8 @@ export class LoadingService {
 
   private loadingInOverlaySubject = new BehaviorSubject<boolean>(false);
   loadingInOverlay$: Observable<boolean> = this.loadingSubject.asObservable();
+
+  loadingRoute = false;
 
   constructor(private readonly overlayService: DynamicOverlayService) {
     console.log('Loading service created ...');
@@ -25,6 +28,10 @@ export class LoadingService {
     );
   }
 
+  isLoading(): boolean {
+    return this.loadingSubject.value;
+  }
+
   loadingOn() {
     this.loadingSubject.next(true);
   }
@@ -33,13 +40,31 @@ export class LoadingService {
     this.loadingSubject.next(false);
   }
 
-  loadingOnInOverlay(nativElement: HTMLElement) {
-    this.overlayService.showOverlay(nativElement);
-    this.loadingInOverlaySubject.next(true);
+  loadingOnRouting() {
+    if (!this.loadingSubject.value && this.loadingRoute) {
+      this.loadingSubject.next(true);
+    }
   }
 
-  loadingOffInOverlay() {
-    this.overlayService.hideOverlay();
+  loadingOffRouting() {
+    if (this.loadingRoute) {
+      this.loadingSubject.next(false);
+    }
+  }
+
+  loadingOnInOverlay(nativElement: HTMLElement) {
+    const overlayRef = this.overlayService.showOverlay(nativElement);
+    this.loadingInOverlaySubject.next(true);
+    return overlayRef;
+  }
+
+  loadingOffInOverlayForAll() {
+    this.overlayService.hideAllOverlays();
+    this.loadingInOverlaySubject.next(false);
+  }
+
+  loadingOffInOverlay(overlayRef: OverlayRef) {
+    this.overlayService.hideOverlay(overlayRef);
     this.loadingInOverlaySubject.next(false);
   }
 }

@@ -13,6 +13,7 @@ export interface Employee {
   morale: number;
   unemployedSeasons: number;
   marketValue: number;
+  salary: string;
   idTeam: number | null;
   job: Job;
   contract: Contract | null;

@@ -1,0 +1,15 @@
+<mat-card-title>{{ title }}</mat-card-title>
+<mat-divider></mat-divider>
+<mat-card-content>
+  <p>
+    {{ message }}
+  </p>
+</mat-card-content>
+<mat-card-actions>
+  <button mat-raised-button color="warn" (click)="onConfirm()">
+    {{ confirmBtnText | uppercase }}
+  </button>
+  <button mat-raised-button (click)="tooltip?.hide()">
+    {{ 'Abbrechen' | uppercase }}
+  </button>
+</mat-card-actions>

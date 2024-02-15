@@ -1,0 +1,30 @@
+.employee-name,
+.employee-job-name,
+.salary-head {
+  text-align: center;
+  font-size: 16px;
+}
+
+.employee-name {
+  padding-bottom: 1rem;
+}
+
+.salary-head {
+  padding-bottom: 1rem;
+}
+
+.accent-text {
+  font-size: 16px;
+}
+
+.salary-slider,
+.time-of-contract {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+mat-slider {
+  width: 80%;
+  margin: 0;
+}

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TeamService } from '../../team/services/team.service';
+import { TeamService } from '../../features/team/services/team.service';
 import { AuthStore } from '../../services/auth.store';
 import { Observable, of } from 'rxjs';
 import { Team } from '../../model/team';

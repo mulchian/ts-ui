@@ -7,6 +7,40 @@
   margin: 1rem 0;
 }
 
+@media (max-width: 768px) {
+  .masonry-item {
+    width: 45%;
+  }
+}
+
+@media (max-width: 480px) {
+  .masonry-item {
+    width: 100%;
+  }
+}
+
+mat-card-header {
+  justify-content: center;
+}
+
 .card-content {
   padding-top: 1rem;
+}
+
+.employee-name {
+  text-align: center;
+  font-size: 16px;
+  padding-bottom: 1rem;
+}
+
+.accent-text {
+  font-size: 16px;
+}
+
+mat-card-actions {
+  justify-content: center;
+}
+
+mat-card-actions .mat-mdc-button-base {
+  margin-right: 8px;
 }

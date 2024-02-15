@@ -4,7 +4,7 @@ import { Job } from '../../../model/job';
 import { HttpClient } from '@angular/common/http';
 import { shareReplay } from 'rxjs/operators';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class JobService {
   private subject = new BehaviorSubject<Job[] | null>(null);
   jobs$: Observable<Job[] | null> = this.subject.asObservable();

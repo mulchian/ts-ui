@@ -23,13 +23,18 @@ export class AuthStore {
     private readonly router: Router,
     private readonly loadingService: LoadingService
   ) {
+    this.loadStorageUser();
     this.isLoggedIn$ = this.user$.pipe(map(user => !!user));
     this.isLoggedOut$ = this.isLoggedIn$.pipe(map(loggedIn => !loggedIn));
 
-    const user = localStorage.getItem(AUTH_DATA);
-    if (user) {
-      this.subject.next(JSON.parse(user));
-    }
+    // first we have to ask for the php session
+    this.isReloginNeeded().subscribe(needsRelogin => {
+      if (needsRelogin) {
+        this.subject.next(null);
+        localStorage.removeItem(AUTH_DATA);
+        this.router.navigateByUrl('/login');
+      }
+    });
   }
 
   login(username: string, password: string): Observable<User> {
@@ -112,5 +117,25 @@ export class AuthStore {
     return this.http
       .post<boolean>('/api/user/changePassword.php', { userId, password })
       .pipe(shareReplay());
+  }
+
+  private loadStorageUser() {
+    const storageUser = localStorage.getItem(AUTH_DATA);
+    let user: User | null = null;
+    if (storageUser) {
+      user = <User>JSON.parse(storageUser);
+      // TODO: lastActiveTIme needs to be updated in frontend and backend
+      // is lastActiveTime longer than 48 hours we need to login again
+      // if (user.lastActiveTime < Date.now() - 172800000) {
+      //   user = null;
+      // }
+    }
+    this.subject.next(user);
+  }
+
+  private isReloginNeeded() {
+    return this.http
+      .get<boolean>('/api/user/needsRelogin.php')
+      .pipe(tap(), shareReplay());
   }
 }

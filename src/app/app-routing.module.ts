@@ -27,6 +27,7 @@ const routes: Routes = [
       import('./features/office/office.module').then(m => m.OfficeModule),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
+    runGuardsAndResolvers: 'always',
   },
   {
     path: 'finances',
@@ -37,13 +38,15 @@ const routes: Routes = [
   },
   {
     path: 'team',
-    loadChildren: () => import('./team/team.module').then(m => m.TeamModule),
+    loadChildren: () =>
+      import('./features/team/team.module').then(m => m.TeamModule),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
   },
   {
     path: 'league',
-    loadChildren: () => import('./team/team.module').then(m => m.TeamModule),
+    loadChildren: () =>
+      import('./features/team/team.module').then(m => m.TeamModule),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
   },
@@ -58,6 +61,7 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, {
       preloadingStrategy: CustomPreloadingStrategy,
+      onSameUrlNavigation: 'reload',
       scrollPositionRestoration: 'enabled',
       paramsInheritanceStrategy: 'always', // having paramMap of all parent routes
       // enableTracing: true,

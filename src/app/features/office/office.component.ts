@@ -10,7 +10,6 @@ export class OfficeComponent {
   constructor(private readonly router: Router) {}
 
   showOverview(): boolean {
-    console.log('url', this.router.url);
     return this.router.url === '/office';
   }
 }

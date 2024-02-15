@@ -28,20 +28,22 @@ export class LoadingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.detectRoutingOngoing) {
+    if (this.detectRoutingOngoing && !this.loadingService.isLoading()) {
       this.router.events.subscribe(event => {
         if (
           event instanceof NavigationStart ||
           event instanceof RouteConfigLoadStart
         ) {
-          this.loadingService.loadingOn();
+          this.loadingService.loadingRoute = true;
+          this.loadingService.loadingOnRouting();
         } else if (
           event instanceof NavigationEnd ||
           event instanceof NavigationError ||
           event instanceof NavigationCancel ||
           event instanceof RouteConfigLoadEnd
         ) {
-          this.loadingService.loadingOff();
+          this.loadingService.loadingOffRouting();
+          this.loadingService.loadingRoute = false;
         }
       });
     }

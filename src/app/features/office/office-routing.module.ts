@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PersonalComponent } from './components/personal/personal.component';
 import { OfficeComponent } from './office.component';
-import { FriendlyComponent } from './components/friendly/friendly/friendly.component';
+import { FriendlyComponent } from './components/friendly/friendly.component';
 
 const routes: Routes = [
   {
