@@ -5,6 +5,15 @@ import { RosterComponent } from './roster/roster.component';
 const routes: Routes = [
   {
     path: '',
+    redirectTo: 'roster',
+    pathMatch: 'full',
+  },
+  {
+    path: 'roster',
+    component: RosterComponent,
+  },
+  {
+    path: 'contracts',
     component: RosterComponent,
   },
 ];

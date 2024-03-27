@@ -91,12 +91,20 @@
   </mat-toolbar-row>
   <mat-toolbar-row>
     <span class="flex-span-big"></span>
-    <mat-chip-set *ngIf="isOffice()" class="flex-chip-set hide-xs">
+    <mat-chip-set *ngIf="isSpecialPath('office')" class="flex-chip-set hide-xs">
       <mat-chip [routerLink]="['office', 'personal']" routerLinkActive="active">
         Personal
       </mat-chip>
       <mat-chip [routerLink]="['office', 'friendly']" routerLinkActive="active">
         Freundschaftsspiel
+      </mat-chip>
+    </mat-chip-set>
+    <mat-chip-set *ngIf="isSpecialPath('team')" class="flex-chip-set hide-xs">
+      <mat-chip [routerLink]="['team', 'roster']" routerLinkActive="active">
+        Roster
+      </mat-chip>
+      <mat-chip [routerLink]="['team', 'contracts']" routerLinkActive="active">
+        Verträge
       </mat-chip>
     </mat-chip-set>
     <!-- hier dann money stuff nach rechts -->

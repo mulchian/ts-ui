@@ -50,8 +50,8 @@ export class EmployeeModalComponent implements OnInit, OnDestroy {
     'salary',
     'marketValue',
   ];
-  dataSource = new MatTableDataSource<TableData>();
-  selection = new SelectionModel<TableData>(false, []);
+  dataSource = new MatTableDataSource<EmployeeTableData>();
+  selection = new SelectionModel<EmployeeTableData>(false, []);
   job: Job;
 
   isLoading = true;
@@ -137,7 +137,7 @@ export interface DialogData {
   job: Job;
 }
 
-export interface TableData {
+export interface EmployeeTableData {
   id: number;
   name: string;
   age: number;

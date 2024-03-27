@@ -23,7 +23,7 @@ export class AppComponent {
     this.auth.logout();
   }
 
-  isOffice(): boolean {
-    return this.route.snapshot.firstChild?.routeConfig?.path === 'office';
+  isSpecialPath(path: string): boolean {
+    return this.route.snapshot.firstChild?.routeConfig?.path === path;
   }
 }

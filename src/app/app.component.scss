@@ -1,5 +1,11 @@
 mat-sidenav-content {
-  height: calc(100vh);
+  height: calc(100vh - 8rem);
+}
+
+@media (max-width: 599px) {
+  mat-sidenav-content {
+    height: calc(100vh - 7rem);
+  }
 }
 
 mat-nav-list a.active {

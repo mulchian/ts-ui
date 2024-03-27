@@ -1,1 +1,145 @@
-<p>roster works!</p>
+<ng-container *ngIf="players">
+  <table mat-table [dataSource]="players">
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      (click)="openPlayerDialog(row)"></tr>
+
+    <!-- position -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef>POS</th>
+      <td mat-cell *matCellDef="let player">
+        {{ player.type?.position?.position }}
+      </td>
+    </ng-container>
+
+    <!-- ovr -->
+    <ng-container matColumnDef="ovr">
+      <th mat-header-cell *matHeaderCellDef>OVR</th>
+      <td mat-cell *matCellDef="let player">{{ player.ovr }}</td>
+    </ng-container>
+
+    <!-- age -->
+    <ng-container matColumnDef="age">
+      <th mat-header-cell *matHeaderCellDef>ALTER</th>
+      <td mat-cell *matCellDef="let player">{{ player.age }}</td>
+    </ng-container>
+
+    <!-- name -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>SPIELER</th>
+      <td mat-cell *matCellDef="let player">
+        {{ player.firstName }} {{ player.lastName }}
+      </td>
+    </ng-container>
+
+    <!-- talent -->
+    <ng-container matColumnDef="talent">
+      <th mat-header-cell *matHeaderCellDef>TALENT</th>
+      <td mat-cell *matCellDef="let player">
+        {{ player.talent | talentPipe }}
+      </td>
+    </ng-container>
+
+    <ng-container *ngIf="showRoster; else contracts">
+      <!-- energy -->
+      <ng-container matColumnDef="energy">
+        <th mat-header-cell *matHeaderCellDef>ENERGIE</th>
+        <td mat-cell *matCellDef="let player">{{ player.energy | percent }}</td>
+      </ng-container>
+
+      <!-- skillpoints -->
+      <ng-container matColumnDef="skillpoints">
+        <th mat-header-cell *matHeaderCellDef>SKILLPOINTS</th>
+        <td mat-cell *matCellDef="let player">
+          <section class="progress-bar-container">
+            <!--            style="min-width: 100px; height: 30px"-->
+            <mat-progress-bar
+              mode="determinate"
+              value="{{ player.skillpoints }}"></mat-progress-bar>
+            <div style="position: absolute; padding: 10px; color: white">
+              {{ player.skillpoints }} SP
+            </div>
+          </section>
+        </td>
+      </ng-container>
+
+      <!-- status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>STATUS</th>
+        <td mat-cell *matCellDef="let player">
+          {{ player.status?.description }}
+        </td>
+      </ng-container>
+    </ng-container>
+    <ng-template #contracts>
+      <!-- moral -->
+      <ng-container matColumnDef="moral">
+        <th mat-header-cell *matHeaderCellDef>MORAL</th>
+        <td mat-cell *matCellDef="let player">
+          {{ player.moral | percent }}
+        </td>
+      </ng-container>
+
+      <!-- salary -->
+      <ng-container matColumnDef="salary">
+        <th mat-header-cell *matHeaderCellDef>GEHALT</th>
+        <td mat-cell *matCellDef="let player">
+          {{ player.contract?.salary | currency: 'EUR' : 'symbol' : '.0' }}
+        </td>
+      </ng-container>
+
+      <!-- contract -->
+      <ng-container matColumnDef="contract">
+        <th mat-header-cell *matHeaderCellDef>VERTRAG</th>
+        <td mat-cell *matCellDef="let player">
+          {{ player.contract?.endOfContract | saisonCount }}
+          <ng-container *ngIf="player.contract?.endOfContract <= 2">
+            <br />
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="openContractTab(player)">
+              NEUER VERTRAG
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <!-- action -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>AKTION</th>
+        <td mat-cell *matCellDef="let player">
+          <button
+            mat-stroked-button
+            color="warn"
+            [tp]="tplConfirm"
+            [tpPlacement]="'bottom'"
+            #tpRelease="tippy"
+            tpVariation="popperBorder">
+            ENTLASSEN
+          </button>
+
+          <ng-template #tplConfirm let-hide>
+            <app-confirm-modal
+              [title]="'Spieler entlassen'"
+              [message]="
+                'Willst du deinen ' +
+                player.type?.position?.description +
+                ' ' +
+                player.firstName +
+                ' ' +
+                player.lastName +
+                ' wirklich entlassen?'
+              "
+              [confirmBtnText]="'Entlassen'"
+              [tooltip]="tpRelease"
+              (confirm)="releasePlayer(player)">
+            </app-confirm-modal>
+          </ng-template>
+        </td>
+      </ng-container>
+    </ng-template>
+  </table>
+</ng-container>

@@ -69,12 +69,24 @@
             </mat-grid-list>
             <mat-divider></mat-divider>
             <mat-card-actions>
-              <button
-                mat-raised-button
-                color="primary"
-                (click)="openContractDialog(employee)">
-                NEUER VERTRAG
-              </button>
+              <ng-container
+                *ngIf="
+                  employee.contract !== null &&
+                    employee.contract.endOfContract <= 2;
+                  else disabledButton
+                ">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="openContractDialog(employee)">
+                  NEUER VERTRAG
+                </button>
+              </ng-container>
+              <ng-template #disabledButton>
+                <button mat-raised-button color="primary" disabled>
+                  NEUER VERTRAG
+                </button>
+              </ng-template>
               <button
                 mat-raised-button
                 color="warn"

@@ -1,0 +1,48 @@
+table {
+  width: 90vw;
+}
+
+.progress-bar-container {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 50px;
+}
+
+mat-progress-bar {
+  min-width: 70px;
+}
+
+.mat-mdc-progress-bar {
+  --mdc-linear-progress-track-height: 30px !important;
+}
+
+.mat-column-position,
+.mat-column-ovr {
+  width: 5%;
+}
+
+.mat-column-name {
+  width: 25%;
+}
+
+.mat-column-age,
+.mat-column-talent,
+.mat-column-energy,
+.mat-column-status,
+.mat-column-contract,
+.mat-column-salary {
+  width: 10%;
+}
+
+.mat-column-skillpoints {
+  width: 20%;
+}
+
+.mat-column-moral {
+  width: 7%;
+}
+
+.mat-column-action {
+  width: 13%;
+}
