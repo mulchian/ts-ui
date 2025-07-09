@@ -12,6 +12,7 @@ import { SkillService } from '../../services/skill.service';
   selector: 'app-roster',
   templateUrl: './roster.component.html',
   styleUrls: ['./roster.component.scss'],
+  standalone: false,
 })
 export class RosterComponent implements OnInit {
   sortedPositions: string[] = [

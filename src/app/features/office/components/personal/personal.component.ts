@@ -9,16 +9,17 @@ import { EmployeeService } from '../../services/employee.service';
 import { StadiumService } from '../../../../core/services/stadium.service';
 import { LoadingService } from '../../../../shared/loading/loading.service';
 import { OverlayRef } from '@angular/cdk/overlay';
-import { TippyInstance } from '@ngneat/helipopper';
 import { MatDialog } from '@angular/material/dialog';
 import { EmployeeModalComponent } from '../../../../shared/modal/employee-modal/employee-modal.component';
 import { ContractModalComponent } from '../../../../shared/modal/contract-modal/contract-modal.component';
 import { NavigationEnd, Router } from '@angular/router';
+import { TippyInstance } from '@ngneat/helipopper/config';
 
 @Component({
   selector: 'app-personal',
   templateUrl: './personal.component.html',
   styleUrls: ['./personal.component.scss'],
+  standalone: false,
 })
 export class PersonalComponent implements OnInit, AfterViewChecked, OnDestroy {
   unsubscribe = new Subject();
@@ -58,6 +59,10 @@ export class PersonalComponent implements OnInit, AfterViewChecked, OnDestroy {
         }, 750);
       }
     });
+  }
+
+  get jobs(): Observable<Job[] | null> {
+    return this.jobService.jobs$;
   }
 
   ngOnInit(): void {
@@ -114,10 +119,6 @@ export class PersonalComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       this.overlayRefs = [];
     }
-  }
-
-  get jobs(): Observable<Job[] | null> {
-    return this.jobService.jobs$;
   }
 
   getEmployeeForJob(job: Job): Employee | undefined {

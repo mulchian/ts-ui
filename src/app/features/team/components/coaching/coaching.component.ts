@@ -11,6 +11,7 @@ import { MatSliderDragEvent } from '@angular/material/slider';
   selector: 'app-coaching',
   templateUrl: './coaching.component.html',
   styleUrls: ['./coaching.component.scss'],
+  standalone: false,
 })
 export class CoachingComponent {
   team: Team | undefined;

@@ -7,6 +7,7 @@ import { Position } from '../../../../../core/model/position';
   selector: 'app-lineup-team-part',
   templateUrl: './lineup-team-part.component.html',
   styleUrls: ['./lineup-team-part.component.scss'],
+  standalone: false,
 })
 export class LineupTeamPartComponent {
   @Input()

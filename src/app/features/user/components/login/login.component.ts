@@ -9,6 +9,7 @@ import { VALIDATOR_PATTERNS } from '../../../../shared/forms/validators/validato
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  standalone: false,
 })
 export class LoginComponent {
   form: FormGroup;

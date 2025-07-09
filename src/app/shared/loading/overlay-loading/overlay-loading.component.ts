@@ -4,8 +4,8 @@ import { Component } from '@angular/core';
   selector: 'app-overlay-loading',
   templateUrl: './overlay-loading.component.html',
   styleUrls: ['./overlay-loading.component.scss'],
+  standalone: false,
 })
 export class OverlayLoadingComponent {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
 }

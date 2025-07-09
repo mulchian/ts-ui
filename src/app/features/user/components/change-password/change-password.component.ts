@@ -9,6 +9,7 @@ import { AuthStore } from '../../../../core/services/auth.store';
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss'],
+  standalone: false,
 })
 export class ChangePasswordComponent implements OnInit {
   isLoggedIn = false;
@@ -39,6 +40,18 @@ export class ChangePasswordComponent implements OnInit {
     this.auth.isLoggedIn$.subscribe(loggedIn => {
       this.isLoggedIn = loggedIn;
     });
+  }
+
+  get oldPasswordControl(): FormControl {
+    return this.form.get('oldPassword') as FormControl;
+  }
+
+  get passwordControl(): FormControl {
+    return this.form.get('password') as FormControl;
+  }
+
+  get repeatPasswordControl(): FormControl {
+    return this.form.get('repeatPassword') as FormControl;
   }
 
   ngOnInit(): void {
@@ -77,18 +90,6 @@ export class ChangePasswordComponent implements OnInit {
         }
       });
     }
-  }
-
-  get oldPasswordControl(): FormControl {
-    return this.form.get('oldPassword') as FormControl;
-  }
-
-  get passwordControl(): FormControl {
-    return this.form.get('password') as FormControl;
-  }
-
-  get repeatPasswordControl(): FormControl {
-    return this.form.get('repeatPassword') as FormControl;
   }
 
   getWrongPasswordMessage(passwordControl: FormControl) {

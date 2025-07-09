@@ -175,6 +175,23 @@ export class PlayerModalComponent implements OnInit {
     this.calcContractDetails();
   }
 
+  formatSalary(value: number): string {
+    return new Intl.NumberFormat('de-DE', {
+      style: 'currency',
+      currency: 'EUR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  }
+
+  getDraftPosition(draftPosition: DraftPosition) {
+    let draftPosString = `${draftPosition.season}. Season`;
+    if (draftPosition.round && draftPosition.pick) {
+      draftPosString += ` | ${draftPosition.round}. Round | ${draftPosition.pick}. Pick`;
+    }
+    return draftPosString;
+  }
+
   private initContractDetails() {
     this.maxSalary = Math.floor((this.player.marketValue * 20) / 100);
     const minContractMoral = this.player.minContractMoral || 0.75;
@@ -213,23 +230,6 @@ export class PlayerModalComponent implements OnInit {
         }
       });
     this.calcContractDetails();
-  }
-
-  formatSalary(value: number): string {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  }
-
-  getDraftPosition(draftPosition: DraftPosition) {
-    let draftPosString = `${draftPosition.season}. Season`;
-    if (draftPosition.round && draftPosition.pick) {
-      draftPosString += ` | ${draftPosition.round}. Round | ${draftPosition.pick}. Pick`;
-    }
-    return draftPosString;
   }
 
   private getSkillNameKey(skillName: string): string {

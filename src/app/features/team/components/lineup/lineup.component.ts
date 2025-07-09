@@ -7,12 +7,13 @@ import { shareReplay } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PositionChangeModalComponent } from '../../../../shared/modal/position-change-modal/position-change-modal.component';
 import { LineupPosition } from './lineup-team-part/lineup-team-part.component';
-import { TippyInstance } from '@ngneat/helipopper';
+import { TippyInstance } from '@ngneat/helipopper/config';
 
 @Component({
   selector: 'app-lineup',
   templateUrl: './lineup.component.html',
   styleUrls: ['./lineup.component.scss'],
+  standalone: false,
 })
 export class LineupComponent implements OnInit {
   team: Team | undefined;

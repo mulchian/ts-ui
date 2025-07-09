@@ -8,6 +8,7 @@ import { Team } from '../../core/model/team';
   selector: 'app-team-chip-set',
   templateUrl: './team-chip-set.component.html',
   styleUrls: ['./team-chip-set.component.scss'],
+  standalone: false,
 })
 export class TeamChipSetComponent implements OnInit {
   show$: Observable<boolean> = of(false);
@@ -17,11 +18,11 @@ export class TeamChipSetComponent implements OnInit {
     private readonly teamService: TeamService
   ) {}
 
-  ngOnInit() {
-    this.show$ = this.auth.isLoggedIn$;
-  }
-
   get team(): Observable<Team | null> {
     return this.teamService.team$;
+  }
+
+  ngOnInit() {
+    this.show$ = this.auth.isLoggedIn$;
   }
 }

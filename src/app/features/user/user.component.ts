@@ -6,6 +6,7 @@ import { AuthStore } from '../../core/services/auth.store';
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
+  standalone: false,
 })
 export class UserComponent {
   loggedIn = false;

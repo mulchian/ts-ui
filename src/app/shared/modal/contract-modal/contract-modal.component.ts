@@ -72,6 +72,10 @@ export class ContractModalComponent implements OnInit, OnDestroy {
     this.isLoading = false;
   }
 
+  get team(): Observable<Team | null> {
+    return this.teamService.team$;
+  }
+
   ngOnInit() {
     console.log('init contract modal');
   }
@@ -163,10 +167,6 @@ export class ContractModalComponent implements OnInit, OnDestroy {
     this.maxSalary = Math.floor((this.employee.marketValue * 20) / 100);
     this.minSalary = Math.floor(this.maxSalary * 0.75);
     this.salaryStep = Math.floor(this.maxSalary * 0.01);
-  }
-
-  get team(): Observable<Team | null> {
-    return this.teamService.team$;
   }
 }
 

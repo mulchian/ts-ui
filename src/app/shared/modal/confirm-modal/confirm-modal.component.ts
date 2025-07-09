@@ -5,6 +5,7 @@ import { TippyDirective } from '@ngneat/helipopper';
   selector: 'app-confirm-modal',
   templateUrl: './confirm-modal.component.html',
   styleUrls: ['./confirm-modal.component.scss'],
+  standalone: false,
 })
 export class ConfirmModalComponent {
   @Input()

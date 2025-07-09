@@ -10,6 +10,7 @@ import { confirmValidator } from '../../../../shared/forms/validators/validator'
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
+  standalone: false,
 })
 export class RegisterComponent {
   form: FormGroup;
