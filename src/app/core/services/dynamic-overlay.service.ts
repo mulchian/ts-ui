@@ -8,9 +8,10 @@ import {
   ScrollStrategyOptions,
 } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { DOCUMENT, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import {
   ComponentFactoryResolver,
+  DOCUMENT,
   Inject,
   Injectable,
   Injector,
