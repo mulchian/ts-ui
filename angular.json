@@ -60,10 +60,10 @@
           "builder": "ngx-build-plus:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "ts-ui:build:production"
+              "buildTarget": "ts-ui:build:production"
             },
             "development": {
-              "browserTarget": "ts-ui:build:development",
+              "buildTarget": "ts-ui:build:development",
               "proxyConfig": "proxy.json"
             }
           },
@@ -72,7 +72,7 @@
         "extract-i18n": {
           "builder": "ngx-build-plus:extract-i18n",
           "options": {
-            "browserTarget": "ts-ui:build"
+            "buildTarget": "ts-ui:build"
           }
         },
         "test": {
@@ -81,14 +81,13 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
+            "styles": ["src/styles.scss", "src/tailwind.css"],
             "scripts": []
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "eslintConfig": ".eslintrc.json",
             "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
@@ -96,32 +95,7 @@
     }
   },
   "cli": {
+    "analytics": false,
     "schematicCollections": ["@angular-eslint/schematics"]
-  },
-  "schematics": {
-    "@schematics/angular:component": {
-      "type": "component"
-    },
-    "@schematics/angular:directive": {
-      "type": "directive"
-    },
-    "@schematics/angular:service": {
-      "type": "service"
-    },
-    "@schematics/angular:guard": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:interceptor": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:module": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:pipe": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:resolver": {
-      "typeSeparator": "."
-    }
   }
 }

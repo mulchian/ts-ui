@@ -11,40 +11,40 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
+    loadChildren: () => import('./home/home.routes').then(m => m.HOME_ROUTES),
     data: {
       preload: true,
     },
   },
   {
     path: 'user',
-    loadChildren: () => import('./features/user/user.module').then(m => m.UserModule),
+    loadChildren: () => import('./features/user/user.routes').then(m => m.USER_ROUTES),
   },
   {
     path: 'office',
-    loadChildren: () => import('./features/office/office.module').then(m => m.OfficeModule),
+    loadChildren: () => import('./features/office/office.routes').then(m => m.OFFICE_ROUTES),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
     runGuardsAndResolvers: 'always',
   },
   {
     path: 'finances',
-    loadChildren: () => import('./features/finance/finance.module').then(m => m.FinanceModule),
+    loadChildren: () => import('./features/finance/finance.routes').then(m => m.FINANCE_ROUTES),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
   },
   {
     path: 'team',
-    loadChildren: () => import('./features/team/team.module').then(m => m.TeamModule),
+    loadChildren: () => import('./features/team/team.routes').then(m => m.TEAM_ROUTES),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
   },
-  {
-    path: 'league',
-    loadChildren: () => import('./features/team/team.module').then(m => m.TeamModule),
-    canActivate: [authGuard],
-    canActivateChild: [authGuardChild],
-  },
+  // {
+  // path: 'league',
+  // loadChildren: () => import('./features/league/league.routes').then(m => m.LEAGUE_ROUTES),
+  // canActivate: [authGuard],
+  // canActivateChild: [authGuardChild],
+  // },
   {
     path: '**',
     // component: PageNotFoundComponent

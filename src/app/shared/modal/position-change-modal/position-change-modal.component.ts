@@ -1,11 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { LineupService } from '../../../features/team/services/lineup.service';
 import { first, shareReplay } from 'rxjs';
 import { Player } from '../../../core/model/player';
-import { SharedModule } from '../../shared.module';
 import { PlayerCardModalComponent } from '../player-card-modal/player-card-modal.component';
 import { PositionLineup } from '../../../core/model/position-lineup';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -17,39 +16,27 @@ import { TeamService } from '../../../core/services/team.service';
   selector: 'app-position-change-modal',
   templateUrl: './position-change-modal.component.html',
   styleUrls: ['./position-change-modal.component.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    CdkDropList,
-    CdkDrag,
-    SharedModule,
-    PlayerCardModalComponent,
-    MatGridListModule,
-    MatButtonModule,
-  ],
+  imports: [CommonModule, CdkDropList, CdkDrag, PlayerCardModalComponent, MatGridListModule, MatButtonModule],
   providers: [LineupService],
 })
 export class PositionChangeModalComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<PositionChangeModalComponent>>(MatDialogRef);
   modalHeader: string;
-
   players: Player[] = [];
   starters: Player[] = [];
   backups: Player[] = [];
-
   position: string;
   lineupPosition: string;
-
   countPlayers = 0;
   countStarters = 0;
   countBackups = 0;
+  private readonly teamService = inject(TeamService);
+  private readonly lineupService = inject(LineupService);
+  private readonly loadingService = inject(LoadingService);
 
-  constructor(
-    public dialogRef: MatDialogRef<PositionChangeModalComponent>,
-    @Inject(MAT_DIALOG_DATA) data: DialogData,
-    private readonly teamService: TeamService,
-    private readonly lineupService: LineupService,
-    private readonly loadingService: LoadingService
-  ) {
+  constructor() {
+    const data = inject<DialogData>(MAT_DIALOG_DATA);
+
     this.loadingService.loadingOn();
     this.lineupPosition = data.lineupPosition;
     this.position = data.position;

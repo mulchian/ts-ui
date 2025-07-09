@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, catchError, Observable } from 'rxjs';
 import { User } from '../model/user';
 import { map, shareReplay, tap } from 'rxjs/operators';
@@ -12,17 +12,17 @@ const AUTH_DATA = 'auth_data';
   providedIn: 'root',
 })
 export class AuthStore {
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly loadingService = inject(LoadingService);
+
   private subject = new BehaviorSubject<User | null>(null);
   user$: Observable<User | null> = this.subject.asObservable();
 
   isLoggedIn$: Observable<boolean>;
   isLoggedOut$: Observable<boolean>;
 
-  constructor(
-    private readonly http: HttpClient,
-    private readonly router: Router,
-    private readonly loadingService: LoadingService
-  ) {
+  constructor() {
     this.loadStorageUser();
     this.isLoggedIn$ = this.user$.pipe(map(user => !!user));
     this.isLoggedOut$ = this.isLoggedIn$.pipe(map(loggedIn => !loggedIn));

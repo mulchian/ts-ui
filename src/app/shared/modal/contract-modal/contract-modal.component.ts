@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { EmployeeService } from '../../../features/office/services/employee.service';
 import { Employee } from '../../../core/model/employee';
@@ -7,7 +7,6 @@ import { TeamService } from '../../../core/services/team.service';
 import { first, Observable } from 'rxjs';
 import { Team } from '../../../core/model/team';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from '../../shared.module';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -22,10 +21,8 @@ import { LoadingService } from '../../loading/loading.service';
   selector: 'app-contract-modal',
   templateUrl: './contract-modal.component.html',
   styleUrls: ['./contract-modal.component.scss'],
-  standalone: true,
   imports: [
     CommonModule,
-    SharedModule,
     MatDialogModule,
     MatGridListModule,
     MatFormFieldModule,
@@ -39,30 +36,26 @@ import { LoadingService } from '../../loading/loading.service';
   providers: [EmployeeService],
 })
 export class ContractModalComponent implements OnInit, OnDestroy {
+  dialogRef = inject<MatDialogRef<ContractModalComponent>>(MatDialogRef);
   job: Job;
   employee: Employee;
-
   newEmployee = true;
-
   signingBonus = 0;
   newMoral = 1;
   totalOffer = 0;
   timeOfContract = '3';
-
   newSalary = 1;
   minSalary = 1;
   maxSalary = 1;
   salaryStep = 1;
-
   isLoading = true;
+  private readonly loadingService = inject(LoadingService);
+  private readonly teamService = inject(TeamService);
+  private readonly employeeService = inject(EmployeeService);
 
-  constructor(
-    public dialogRef: MatDialogRef<ContractModalComponent>,
-    @Inject(MAT_DIALOG_DATA) data: DialogData,
-    private readonly loadingService: LoadingService,
-    private readonly teamService: TeamService,
-    private readonly employeeService: EmployeeService
-  ) {
+  constructor() {
+    const data = inject<DialogData>(MAT_DIALOG_DATA);
+
     this.job = data.job;
     this.employee = data.employee;
     this.newEmployee = this.employee.contract == null;
@@ -72,7 +65,7 @@ export class ContractModalComponent implements OnInit, OnDestroy {
     this.isLoading = false;
   }
 
-  get team(): Observable<Team | null> {
+  get team$(): Observable<Team | null> {
     return this.teamService.team$;
   }
 

@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { catchError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Player } from '../../../core/model/player';
 
 @Injectable()
 export class PlayerService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   updateMinContractMoral(playerId: number, minContractMoral: number) {
     return this.http.post('/api/player' + '/updateMinContractMoral.php', { playerId, minContractMoral });

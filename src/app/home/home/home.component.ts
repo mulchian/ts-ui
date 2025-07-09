@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AuthStore } from '../../core/services/auth.store';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule],
 })
 export class HomeComponent {
-  constructor(protected readonly auth: AuthStore) {}
+  protected readonly auth = inject(AuthStore);
 }

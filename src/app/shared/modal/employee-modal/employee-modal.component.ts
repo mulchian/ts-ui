@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Job } from '../../../core/model/job';
@@ -16,7 +16,6 @@ import { CommonModule } from '@angular/common';
   selector: 'app-employee-modal',
   templateUrl: './employee-modal.component.html',
   styleUrls: ['./employee-modal.component.scss'],
-  standalone: true,
   imports: [
     CommonModule,
     MatButtonModule,
@@ -29,6 +28,10 @@ import { CommonModule } from '@angular/common';
   providers: [EmployeeService],
 })
 export class EmployeeModalComponent implements OnInit, OnDestroy {
+  dialogRef = inject<MatDialogRef<EmployeeModalComponent>>(MatDialogRef);
+  private readonly employeeService = inject(EmployeeService);
+  private readonly dialog = inject(MatDialog);
+
   displayedColumns: string[] = [
     'select',
     'jobName',
@@ -50,12 +53,9 @@ export class EmployeeModalComponent implements OnInit, OnDestroy {
   @ViewChild(MatTable)
   employeeTable: MatTable<Element> | undefined;
 
-  constructor(
-    public dialogRef: MatDialogRef<EmployeeModalComponent>,
-    @Inject(MAT_DIALOG_DATA) data: DialogData,
-    private readonly employeeService: EmployeeService,
-    private readonly dialog: MatDialog
-  ) {
+  constructor() {
+    const data = inject<DialogData>(MAT_DIALOG_DATA);
+
     this.job = data.job;
   }
 

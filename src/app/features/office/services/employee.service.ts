@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, catchError, debounceTime, Observable } from 'rxjs';
 import { Employee } from '../../../core/model/employee';
 import { HttpClient } from '@angular/common/http';
@@ -9,14 +9,14 @@ import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class EmployeeService {
+  private readonly http = inject(HttpClient);
+  private readonly auth = inject(AuthStore);
+  private readonly teamService = inject(TeamService);
+
   private subject = new BehaviorSubject<Employee[] | null>(null);
   employees$: Observable<Employee[] | null> = this.subject.asObservable();
 
-  constructor(
-    private readonly http: HttpClient,
-    private readonly auth: AuthStore,
-    private readonly teamService: TeamService
-  ) {
+  constructor() {
     this.auth.user$.subscribe(user => {
       if (user) {
         this.loadEmployees(user);

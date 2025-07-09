@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { LoadingService } from './loading.service';
 import {
   NavigationCancel,
@@ -9,24 +9,21 @@ import {
   RouteConfigLoadStart,
   Router,
 } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-loading',
   templateUrl: './loading.component.html',
   styleUrls: ['./loading.component.css'],
-  standalone: false,
+  imports: [CommonModule, MatProgressSpinner],
+  providers: [LoadingService],
 })
 export class LoadingComponent implements OnInit {
-  @Input()
-  routing = false;
-
-  @Input()
-  detectRoutingOngoing = false;
-
-  constructor(
-    public loadingService: LoadingService,
-    private router: Router
-  ) {}
+  loadingService = inject(LoadingService);
+  @Input() routing = false;
+  @Input() detectRoutingOngoing = false;
+  private router = inject(Router);
 
   ngOnInit() {
     if (this.detectRoutingOngoing && !this.loadingService.isLoading()) {

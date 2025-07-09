@@ -1,15 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VALIDATOR_PATTERNS } from '../../../../shared/forms/validators/validator-patterns';
 import { confirmValidator } from '../../../../shared/forms/validators/validator';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthStore } from '../../../../core/services/auth.store';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatButton, MatIconButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss'],
-  standalone: false,
+  imports: [CommonModule, MatFormFieldModule, ReactiveFormsModule, MatIcon, MatInput, MatIconButton, MatButton],
+  providers: [AuthStore],
 })
 export class ChangePasswordComponent implements OnInit {
   isLoggedIn = false;
@@ -20,15 +26,13 @@ export class ChangePasswordComponent implements OnInit {
   hideConfirmPassword = true;
   successful = false;
   message: string | undefined;
-
   form: FormGroup;
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly auth = inject(AuthStore);
+  private fb = inject(FormBuilder);
 
-  constructor(
-    private readonly router: Router,
-    private readonly route: ActivatedRoute,
-    private readonly auth: AuthStore,
-    private fb: FormBuilder
-  ) {
+  constructor() {
     this.form = this.fb.group({
       oldPassword: ['', []],
       password: ['', [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.password)]],

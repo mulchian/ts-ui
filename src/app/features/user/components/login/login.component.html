@@ -26,12 +26,16 @@
       type="button">
       <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
-    <mat-error *ngIf="passwordControl.invalid">{{ getWrongPasswordMessage() }}</mat-error>
+    @if (passwordControl.invalid) {
+      <mat-error>
+        {{ getWrongPasswordMessage() }}
+      </mat-error>
+    }
   </mat-form-field>
 
-  <ng-container *ngIf="error">
+  @if (error) {
     <span class="error">{{ error }}</span>
-  </ng-container>
+  }
 
   <button (click)="login()" [disabled]="!form.valid" class="login-button" color="primary" mat-raised-button>
     Login

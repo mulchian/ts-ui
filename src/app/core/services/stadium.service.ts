@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthStore } from './auth.store';
 import { BehaviorSubject, debounceTime, Observable } from 'rxjs';
@@ -8,14 +8,14 @@ import { TeamService } from './team.service';
 
 @Injectable()
 export class StadiumService {
+  private readonly http = inject(HttpClient);
+  private readonly auth = inject(AuthStore);
+  private readonly teamService = inject(TeamService);
+
   private subject = new BehaviorSubject<Stadium | null>(null);
   stadium$: Observable<Stadium | null> = this.subject.asObservable();
 
-  constructor(
-    private readonly http: HttpClient,
-    private readonly auth: AuthStore,
-    private readonly teamService: TeamService
-  ) {
+  constructor() {
     this.auth.user$.subscribe(user => {
       if (user) {
         this.loadStadium(user);

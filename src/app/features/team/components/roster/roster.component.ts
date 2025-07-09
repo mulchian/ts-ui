@@ -1,18 +1,36 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { MatTable, MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Player } from '../../../../core/model/player';
 import { TeamService } from '../../../../core/services/team.service';
 import { Router } from '@angular/router';
 import { PlayerModalComponent } from '../../../../shared/modal/player-modal/player-modal.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Sort } from '@angular/material/sort';
+import { MatSortModule, Sort } from '@angular/material/sort';
 import { SkillService } from '../../services/skill.service';
+import { CommonModule } from '@angular/common';
+import { TalentPipe } from '../../../../shared/pipe/talent.pipe';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { SaisonCountPipe } from '../../../../shared/pipe/saison-count.pipe';
+import { MatButton } from '@angular/material/button';
+import { TippyDirective } from '@ngneat/helipopper';
+import { ConfirmModalComponent } from '../../../../shared/modal/tooltip/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-roster',
   templateUrl: './roster.component.html',
   styleUrls: ['./roster.component.scss'],
-  standalone: false,
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatSortModule,
+    MatProgressBar,
+    MatButton,
+    TippyDirective,
+    TalentPipe,
+    SaisonCountPipe,
+    ConfirmModalComponent,
+  ],
+  providers: [TeamService, SkillService],
 })
 export class RosterComponent implements OnInit {
   sortedPositions: string[] = [
@@ -38,18 +56,16 @@ export class RosterComponent implements OnInit {
   players = new MatTableDataSource<Player>();
   skillNames: Record<string, string> = {};
   salaryCap = 0;
-
   @ViewChild(MatTable)
   playerTable: MatTable<Element> | undefined;
-
   showRoster = true;
 
-  constructor(
-    private readonly dialog: MatDialog,
-    private readonly router: Router,
-    private readonly teamService: TeamService,
-    private readonly skillService: SkillService
-  ) {
+  private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
+  private readonly teamService = inject(TeamService);
+  private readonly skillService = inject(SkillService);
+
+  constructor() {
     this.showRoster = this.router.url.endsWith('roster');
     if (this.showRoster) {
       this.displayedColumns.push('energy', 'skillpoints', 'status');

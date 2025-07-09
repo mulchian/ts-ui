@@ -1,28 +1,34 @@
-import { Component } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthStore } from '../../../../core/services/auth.store';
 import { VALIDATOR_PATTERNS } from '../../../../shared/forms/validators/validator-patterns';
 import { catchError, EMPTY } from 'rxjs';
 import { confirmValidator } from '../../../../shared/forms/validators/validator';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
-  standalone: false,
+  imports: [CommonModule, MatFormFieldModule, ReactiveFormsModule, MatIcon, MatButton, MatInput, MatIconButton],
+  providers: [AuthStore],
 })
 export class RegisterComponent {
+  private readonly formBuilder = inject(NonNullableFormBuilder);
+  private readonly router = inject(Router);
+  private readonly auth = inject(AuthStore);
+
   form: FormGroup;
   hidePassword = true;
   hideConfirmPassword = true;
   error: string | undefined;
 
-  constructor(
-    private readonly formBuilder: NonNullableFormBuilder,
-    private readonly router: Router,
-    private readonly auth: AuthStore
-  ) {
+  constructor() {
     this.form = this.formBuilder.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.password)]],

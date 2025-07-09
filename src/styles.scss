@@ -4,17 +4,17 @@
 @use 'app/features/office/components/personal/personal-theme' as personal;
 @use 'app/shared/modal/player-card-modal/player-card-modal-theme' as player-card-modal;
 
+@use 'material-icons/iconfont/filled.css';
+@use '@fontsource/roboto-mono/300.css' as robotoMono300;
+@use 'dist/tippy';
+@use 'themes/light';
+@use 'themes/light-border';
+@use 'themes/material';
+@use 'animations/scale';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import 'material-icons/iconfont/filled.css';
-@import '@fontsource/roboto-mono/300.css';
-@import 'dist/tippy';
-@import 'themes/light';
-@import 'themes/light-border';
-@import 'themes/material';
-@import 'animations/scale';
 
 $material-icons-font-path: './' !default;
 $material-icons-font-size: 24px !default;

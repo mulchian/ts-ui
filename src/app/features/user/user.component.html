@@ -1,4 +1,6 @@
-<ng-container *ngIf="!showProfile()">
+@if (showProfile()) {
+  <router-outlet name="profile"></router-outlet>
+} @else {
   <mat-card class="login-card">
     <div class="logo-container">
       <img alt="Touchdown Stars" class="logo" mat-card-image src="/assets/logo_transparent_inverted.png" />
@@ -7,38 +9,36 @@
       <router-outlet></router-outlet>
       <mat-card-actions>
         <div class="actions-row">
-          <button
-            *ngIf="isLoginPath()"
-            [routerLinkActiveOptions]="{ exact: true }"
-            [routerLink]="['forgot-password']"
-            color="primary"
-            mat-raised-button
-            routerLinkActive="menu-item-active">
-            Passwort vergessen
-          </button>
-          <button
-            *ngIf="isLoginPath()"
-            [routerLinkActiveOptions]="{ exact: true }"
-            [routerLink]="['register']"
-            color="primary"
-            mat-raised-button
-            routerLinkActive="menu-item-active">
-            Registrieren
-          </button>
-          <button
-            *ngIf="!isLoginPath() && !loggedIn"
-            [routerLinkActiveOptions]="{ exact: true }"
-            [routerLink]="['login']"
-            color="primary"
-            mat-raised-button
-            routerLinkActive="menu-item-active">
-            Zurück
-          </button>
+          @if (isLoginPath()) {
+            <button
+              [routerLinkActiveOptions]="{ exact: true }"
+              [routerLink]="['forgot-password']"
+              color="primary"
+              mat-raised-button
+              routerLinkActive="menu-item-active">
+              Passwort vergessen
+            </button>
+            <button
+              [routerLinkActiveOptions]="{ exact: true }"
+              [routerLink]="['register']"
+              color="primary"
+              mat-raised-button
+              routerLinkActive="menu-item-active">
+              Registrieren
+            </button>
+          }
+          @if (!isLoginPath() && !loggedIn) {
+            <button
+              [routerLinkActiveOptions]="{ exact: true }"
+              [routerLink]="['login']"
+              color="primary"
+              mat-raised-button
+              routerLinkActive="menu-item-active">
+              Zurück
+            </button>
+          }
         </div>
       </mat-card-actions>
     </mat-card-content>
   </mat-card>
-</ng-container>
-<ng-container *ngIf="showProfile()">
-  <router-outlet name="profile"></router-outlet>
-</ng-container>
+}

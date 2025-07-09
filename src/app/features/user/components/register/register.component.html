@@ -25,9 +25,11 @@
       matSuffix>
       <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
-    <mat-error *ngIf="passwordControl.invalid">
-      {{ getWrongPasswordMessage(passwordControl) }}
-    </mat-error>
+    @if (passwordControl.invalid) {
+      <mat-error>
+        {{ getWrongPasswordMessage(passwordControl) }}
+      </mat-error>
+    }
   </mat-form-field>
 
   <mat-form-field
@@ -50,9 +52,11 @@
       matSuffix>
       <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
-    <mat-error *ngIf="repeatPasswordControl.invalid">
-      {{ getWrongPasswordMessage(repeatPasswordControl) }}
-    </mat-error>
+    @if (passwordControl.invalid) {
+      <mat-error>
+        {{ getWrongPasswordMessage(repeatPasswordControl) }}
+      </mat-error>
+    }
   </mat-form-field>
 
   <mat-form-field
@@ -62,9 +66,11 @@
     <mat-label>E-Mail</mat-label>
     <input autocomplete="email" formControlName="email" matInput type="text" />
     <span matTextPrefix><mat-icon>email</mat-icon></span>
-    <mat-error *ngIf="emailControl.invalid">
-      {{ getWrongEmailMessage(emailControl) }}
-    </mat-error>
+    @if (emailControl.invalid) {
+      <mat-error>
+        {{ getWrongEmailMessage(emailControl) }}
+      </mat-error>
+    }
   </mat-form-field>
 
   <mat-form-field
@@ -74,14 +80,16 @@
     <mat-label>E-Mail wiederholen</mat-label>
     <input autocomplete="email" formControlName="repeatEmail" matInput type="text" />
     <span matTextPrefix><mat-icon>email</mat-icon></span>
-    <mat-error *ngIf="repeatEmailControl.invalid">
-      {{ getWrongEmailMessage(repeatEmailControl) }}
-    </mat-error>
+    @if (repeatEmailControl.invalid) {
+      <mat-error>
+        {{ getWrongEmailMessage(repeatEmailControl) }}
+      </mat-error>
+    }
   </mat-form-field>
 
-  <ng-container *ngIf="error">
+  @if (error) {
     <span class="error">{{ error }}</span>
-  </ng-container>
+  }
 
   <button (click)="register()" [disabled]="!form.valid" class="register-button" color="primary" mat-raised-button>
     Registrieren

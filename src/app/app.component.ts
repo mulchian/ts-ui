@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AuthStore } from './core/services/auth.store';
 import { ActivatedRoute } from '@angular/router';
 
@@ -9,12 +9,12 @@ import { ActivatedRoute } from '@angular/router';
   standalone: false,
 })
 export class AppComponent {
+  private readonly auth = inject(AuthStore);
+  private readonly route = inject(ActivatedRoute);
+
   loggedIn = false;
 
-  constructor(
-    private readonly auth: AuthStore,
-    private readonly route: ActivatedRoute
-  ) {
+  constructor() {
     this.auth.isLoggedIn$.subscribe((loggedIn: boolean) => (this.loggedIn = loggedIn));
   }
 

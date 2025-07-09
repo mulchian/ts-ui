@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { concatMap, finalize, tap } from 'rxjs/operators';
 import { DynamicOverlayService } from '../../core/services/dynamic-overlay.service';
@@ -8,6 +8,8 @@ import { OverlayRef } from '@angular/cdk/overlay';
   providedIn: 'root',
 })
 export class LoadingService {
+  private readonly overlayService = inject(DynamicOverlayService);
+
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$: Observable<boolean> = this.loadingSubject.asObservable();
 
@@ -16,7 +18,7 @@ export class LoadingService {
 
   loadingRoute = false;
 
-  constructor(private readonly overlayService: DynamicOverlayService) {
+  constructor() {
     console.log('Loading service created ...');
   }
 

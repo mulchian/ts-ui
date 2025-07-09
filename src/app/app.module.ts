@@ -17,10 +17,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
-import { SharedModule } from './shared/shared.module';
 import { TeamService } from './core/services/team.service';
 import { StadiumService } from './core/services/stadium.service';
-import { popperVariation, provideTippyConfig, tooltipVariation } from '@ngneat/helipopper/config';
+import { popperVariation, provideTippyConfig, provideTippyLoader, tooltipVariation } from '@ngneat/helipopper/config';
+import { LoadingComponent } from './shared/loading/loading.component';
+import { TeamChipSetComponent } from './shared/team-chip-set/team-chip-set.component';
 
 @NgModule({
   declarations: [AppComponent],
@@ -40,12 +41,14 @@ import { popperVariation, provideTippyConfig, tooltipVariation } from '@ngneat/h
     MatChipsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    SharedModule,
+    LoadingComponent,
+    TeamChipSetComponent,
   ],
   providers: [
     TeamService,
     StadiumService,
     { provide: LOCALE_ID, useValue: 'de' },
+    provideTippyLoader(() => import('tippy.js')),
     provideTippyConfig({
       defaultVariation: 'popper',
       variations: {

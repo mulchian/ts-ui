@@ -1,0 +1,16 @@
+<mat-card-title>{{ title }}</mat-card-title>
+<mat-divider></mat-divider>
+<mat-card-content>
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>{{ inputLabel }}</mat-label>
+    <input [(ngModel)]="inputValue" [type]="inputType" [placeholder]="inputPlaceholder" matInput />
+  </mat-form-field>
+</mat-card-content>
+<mat-card-actions>
+  <button (click)="onConfirm()" color="warn" mat-raised-button>
+    {{ confirmBtnText | uppercase }}
+  </button>
+  <button (click)="tooltip?.hide()" mat-raised-button>
+    {{ 'Abbrechen' | uppercase }}
+  </button>
+</mat-card-actions>

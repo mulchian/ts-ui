@@ -80,9 +80,11 @@
       </td>
     </ng-container>
   </table>
-  <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
+  @if (isLoading) {
+  <mat-card class="flex justify-center items-center">
     <mat-progress-spinner color="primary" mode="indeterminate"></mat-progress-spinner>
   </mat-card>
+  }
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="onDismiss()">Abbrechen</button>

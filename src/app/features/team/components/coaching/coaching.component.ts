@@ -1,42 +1,65 @@
-import { Component } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { Team } from '../../../../core/model/team';
 import { CoachingName } from '../../../../core/model/coachingName';
 import { TeamService } from '../../../../core/services/team.service';
 import { CoachingService } from '../../services/coaching.service';
 import { Coaching } from '../../../../core/model/coaching';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { MatSliderDragEvent } from '@angular/material/slider';
+import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatSliderDragEvent, MatSliderModule } from '@angular/material/slider';
+import { CommonModule } from '@angular/common';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { FormsModule } from '@angular/forms';
+import { MatFormField, MatLabel, MatSelectModule } from '@angular/material/select';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { TippyDirective } from '@ngneat/helipopper';
+import { TippyInstance } from '@ngneat/helipopper/config';
+import { InputModalComponent } from '../../../../shared/modal/tooltip/input-modal/input-modal.component';
 
 @Component({
   selector: 'app-coaching',
   templateUrl: './coaching.component.html',
   styleUrls: ['./coaching.component.scss'],
-  standalone: false,
+  imports: [
+    CommonModule,
+    MatButtonToggleModule,
+    FormsModule,
+    MatFormField,
+    MatLabel,
+    MatSelectModule,
+    MatIcon,
+    MatIconButton,
+    MatSliderModule,
+    MatCardModule,
+    MatSlideToggle,
+    TippyDirective,
+    InputModalComponent,
+  ],
+  providers: [TeamService, CoachingService],
 })
 export class CoachingComponent {
+  private readonly teamService = inject(TeamService);
+  private readonly coachingService = inject(CoachingService);
+
   team: Team | undefined;
   teamPart: 'general' | 'offense' | 'defense' = 'offense';
-
   runGameplays = ['Inside Run', 'Outside Run rechts', 'Outside Run links'];
   passGameplays = ['Screen Pass', 'Short Pass', 'Medium Pass', 'Long Pass'];
-
   runDefGameplays = ['Box', 'Outside Contain', 'Inside Blitz', 'Outside Blitz', 'Auf Reaktion'];
   passDefGameplays = ['Coverage', 'Blitz', 'Coverage Tief', 'Auf Reaktion'];
-
   offCoachingNames: CoachingName[] = [];
   selectedOffCoaching = 1;
-
   defCoachingNames: CoachingName[] = [];
   selectedDefCoaching = 1;
-
   generalCoachings: Coaching[] = [];
   offCoachings: Coaching[] = [];
   defCoachings: Coaching[] = [];
 
-  constructor(
-    private readonly teamService: TeamService,
-    private readonly coachingService: CoachingService
-  ) {
+  @ViewChild('tpChangeName')
+  tpChangeName: TippyInstance | undefined;
+
+  constructor() {
     this.teamService.team$.subscribe(team => {
       if (team) {
         this.team = team;
@@ -108,5 +131,23 @@ export class CoachingComponent {
         // this.teamService.updateTeam();
       }
     });
+  }
+
+  renameDefCoaching(newName: string) {
+    const coachingName = this.defCoachingNames.find(name => name.gameplanNr === this.selectedDefCoaching);
+    if (coachingName) {
+      coachingName.name = newName;
+      this.coachingService.saveCoachingName(coachingName).subscribe(res => {
+        if (res.coachingNameSaved) {
+          console.log('Defensive coaching name saved: ' + res.coachingNameSaved);
+          this.teamService.updateTeam();
+          this.tpChangeName?.hide();
+        }
+      });
+    }
+  }
+
+  renameOffCoaching() {
+    // use selectedOffCoaching
   }
 }

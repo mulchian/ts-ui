@@ -5,27 +5,42 @@
       'player-card': isActive,
       'deactivated-card': !isActive,
     }">
-    <mat-card-header *ngIf="showChangeButton">
-      <mat-card-title class="text-center">{{ getIsReturner() ? 'Returner' : position?.description }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content *ngIf="player" class="min-w-44">
+    @if (showChangeButton) {
+      <mat-card-header>
+        <mat-card-title class="text-center">{{ getIsReturner() ? 'Returner' : position?.description }}</mat-card-title>
+      </mat-card-header>
+    }
+    <mat-card-content class="min-w-44">
       <div class="player-name">
         {{ player.firstName }} {{ player.lastName }}
         {{ getIsReturner() ? '(' + player.type.position.position + ')' : '' }}
       </div>
-      <mat-grid-list cols="2" rowHeight="5:1">
-        <mat-grid-tile [colspan]="1" [rowspan]="1" ngClass="accent-text">{{ player.ovr }}</mat-grid-tile>
-        <mat-grid-tile [colspan]="1" [rowspan]="1" ngClass="accent-text">{{ player.age }}</mat-grid-tile>
-        <mat-grid-tile [colspan]="1" [rowspan]="1"><small>OVR</small></mat-grid-tile>
-        <mat-grid-tile [colspan]="1" [rowspan]="1"><small>ALTER</small></mat-grid-tile>
-        <mat-grid-tile [colspan]="2" [rowspan]="1" ngClass="accent-text">{{
-          player.talent | talentPipe
-        }}</mat-grid-tile>
-        <mat-grid-tile [colspan]="2" [rowspan]="1"><small>TALENT</small></mat-grid-tile>
-      </mat-grid-list>
+
+      <div class="grid grid-cols-2 gap-2 text-center">
+        <div class="accent-text col-span-1">
+          {{ player.ovr }}
+        </div>
+        <div class="accent-text col-span-1">
+          {{ player.age }}
+        </div>
+        <div class="col-span-1">
+          <small>OVR</small>
+        </div>
+        <div class="col-span-1">
+          <small>ALTER</small>
+        </div>
+        <div class="accent-text col-span-2">
+          {{ player.talent | talentPipe }}
+        </div>
+        <div class="col-span-2">
+          <small>TALENT</small>
+        </div>
+      </div>
     </mat-card-content>
-    <mat-card-actions *ngIf="showChangeButton">
-      <button mat-raised-button (click)="openDialog()">ÄNDERN</button>
-    </mat-card-actions>
+    @if (showChangeButton) {
+      <mat-card-actions>
+        <button mat-raised-button (click)="openDialog()">ÄNDERN</button>
+      </mat-card-actions>
+    }
   </mat-card>
 </ng-container>

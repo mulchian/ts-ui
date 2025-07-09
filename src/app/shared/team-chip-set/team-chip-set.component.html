@@ -1,7 +1,8 @@
-<ng-container *ngIf="team | async as team">
+@let team = team$ | async;
+@if (team) {
   <mat-chip-set disabled>
     <mat-chip>Budget: {{ team.budget | currency: 'EUR' : 'symbol' : '.0-2' }}</mat-chip>
     <mat-chip>Salary Cap: {{ team.salaryCap | currency: 'EUR' : 'symbol' : '.0-2' }}</mat-chip>
     <mat-chip>TS-Coins: {{ team.credits | currency: 'EUR' : 'symbol' : '.0' }}</mat-chip>
   </mat-chip-set>
-</ng-container>
+}

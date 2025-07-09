@@ -1,53 +1,58 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import tseslint from 'typescript-eslint';
+import angular from 'angular-eslint';
+import eslint from '@eslint/js';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
-
-export default defineConfig([globalIgnores(["projects/**/*"]), {
-    files: ["**/*.ts"],
-
-    extends: compat.extends(
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@angular-eslint/recommended",
-        "plugin:@angular-eslint/template/process-inline-templates",
-        "plugin:prettier/recommended",
-    ),
-
+export default tseslint.config(
+  {
+    files: ['*.ts'],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+      ...angular.configs.tsRecommended,
+      eslintPluginPrettierRecommended,
+      eslintConfigPrettier,
+    ],
     rules: {
-        "@angular-eslint/directive-selector": ["error", {
-            type: "attribute",
-            prefix: "app",
-            style: "camelCase",
-        }],
-
-        "@angular-eslint/component-selector": ["error", {
-            type: "element",
-            prefix: "app",
-            style: "kebab-case",
-        }],
+      '@angular-eslint/directive-selector': [
+        'error',
+        {
+          type: 'attribute',
+          prefix: 'app',
+          style: 'camelCase',
+        },
+      ],
+      '@angular-eslint/component-selector': [
+        'error',
+        {
+          type: 'element',
+          prefix: 'app',
+          style: 'kebab-case',
+        },
+      ],
+      'prettier/prettier': [
+        'error',
+        {
+          semi: true,
+          indent: 2,
+          singleQuote: false,
+          trailingComma: 'es5',
+        },
+      ],
     },
-}, {
-    files: ["**/*.html"],
-    ignores: ["**/*inline-template-*.component.html"],
-
-    extends: compat.extends(
-        "plugin:@angular-eslint/template/recommended",
-        "plugin:@angular-eslint/template/accessibility",
-    ),
-
+  },
+  {
+    files: ['*.html'],
+    ignores: ['*inline-template-*.component.html'],
+    extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
     rules: {
-        "prettier/prettier": ["error", {
-            parser: "angular",
-        }],
+      'prettier/prettier': [
+        'error',
+        {
+          parser: 'angular',
+        },
+      ],
     },
-}]);
+  }
+);

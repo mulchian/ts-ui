@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
 import { Team } from '../model/team';
@@ -6,16 +6,15 @@ import { AuthStore } from './auth.store';
 
 @Injectable()
 export class TeamService {
+  private http = inject(HttpClient);
+  private auth = inject(AuthStore);
+
   private subject = new BehaviorSubject<Team | null>(null);
   team$: Observable<Team | null> = this.subject.asObservable();
 
-  constructor(
-    private http: HttpClient,
-    private auth: AuthStore
-  ) {
+  constructor() {
     this.auth.isLoggedIn$.subscribe(loggedIn => {
       if (loggedIn && !this.subject.getValue()) {
-        console.log(this.subject.getValue());
         console.log('Load team from service');
         this.loadTeam();
       } else if (!loggedIn) {

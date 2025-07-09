@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TeamService } from '../../../core/services/team.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -23,7 +23,6 @@ import { PlayerService } from '../../../features/team/services/player.service';
   selector: 'app-player-modal',
   templateUrl: './player-modal.component.html',
   styleUrls: ['./player-modal.component.scss'],
-  standalone: true,
   imports: [
     CommonModule,
     MatTabsModule,
@@ -38,9 +37,14 @@ import { PlayerService } from '../../../features/team/services/player.service';
     MatSelectModule,
     FormsModule,
   ],
-  providers: [PlayerService],
+  providers: [PlayerService, SkillService, TeamService],
 })
 export class PlayerModalComponent implements OnInit {
+  dialogRef = inject<MatDialogRef<PlayerModalComponent>>(MatDialogRef);
+  private readonly teamService = inject(TeamService);
+  private readonly skillService = inject(SkillService);
+  private readonly playerService = inject(PlayerService);
+
   currentTabIndex = 0;
   player: Player;
   skillNames: Record<string, string>;
@@ -62,13 +66,9 @@ export class PlayerModalComponent implements OnInit {
 
   skillCards = signal<Skill[]>([]);
 
-  constructor(
-    public dialogRef: MatDialogRef<PlayerModalComponent>,
-    @Inject(MAT_DIALOG_DATA) data: DialogData,
-    private readonly teamService: TeamService,
-    private readonly skillService: SkillService,
-    private readonly playerService: PlayerService
-  ) {
+  constructor() {
+    const data = inject<DialogData>(MAT_DIALOG_DATA);
+
     this.player = data.player;
     this.skillNames = data.skillNames;
     if (data.selectedTabIndex) {

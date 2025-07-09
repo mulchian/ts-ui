@@ -1,6 +1,7 @@
 <h2 mat-dialog-title>Vertrag verhandeln!</h2>
 <mat-dialog-content>
-  <ng-container *ngIf="team | async as team">
+  @let team = team$ | async;
+  @if (team) {
     <div class="employee-job-name">
       {{ employee.job.name }}
     </div>
@@ -58,14 +59,15 @@
       <mat-grid-tile><small>GESAMTANGEBOT</small></mat-grid-tile>
       <mat-grid-tile><small>NEUES SALARY CAP</small></mat-grid-tile>
     </mat-grid-list>
-  </ng-container>
-  <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
-    <mat-progress-spinner color="primary" mode="indeterminate"> </mat-progress-spinner>
-  </mat-card>
+  }
+  @if (isLoading) {
+    <mat-card class="flex justify-center items-center">
+      <mat-progress-spinner color="primary" mode="indeterminate"></mat-progress-spinner>
+    </mat-card>
+  }
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="onDismiss(false)">Abbrechen</button>
-  <!--    [mat-dialog-close]="employee"-->
   <button mat-button (click)="negotiateContract()">
     {{ newEmployee ? 'Einstellen' : 'Verlängern' }}
   </button>

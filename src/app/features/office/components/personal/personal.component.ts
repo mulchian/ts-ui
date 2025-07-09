@@ -1,5 +1,5 @@
-import { AfterViewChecked, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
+import { AfterViewChecked, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NgxMasonryComponent, NgxMasonryModule, NgxMasonryOptions } from 'ngx-masonry';
 import { Building } from '../../../../core/model/building';
 import { first, Observable, Subject, Subscription, takeUntil } from 'rxjs';
 import { Employee } from '../../../../core/model/employee';
@@ -14,41 +14,54 @@ import { EmployeeModalComponent } from '../../../../shared/modal/employee-modal/
 import { ContractModalComponent } from '../../../../shared/modal/contract-modal/contract-modal.component';
 import { NavigationEnd, Router } from '@angular/router';
 import { TippyInstance } from '@ngneat/helipopper/config';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatDivider } from '@angular/material/divider';
+import { InViewportDirective } from 'ng-in-viewport';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatButton } from '@angular/material/button';
+import { TippyDirective } from '@ngneat/helipopper';
+import { ConfirmModalComponent } from '../../../../shared/modal/tooltip/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-personal',
   templateUrl: './personal.component.html',
   styleUrls: ['./personal.component.scss'],
-  standalone: false,
+  imports: [
+    CommonModule,
+    NgxMasonryModule,
+    MatCardModule,
+    MatDivider,
+    MatGridListModule,
+    InViewportDirective,
+    MatButton,
+    TippyDirective,
+    ConfirmModalComponent,
+  ],
+  providers: [EmployeeService, JobService, StadiumService, LoadingService],
 })
 export class PersonalComponent implements OnInit, AfterViewChecked, OnDestroy {
   unsubscribe = new Subject();
-
   @ViewChild(NgxMasonryComponent)
   masonry: NgxMasonryComponent | undefined;
   masonryOptions: NgxMasonryOptions = {
     gutter: 20,
   };
   rowHeight = '4:1';
-
   @ViewChild('tpRelease')
   tpRelease: TippyInstance | undefined;
-
   overlayRefs: OverlayRef[] = [];
-
   officeBuilding: Building | undefined;
   employees: Employee[] = [];
-
+  private readonly loadingService = inject(LoadingService);
+  private readonly jobService = inject(JobService);
+  private readonly employeeService = inject(EmployeeService);
+  private readonly stadiumService = inject(StadiumService);
+  private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
   private readonly navigationSubscription: Subscription;
 
-  constructor(
-    private readonly loadingService: LoadingService,
-    private readonly jobService: JobService,
-    private readonly employeeService: EmployeeService,
-    private readonly stadiumService: StadiumService,
-    private readonly dialog: MatDialog,
-    private readonly router: Router
-  ) {
+  constructor() {
     this.navigationSubscription = this.router.events.subscribe((e: unknown) => {
       if (e instanceof NavigationEnd) {
         this.loadingService.loadingOn();

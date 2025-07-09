@@ -1,25 +1,31 @@
-import { Component } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthStore } from '../../../../core/services/auth.store';
 import { VALIDATOR_PATTERNS } from '../../../../shared/forms/validators/validator-patterns';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss'],
-  standalone: false,
+  imports: [CommonModule, MatFormFieldModule, ReactiveFormsModule, MatIcon, MatButton, MatInput],
+  providers: [AuthStore],
 })
 export class ForgotPasswordComponent {
+  private readonly formBuilder = inject(NonNullableFormBuilder);
+  private readonly router = inject(Router);
+  private readonly auth = inject(AuthStore);
+
   form: FormGroup;
   message: string | undefined;
   successful = false;
 
-  constructor(
-    private readonly formBuilder: NonNullableFormBuilder,
-    private readonly router: Router,
-    private readonly auth: AuthStore
-  ) {
+  constructor() {
     this.form = this.formBuilder.group({
       username: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.email)]],

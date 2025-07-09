@@ -1,13 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
 
 @Injectable()
 export class SkillService {
+  private http = inject(HttpClient);
+
   private subject = new BehaviorSubject<Record<string, string> | null>(null);
   skillNames$: Observable<Record<string, string> | null> = this.subject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor() {
     this.loadSkillNames();
   }
 

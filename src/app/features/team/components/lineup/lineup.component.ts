@@ -1,34 +1,52 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { TeamService } from '../../../../core/services/team.service';
 import { Team } from '../../../../core/model/team';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { LineupService } from '../../services/lineup.service';
 import { shareReplay } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PositionChangeModalComponent } from '../../../../shared/modal/position-change-modal/position-change-modal.component';
-import { LineupPosition } from './lineup-team-part/lineup-team-part.component';
+import { LineupPosition, LineupTeamPartComponent } from './lineup-team-part/lineup-team-part.component';
 import { TippyInstance } from '@ngneat/helipopper/config';
+import { CommonModule } from '@angular/common';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatLabel } from '@angular/material/select';
+import { ConfirmModalComponent } from '../../../../shared/modal/tooltip/confirm-modal/confirm-modal.component';
+import { MatButton } from '@angular/material/button';
+import { TippyDirective } from '@ngneat/helipopper';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-lineup',
   templateUrl: './lineup.component.html',
   styleUrls: ['./lineup.component.scss'],
-  standalone: false,
+  imports: [
+    CommonModule,
+    MatGridListModule,
+    MatButtonToggleModule,
+    MatLabel,
+    MatSlideToggle,
+    ConfirmModalComponent,
+    MatButton,
+    TippyDirective,
+    FormsModule,
+    LineupTeamPartComponent,
+  ],
+  providers: [TeamService, LineupService],
 })
 export class LineupComponent implements OnInit {
   team: Team | undefined;
   teamPart: 'offense' | 'defense' | 'special' = 'offense';
   activeLineupOff = 'TE';
   activeLineupDef = 'NT';
-
   @ViewChild('tpAutoLineup')
   tpAutoLineup: TippyInstance | undefined;
+  private readonly dialog = inject(MatDialog);
+  private readonly teamService = inject(TeamService);
+  private readonly lineupService = inject(LineupService);
 
-  constructor(
-    private readonly dialog: MatDialog,
-    private readonly teamService: TeamService,
-    private readonly lineupService: LineupService
-  ) {
+  constructor() {
     this.teamService.team$.subscribe(team => {
       if (team) {
         this.team = team;

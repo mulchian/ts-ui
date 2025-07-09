@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-office',
   templateUrl: './office.component.html',
   styleUrls: ['./office.component.scss'],
-  standalone: false,
+  imports: [CommonModule, RouterOutlet],
 })
 export class OfficeComponent {
-  constructor(private readonly router: Router) {}
+  private readonly router = inject(Router);
 
   showOverview(): boolean {
     return this.router.url === '/office';

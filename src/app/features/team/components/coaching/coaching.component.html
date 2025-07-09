@@ -1,207 +1,263 @@
 <div class="grid grid-cols-2">
   <div class="flex justify-center items-center">
-    <mat-button-toggle-group [(ngModel)]="teamPart" name="teamPart" aria-label="Team Part">
+    <mat-button-toggle-group [(ngModel)]="teamPart" aria-label="Team Part" hideSingleSelectionIndicator name="teamPart">
       <mat-button-toggle value="general">General</mat-button-toggle>
       <mat-button-toggle value="offense">Offensive</mat-button-toggle>
       <mat-button-toggle value="defense">Defensive</mat-button-toggle>
     </mat-button-toggle-group>
   </div>
-  <div class="flex justify-center items-center" *ngIf="teamPart === 'offense'">
-    <mat-form-field subscriptSizing="dynamic">
-      <mat-label>Offense Gameplan</mat-label>
-      <mat-select [(value)]="selectedOffCoaching">
-        <mat-option *ngFor="let coachingName of offCoachingNames" [value]="coachingName.gameplanNr">
-          {{ coachingName.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button mat-icon-button class="edit-button">
-      <mat-icon class="menu-icon">edit</mat-icon>
-    </button>
-  </div>
-  <div class="flex justify-center items-center" *ngIf="teamPart === 'defense'">
-    <mat-form-field>
-      <mat-label>Defensive Gameplan</mat-label>
-      <mat-select [(value)]="selectedDefCoaching">
-        <mat-option *ngFor="let coachingName of defCoachingNames" [value]="coachingName.gameplanNr">
-          {{ coachingName.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+  @if (teamPart === 'offense') {
+    <div class="flex justify-center items-center">
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label>Offense Gameplan</mat-label>
+        <mat-select [(value)]="selectedOffCoaching">
+          @for (coachingName of offCoachingNames; track coachingName.gameplanNr) {
+            <mat-option [value]="coachingName.gameplanNr">
+              {{ coachingName.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button mat-icon-button class="edit-button">
+        <mat-icon class="menu-icon">edit</mat-icon>
+      </button>
+    </div>
+  } @else if (teamPart === 'defense') {
+    <div class="flex justify-center items-center">
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label>Defensive Gameplan</mat-label>
+        <mat-select [(value)]="selectedDefCoaching">
+          @for (coachingName of defCoachingNames; track coachingName.gameplanNr) {
+            <mat-option [value]="coachingName.gameplanNr">
+              {{ coachingName.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button
+        mat-icon-button
+        class="edit-button"
+        [tp]="tplRename"
+        [tpPlacement]="'bottom'"
+        #tpChangeName="tippy"
+        tpVariation="popperBorder"
+      >
+        <mat-icon class="menu-icon">edit</mat-icon>
+      </button>
+      <ng-template #tplRename let-hide>
+        <app-input-modal
+          (confirm)="renameDefCoaching($event)"
+          [confirmBtnText]="'Speichern'"
+          [inputLabel]="'Gameplan-Name'"
+          [inputValue]="'Gameplan ' + selectedDefCoaching"
+          [inputType]="'text'"
+          [inputPlaceholder]="'Gameplan ' + selectedDefCoaching"
+          [title]="'Gameplan umbenennen'"
+          [tooltip]="tpChangeName">
+        </app-input-modal>
+      </ng-template>
+    </div>
+  }
 </div>
-<ng-container *ngIf="team" [ngSwitch]="teamPart">
-  <div *ngSwitchCase="'general'" class="grid grid-cols-1 grid-rows-1 gap-4 p-4">
-    <mat-card></mat-card>
-  </div>
-  <div *ngSwitchCase="'offense'" class="grid md:grid-cols-3 grid-cols-1 md:grid-rows-4 grid-flow-row gap-4 p-4">
-    <div *ngFor="let offCoaching of offCoachings">
-      <mat-card>
-        <mat-card-header class="text-center">
-          <mat-card-title> {{ offCoaching.down }} {{ offCoaching.playrange }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="grid grid-rows-3">
-            <div class="grid grid-cols-2 gap-2 justify-center items-center">
-              <mat-slide-toggle
-                #slideL
-                [checked]="offCoaching.gameplay1.split(';')[0] === 'Pass'"
-                (change)="changeGameplayType($event, offCoaching, 1)"
-                class="icon-slide-toggle">
-                <span>{{ offCoaching.gameplay1.split(';')[0] }}</span>
-              </mat-slide-toggle>
-              <mat-slide-toggle
-                #slideR
-                [checked]="offCoaching.gameplay2.split(';')[0] === 'Pass'"
-                (change)="changeGameplayType($event, offCoaching, 2)"
-                class="icon-slide-toggle">
-                <span>{{ offCoaching.gameplay2.split(';')[0] }}</span>
-              </mat-slide-toggle>
-            </div>
-            <div class="grid grid-cols-2 gap-2 justify-center items-center">
-              <mat-form-field>
-                <mat-label>{{ offCoaching.gameplay1.split(';')[0] }}</mat-label>
-                <ng-container [ngSwitch]="offCoaching.gameplay1.split(';')[0]">
-                  <mat-select
-                    name="gameplay1Pass"
-                    *ngSwitchCase="'Pass'"
-                    [(ngModel)]="offCoaching.gameplay1"
-                    (selectionChange)="changeCoachingGameplay(offCoaching)">
-                    <mat-option *ngFor="let passGameplay of passGameplays" [value]="'Pass;' + passGameplay">
-                      {{ passGameplay }}
-                    </mat-option>
-                  </mat-select>
-                  <mat-select
-                    name="gamepla1Run"
-                    *ngSwitchCase="'Run'"
-                    [(ngModel)]="offCoaching.gameplay1"
-                    (selectionChange)="changeCoachingGameplay(offCoaching)">
-                    <mat-option *ngFor="let runGameplay of runGameplays" [value]="'Run;' + runGameplay">
-                      {{ runGameplay }}
-                    </mat-option>
-                  </mat-select>
-                </ng-container>
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>{{ offCoaching.gameplay2.split(';')[0] }}</mat-label>
-                <ng-container [ngSwitch]="offCoaching.gameplay2.split(';')[0]">
-                  <mat-select
-                    name="gameplay2Pass"
-                    *ngSwitchCase="'Pass'"
-                    [(ngModel)]="offCoaching.gameplay2"
-                    (selectionChange)="changeCoachingGameplay(offCoaching)">
-                    <mat-option *ngFor="let passGameplay of passGameplays" [value]="'Pass;' + passGameplay">
-                      {{ passGameplay }}
-                    </mat-option>
-                  </mat-select>
-                  <mat-select
-                    name="gameplay2Run"
-                    *ngSwitchCase="'Run'"
-                    [(ngModel)]="offCoaching.gameplay2"
-                    (selectionChange)="changeCoachingGameplay(offCoaching)">
-                    <mat-option *ngFor="let runGameplay of runGameplays" [value]="'Run;' + runGameplay">
-                      {{ runGameplay }}
-                    </mat-option>
-                  </mat-select>
-                </ng-container>
-              </mat-form-field>
-            </div>
-            <div class="flex justify-center items-center mt-6">
-              <mat-slider
-                class="always-on-indicator"
-                min="0"
-                max="100"
-                step="5"
-                discrete
-                showTickMarks
-                [displayWith]="formatPercentLabel">
-                <input
-                  matSliderThumb
-                  [value]="offCoaching.rating"
-                  [(ngModel)]="offCoaching.rating"
-                  (dragEnd)="changeCoachingRate($event, offCoaching)" />
-              </mat-slider>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
-  <div *ngSwitchCase="'defense'" class="grid lg:grid-cols-4 grid-cols-2 grid-flow-row gap-4 p-4">
-    <div *ngFor="let defCoaching of defCoachings">
-      <mat-card>
-        <mat-card-header class="text-center pb-4">
-          <mat-card-title> {{ defCoaching.down }} {{ defCoaching.playrange }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="grid grid-rows-2">
-            <div class="grid grid-cols-2 gap-2 justify-center items-center">
-              <mat-form-field>
-                <mat-label>{{ defCoaching.gameplay1.split(';')[0] }}</mat-label>
-                <ng-container [ngSwitch]="defCoaching.gameplay1.split(';')[0]">
-                  <mat-select
-                    name="gameplay1Pass"
-                    *ngSwitchCase="'Pass'"
-                    [(ngModel)]="defCoaching.gameplay1"
-                    (selectionChange)="changeCoachingGameplay(defCoaching)">
-                    <mat-option *ngFor="let passDefGameplay of passDefGameplays" [value]="'Pass;' + passDefGameplay">
-                      {{ passDefGameplay }}
-                    </mat-option>
-                  </mat-select>
-                  <mat-select
-                    name="gamepla1Run"
-                    *ngSwitchCase="'Run'"
-                    [(ngModel)]="defCoaching.gameplay1"
-                    (selectionChange)="changeCoachingGameplay(defCoaching)">
-                    <mat-option *ngFor="let runDefGameplay of runDefGameplays" [value]="'Run;' + runDefGameplay">
-                      {{ runDefGameplay }}
-                    </mat-option>
-                  </mat-select>
-                </ng-container>
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>{{ defCoaching.gameplay2.split(';')[0] }}</mat-label>
-                <ng-container [ngSwitch]="defCoaching.gameplay2.split(';')[0]">
-                  <mat-select
-                    name="gameplay2Pass"
-                    *ngSwitchCase="'Pass'"
-                    [(ngModel)]="defCoaching.gameplay2"
-                    (selectionChange)="changeCoachingGameplay(defCoaching)">
-                    <mat-option *ngFor="let passDefGameplay of passDefGameplays" [value]="'Pass;' + passDefGameplay">
-                      {{ passDefGameplay }}
-                    </mat-option>
-                  </mat-select>
-                  <mat-select
-                    name="gameplay2Run"
-                    *ngSwitchCase="'Run'"
-                    [(ngModel)]="defCoaching.gameplay2"
-                    (selectionChange)="changeCoachingGameplay(defCoaching)">
-                    <mat-option *ngFor="let runDefGameplay of runDefGameplays" [value]="'Run;' + runDefGameplay">
-                      {{ runDefGameplay }}
-                    </mat-option>
-                  </mat-select>
-                </ng-container>
-              </mat-form-field>
-            </div>
-            <div class="flex justify-center items-center mt-6">
-              <mat-slider
-                class="always-on-indicator"
-                min="0"
-                max="100"
-                step="5"
-                discrete
-                showTickMarks
-                [displayWith]="formatPercentLabel">
-                <input
-                  matSliderThumb
-                  [value]="defCoaching.rating"
-                  [(ngModel)]="defCoaching.rating"
-                  (dragEnd)="changeCoachingRate($event, defCoaching)" />
-              </mat-slider>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
-</ng-container>
+
+@if (team) {
+  @switch (teamPart) {
+    @case ('general') {
+      <div class="grid grid-cols-1 grid-rows-1 gap-4 p-4">
+        <mat-card></mat-card>
+      </div>
+    }
+    @case ('offense') {
+      <div class="grid md:grid-cols-3 grid-cols-1 md:grid-rows-4 grid-flow-row gap-4 p-4">
+        @for (offCoaching of offCoachings; track offCoaching.id) {
+          <mat-card>
+            <mat-card-header class="text-center">
+              <mat-card-title> {{ offCoaching.down }} {{ offCoaching.playrange }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="grid grid-rows-3">
+                <div class="grid grid-cols-2 gap-2 justify-center items-center">
+                  <mat-slide-toggle
+                    #slideL
+                    [checked]="offCoaching.gameplay1.split(';')[0] === 'Pass'"
+                    (change)="changeGameplayType($event, offCoaching, 1)"
+                    class="icon-slide-toggle">
+                    <span>{{ offCoaching.gameplay1.split(';')[0] }}</span>
+                  </mat-slide-toggle>
+                  <mat-slide-toggle
+                    #slideR
+                    [checked]="offCoaching.gameplay2.split(';')[0] === 'Pass'"
+                    (change)="changeGameplayType($event, offCoaching, 2)"
+                    class="icon-slide-toggle">
+                    <span>{{ offCoaching.gameplay2.split(';')[0] }}</span>
+                  </mat-slide-toggle>
+                </div>
+                <div class="grid grid-cols-2 gap-2 justify-center items-center">
+                  <mat-form-field>
+                    <mat-label>{{ offCoaching.gameplay1.split(';')[0] }}</mat-label>
+                    @switch (offCoaching.gameplay1.split(';')[0]) {
+                      @case ('Pass') {
+                        <mat-select
+                          name="gameplay1Pass"
+                          [(ngModel)]="offCoaching.gameplay1"
+                          (selectionChange)="changeCoachingGameplay(offCoaching)">
+                          <mat-option *ngFor="let passGameplay of passGameplays" [value]="'Pass;' + passGameplay">
+                            {{ passGameplay }}
+                          </mat-option>
+                        </mat-select>
+                      }
+                      @case ('Run') {
+                        <mat-select
+                          name="gamepla1Run"
+                          [(ngModel)]="offCoaching.gameplay1"
+                          (selectionChange)="changeCoachingGameplay(offCoaching)">
+                          <mat-option *ngFor="let runGameplay of runGameplays" [value]="'Run;' + runGameplay">
+                            {{ runGameplay }}
+                          </mat-option>
+                        </mat-select>
+                      }
+                    }
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{ offCoaching.gameplay2.split(';')[0] }}</mat-label>
+                    @switch (offCoaching.gameplay2.split(';')[0]) {
+                      @case ('Pass') {
+                        <mat-select
+                          name="gameplay2Pass"
+                          [(ngModel)]="offCoaching.gameplay2"
+                          (selectionChange)="changeCoachingGameplay(offCoaching)">
+                          <mat-option *ngFor="let passGameplay of passGameplays" [value]="'Pass;' + passGameplay">
+                            {{ passGameplay }}
+                          </mat-option>
+                        </mat-select>
+                      }
+                      @case ('Run') {
+                        <mat-select
+                          name="gameplay2Run"
+                          [(ngModel)]="offCoaching.gameplay2"
+                          (selectionChange)="changeCoachingGameplay(offCoaching)">
+                          <mat-option *ngFor="let runGameplay of runGameplays" [value]="'Run;' + runGameplay">
+                            {{ runGameplay }}
+                          </mat-option>
+                        </mat-select>
+                      }
+                    }
+                  </mat-form-field>
+                </div>
+                <div class="flex justify-center items-center mt-6">
+                  <mat-slider
+                    class="always-on-indicator"
+                    min="0"
+                    max="100"
+                    step="5"
+                    discrete
+                    showTickMarks
+                    [displayWith]="formatPercentLabel">
+                    <input
+                      matSliderThumb
+                      [value]="offCoaching.rating"
+                      [(ngModel)]="offCoaching.rating"
+                      (dragEnd)="changeCoachingRate($event, offCoaching)" />
+                  </mat-slider>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+    @case ('defense') {
+      <div class="grid lg:grid-cols-4 grid-cols-2 grid-flow-row gap-4 p-4">
+        @for (defCoaching of defCoachings; track defCoaching.id) {
+          <mat-card>
+            <mat-card-header class="justify-center !pb-4">
+              <mat-card-title> {{ defCoaching.down }} {{ defCoaching.playrange }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="grid grid-rows-2">
+                <div class="grid grid-cols-2 gap-2 justify-center items-center">
+                  <mat-form-field>
+                    <mat-label>{{ defCoaching.gameplay1.split(';')[0] }}</mat-label>
+                    @switch (defCoaching.gameplay1.split(';')[0]) {
+                      @case ('Pass') {
+                        <mat-select
+                          name="gameplay1Pass"
+                          [(ngModel)]="defCoaching.gameplay1"
+                          (selectionChange)="changeCoachingGameplay(defCoaching)">
+                          @for (passDefGameplay of passDefGameplays; track passDefGameplay) {
+                            <mat-option
+                              [value]="'Pass;' + passDefGameplay">
+                              {{ passDefGameplay }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      }
+                      @case ('Run') {
+                        <mat-select
+                          name="gamepla1Run"
+                          [(ngModel)]="defCoaching.gameplay1"
+                          (selectionChange)="changeCoachingGameplay(defCoaching)">
+                          @for (runDefGameplay of runDefGameplays; track runDefGameplay) {
+                            <mat-option [value]="'Run;' + runDefGameplay">
+                              {{ runDefGameplay }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      }
+                    }
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>{{ defCoaching.gameplay2.split(';')[0] }}</mat-label>
+                    @switch (defCoaching.gameplay2.split(';')[0]) {
+                      @case ('Pass') {
+                        <mat-select
+                          name="gameplay2Pass"
+                          [(ngModel)]="defCoaching.gameplay2"
+                          (selectionChange)="changeCoachingGameplay(defCoaching)">
+                          @for (passDefGameplay of passDefGameplays; track passDefGameplay) {
+                            <mat-option
+                              [value]="'Pass;' + passDefGameplay">
+                              {{ passDefGameplay }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      }
+                      @case ('Run') {
+                        <mat-select
+                          name="gameplay2Run"
+                          [(ngModel)]="defCoaching.gameplay2"
+                          (selectionChange)="changeCoachingGameplay(defCoaching)">
+                          @for (runDefGameplay of runDefGameplays; track runDefGameplay) {
+                            <mat-option [value]="'Run;' + runDefGameplay">
+                              {{ runDefGameplay }}
+                            </mat-option>
+                          }
+                        </mat-select>
+                      }
+                    }
+                  </mat-form-field>
+                </div>
+                <div class="flex justify-center items-center mt-6">
+                  <mat-slider
+                    class="always-on-indicator"
+                    min="0"
+                    max="100"
+                    step="5"
+                    discrete
+                    showTickMarks
+                    [displayWith]="formatPercentLabel">
+                    <input
+                      matSliderThumb
+                      [value]="defCoaching.rating"
+                      [(ngModel)]="defCoaching.rating"
+                      (dragEnd)="changeCoachingRate($event, defCoaching)" />
+                  </mat-slider>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+}

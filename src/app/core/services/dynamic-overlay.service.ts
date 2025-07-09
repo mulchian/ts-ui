@@ -12,12 +12,12 @@ import { Location } from '@angular/common';
 import {
   ComponentFactoryResolver,
   DOCUMENT,
-  Inject,
   Injectable,
   Injector,
   NgZone,
   Renderer2,
   RendererFactory2,
+  inject,
 } from '@angular/core';
 import { DynamicOverlayContainerService } from './dynamic-overlay-container.service';
 import { OverlayLoadingComponent } from '../../shared/loading/overlay-loading/overlay-loading.component';
@@ -30,21 +30,20 @@ export class DynamicOverlayService extends Overlay {
   private readonly renderer: Renderer2;
   private overlayRefs: OverlayRef[] = [];
 
-  constructor(
-    scrollStrategies: ScrollStrategyOptions,
-    _overlayContainer: DynamicOverlayContainerService,
-    _componentFactoryResolver: ComponentFactoryResolver,
-    _positionBuilder: OverlayPositionBuilder,
-    _keyboardDispatcher: OverlayKeyboardDispatcher,
-    _injector: Injector,
-    _ngZone: NgZone,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    @Inject(DOCUMENT) _document: any,
-    _directionality: Directionality,
-    rendererFactory: RendererFactory2,
-    _location: Location,
-    _outsideClickDispatcher: OverlayOutsideClickDispatcher
-  ) {
+  constructor() {
+    const scrollStrategies = inject(ScrollStrategyOptions);
+    const _overlayContainer = inject(DynamicOverlayContainerService);
+    const _componentFactoryResolver = inject(ComponentFactoryResolver);
+    const _positionBuilder = inject(OverlayPositionBuilder);
+    const _keyboardDispatcher = inject(OverlayKeyboardDispatcher);
+    const _injector = inject(Injector);
+    const _ngZone = inject(NgZone);
+    const _document = inject(DOCUMENT);
+    const _directionality = inject(Directionality);
+    const rendererFactory = inject(RendererFactory2);
+    const _location = inject(Location);
+    const _outsideClickDispatcher = inject(OverlayOutsideClickDispatcher);
+
     super(
       scrollStrategies,
       _overlayContainer,

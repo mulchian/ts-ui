@@ -1,26 +1,24 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Team } from '../../../../../core/model/team';
 import { PositionService } from '../../../services/position.service';
 import { Position } from '../../../../../core/model/position';
+import { CommonModule } from '@angular/common';
+import { PlayerCardModalComponent } from '../../../../../shared/modal/player-card-modal/player-card-modal.component';
+import { Player } from '../../../../../core/model/player';
 
 @Component({
   selector: 'app-lineup-team-part',
   templateUrl: './lineup-team-part.component.html',
   styleUrls: ['./lineup-team-part.component.scss'],
-  standalone: false,
+  imports: [CommonModule, PlayerCardModalComponent],
+  providers: [PositionService],
 })
 export class LineupTeamPartComponent {
-  @Input()
-  team: Team | null | undefined;
-  @Input()
-  teamPart: 'offense' | 'defense' | 'special' = 'offense';
-  @Input()
-  activeLineupPos: string | undefined;
-  @Output()
-  openChangePositionModal = new EventEmitter<LineupPosition>();
-
+  @Input() team!: Team;
+  @Input() teamPart: 'offense' | 'defense' | 'special' = 'offense';
+  @Input() activeLineupPos: string | undefined;
+  @Output() openChangePositionModal = new EventEmitter<LineupPosition>();
   positions: Position[] | null = [];
-
   offensePositions: Record<number, LineupPosition[]> = {
     1: [
       { position: 'FB', lineupPosition: 'FB', number: 0 },
@@ -66,17 +64,15 @@ export class LineupTeamPartComponent {
     { position: 'P', lineupPosition: 'P', number: 0 },
     { position: 'R', lineupPosition: 'R', number: 0 },
   ];
+  private readonly positionService = inject(PositionService);
 
-  constructor(private readonly positionService: PositionService) {
+  constructor() {
     this.positionService.positions$.subscribe(positions => {
       this.positions = positions;
     });
   }
 
-  getPlayerForPosition(position: LineupPosition) {
-    if (!this.team) {
-      return;
-    }
+  getPlayerForPosition(position: LineupPosition): Player {
     return Object.values(this.team.players).filter(player => player.lineupPosition === position.lineupPosition)[
       position.number
     ];

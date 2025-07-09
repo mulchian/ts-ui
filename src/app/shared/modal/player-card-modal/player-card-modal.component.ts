@@ -3,7 +3,7 @@ import { Player } from '../../../core/model/player';
 import { TalentPipe } from '../../pipe/talent.pipe';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { LineupPosition } from '../../../features/team/components/lineup/lineup-team-part/lineup-team-part.component';
 import { Position } from '../../../core/model/position';
@@ -12,23 +12,16 @@ import { Position } from '../../../core/model/position';
   selector: 'app-player-card-modal',
   templateUrl: './player-card-modal.component.html',
   styleUrls: ['./player-card-modal.component.scss'],
-  standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatGridListModule, NgClass, TalentPipe, NgIf],
+  imports: [MatCardModule, MatButtonModule, MatGridListModule, NgClass, TalentPipe],
   providers: [],
 })
 export class PlayerCardModalComponent {
-  @Input()
-  position: Position | null | undefined;
-  @Input()
-  player: Player | undefined;
-  @Input()
-  activeLineupPos: string | undefined;
-  @Input()
-  showChangeButton = true;
-  @Input()
-  isSpecialTeam = false;
-  @Output()
-  openChangePositionModal = new EventEmitter<LineupPosition>();
+  @Input() position: Position | null | undefined;
+  @Input() player!: Player;
+  @Input() activeLineupPos: string | undefined;
+  @Input() showChangeButton = true;
+  @Input() isSpecialTeam = false;
+  @Output() openChangePositionModal = new EventEmitter<LineupPosition>();
 
   get isActive(): boolean {
     if (this.activeLineupPos === 'MLB') {
