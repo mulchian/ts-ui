@@ -25,11 +25,6 @@ export const authGuardChild: CanActivateChildFn = (
   router: Router = inject(Router)
 ): Observable<boolean | UrlTree> => checkIfAuthenticated(auth, router);
 
-function checkIfAuthenticated(
-  auth: AuthStore,
-  router: Router
-): Observable<boolean | UrlTree> {
-  return auth.isLoggedIn$.pipe(
-    map(loggedIn => (loggedIn ? true : router.parseUrl('/user/login')))
-  );
+function checkIfAuthenticated(auth: AuthStore, router: Router): Observable<boolean | UrlTree> {
+  return auth.isLoggedIn$.pipe(map(loggedIn => (loggedIn ? true : router.parseUrl('/user/login'))));
 }

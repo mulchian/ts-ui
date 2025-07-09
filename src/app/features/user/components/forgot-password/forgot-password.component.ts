@@ -1,12 +1,7 @@
 import { Component } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  NonNullableFormBuilder,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthStore } from '../../../../services/auth.store';
+import { AuthStore } from '../../../../core/services/auth.store';
 import { VALIDATOR_PATTERNS } from '../../../../shared/forms/validators/validator-patterns';
 
 @Component({
@@ -26,10 +21,7 @@ export class ForgotPasswordComponent {
   ) {
     this.form = this.formBuilder.group({
       username: ['', [Validators.required]],
-      email: [
-        '',
-        [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.email)],
-      ],
+      email: ['', [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.email)]],
     });
   }
 
@@ -52,18 +44,15 @@ export class ForgotPasswordComponent {
     const link = this.router.url.replace('forgot-password', 'change-password');
     console.log(link);
 
-    this.auth
-      .requestNewPasswort(val.username, val.email, link)
-      .subscribe((requested: boolean) => {
-        if (requested) {
-          this.successful = true;
-          this.message =
-            'Eine E-Mail mit einem Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.';
-        } else {
-          this.successful = false;
-          this.message =
-            'Die Kombination aus User und E-Mail-Adresse ist nicht bekannt.';
-        }
-      });
+    this.auth.requestNewPasswort(val.username, val.email, link).subscribe((requested: boolean) => {
+      if (requested) {
+        this.successful = true;
+        this.message =
+          'Eine E-Mail mit einem Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.';
+      } else {
+        this.successful = false;
+        this.message = 'Die Kombination aus User und E-Mail-Adresse ist nicht bekannt.';
+      }
+    });
   }
 }

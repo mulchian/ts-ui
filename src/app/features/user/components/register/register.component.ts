@@ -1,12 +1,7 @@
 import { Component } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  NonNullableFormBuilder,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthStore } from '../../../../services/auth.store';
+import { AuthStore } from '../../../../core/services/auth.store';
 import { VALIDATOR_PATTERNS } from '../../../../shared/forms/validators/validator-patterns';
 import { catchError, EMPTY } from 'rxjs';
 import { confirmValidator } from '../../../../shared/forms/validators/validator';
@@ -29,30 +24,13 @@ export class RegisterComponent {
   ) {
     this.form = this.formBuilder.group({
       username: ['', [Validators.required]],
-      password: [
-        '',
-        [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.password)],
-      ],
+      password: ['', [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.password)]],
       repeatPassword: [
         '',
-        [
-          Validators.required,
-          confirmValidator('password'),
-          Validators.pattern(VALIDATOR_PATTERNS.password),
-        ],
+        [Validators.required, confirmValidator('password'), Validators.pattern(VALIDATOR_PATTERNS.password)],
       ],
-      email: [
-        '',
-        [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.email)],
-      ],
-      repeatEmail: [
-        '',
-        [
-          Validators.required,
-          confirmValidator('email'),
-          Validators.pattern(VALIDATOR_PATTERNS.email),
-        ],
-      ],
+      email: ['', [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.email)]],
+      repeatEmail: ['', [Validators.required, confirmValidator('email'), Validators.pattern(VALIDATOR_PATTERNS.email)]],
     });
   }
 
@@ -120,11 +98,7 @@ export class RegisterComponent {
   isLongErrorMessage(formControl: FormControl) {
     return (
       formControl.hasError('pattern') &&
-      !(
-        formControl.hasError('notmatch') ||
-        formControl.hasError('minlength') ||
-        formControl.hasError('required')
-      )
+      !(formControl.hasError('notmatch') || formControl.hasError('minlength') || formControl.hasError('required'))
     );
   }
 }

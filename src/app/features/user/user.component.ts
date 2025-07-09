@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AuthStore } from '../../services/auth.store';
+import { AuthStore } from '../../core/services/auth.store';
 
 @Component({
   selector: 'app-user',

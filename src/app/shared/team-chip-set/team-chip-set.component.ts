@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { TeamService } from '../../features/team/services/team.service';
-import { AuthStore } from '../../services/auth.store';
+import { TeamService } from '../../core/services/team.service';
+import { AuthStore } from '../../core/services/auth.store';
 import { Observable, of } from 'rxjs';
-import { Team } from '../../model/team';
+import { Team } from '../../core/model/team';
 
 @Component({
   selector: 'app-team-chip-set',

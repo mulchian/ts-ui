@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthStore } from './services/auth.store';
+import { AuthStore } from './core/services/auth.store';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -14,9 +14,7 @@ export class AppComponent {
     private readonly auth: AuthStore,
     private readonly route: ActivatedRoute
   ) {
-    this.auth.isLoggedIn$.subscribe(
-      (loggedIn: boolean) => (this.loggedIn = loggedIn)
-    );
+    this.auth.isLoggedIn$.subscribe((loggedIn: boolean) => (this.loggedIn = loggedIn));
   }
 
   logout() {

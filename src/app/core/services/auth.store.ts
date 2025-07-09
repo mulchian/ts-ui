@@ -3,7 +3,7 @@ import { BehaviorSubject, catchError, Observable } from 'rxjs';
 import { User } from '../model/user';
 import { map, shareReplay, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { LoadingService } from '../shared/loading/loading.service';
+import { LoadingService } from '../../shared/loading/loading.service';
 import { Router } from '@angular/router';
 
 const AUTH_DATA = 'auth_data';
@@ -39,24 +39,22 @@ export class AuthStore {
 
   login(username: string, password: string): Observable<User> {
     this.loadingService.loadingOn();
-    return this.http
-      .post<User>('/api/user/login.php', { username, password })
-      .pipe(
-        tap(user => {
-          this.loadingService.loadingOff();
-          if (user.id) {
-            this.subject.next(user);
-            localStorage.setItem(AUTH_DATA, JSON.stringify(user));
-          } else {
-            // PHP is sending an error message instead of an user-object
-            throw new Error(JSON.stringify(user));
-          }
-        }),
-        catchError(err => {
-          throw err;
-        }),
-        shareReplay()
-      );
+    return this.http.post<User>('/api/user/login.php', { username, password }).pipe(
+      tap(user => {
+        this.loadingService.loadingOff();
+        if (user.id) {
+          this.subject.next(user);
+          localStorage.setItem(AUTH_DATA, JSON.stringify(user));
+        } else {
+          // PHP is sending an error message instead of an user-object
+          throw new Error(JSON.stringify(user));
+        }
+      }),
+      catchError(err => {
+        throw err;
+      }),
+      shareReplay()
+    );
   }
 
   logout() {
@@ -79,28 +77,22 @@ export class AuthStore {
     }
   }
 
-  register(
-    username: string,
-    email: string,
-    password: string
-  ): Observable<User> {
-    return this.http
-      .post<User>('/api/user/register.php', { username, email, password })
-      .pipe(
-        tap(user => {
-          if (user.id) {
-            this.subject.next(user);
-            localStorage.setItem(AUTH_DATA, JSON.stringify(user));
-          } else {
-            // PHP is sending an error message instead of a user-object
-            throw new Error(JSON.stringify(user));
-          }
-        }),
-        catchError(err => {
-          throw err;
-        }),
-        shareReplay()
-      );
+  register(username: string, email: string, password: string): Observable<User> {
+    return this.http.post<User>('/api/user/register.php', { username, email, password }).pipe(
+      tap(user => {
+        if (user.id) {
+          this.subject.next(user);
+          localStorage.setItem(AUTH_DATA, JSON.stringify(user));
+        } else {
+          // PHP is sending an error message instead of a user-object
+          throw new Error(JSON.stringify(user));
+        }
+      }),
+      catchError(err => {
+        throw err;
+      }),
+      shareReplay()
+    );
   }
 
   requestNewPasswort(username: string, email: string, link: string) {
@@ -114,9 +106,7 @@ export class AuthStore {
   }
 
   changePassword(userId: number, password: string) {
-    return this.http
-      .post<boolean>('/api/user/changePassword.php', { userId, password })
-      .pipe(shareReplay());
+    return this.http.post<boolean>('/api/user/changePassword.php', { userId, password }).pipe(shareReplay());
   }
 
   private loadStorageUser() {
@@ -134,8 +124,6 @@ export class AuthStore {
   }
 
   private isReloginNeeded() {
-    return this.http
-      .get<boolean>('/api/user/needsRelogin.php')
-      .pipe(tap(), shareReplay());
+    return this.http.get<boolean>('/api/user/needsRelogin.php').pipe(tap(), shareReplay());
   }
 }

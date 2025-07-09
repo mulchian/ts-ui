@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { concatMap, finalize, tap } from 'rxjs/operators';
-import { DynamicOverlayService } from '../../services/dynamic-overlay.service';
+import { DynamicOverlayService } from '../../core/services/dynamic-overlay.service';
 import { OverlayRef } from '@angular/cdk/overlay';
 
 @Injectable({

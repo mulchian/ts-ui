@@ -4,9 +4,7 @@
     <div class="employee-job-name">
       {{ employee.job.name }}
     </div>
-    <div class="employee-name">
-      {{ employee.firstName }} {{ employee.lastName }}
-    </div>
+    <div class="employee-name">{{ employee.firstName }} {{ employee.lastName }}</div>
     <mat-grid-list cols="2" rowHeight="10:1">
       <mat-grid-tile class="accent-text">
         {{ employee.ovr }}
@@ -20,9 +18,7 @@
     <div class="time-of-contract">
       <mat-form-field>
         <mat-label>Laufzeit</mat-label>
-        <mat-select
-          [(ngModel)]="timeOfContract"
-          (selectionChange)="changeTimeOfContract()">
+        <mat-select [(ngModel)]="timeOfContract" (selectionChange)="changeTimeOfContract()">
           <mat-option value="1">1 Saison</mat-option>
           <mat-option value="2">2 Saisons</mat-option>
           <mat-option value="3">3 Saisons</mat-option>
@@ -37,15 +33,10 @@
         min="{{ minSalary }}"
         max="{{ maxSalary }}"
         step="{{ salaryStep }}"
+        discrete
         showTickMarks
-        discrete="true"
-        color="primary"
         [displayWith]="formatSalaryLabel">
-        <input
-          matSliderThumb
-          [value]="newSalary"
-          [(ngModel)]="newSalary"
-          (input)="changeSalary()" />
+        <input matSliderThumb [value]="newSalary" [(ngModel)]="newSalary" (input)="changeSalary()" />
       </mat-slider>
     </div>
     <div class="salary-head"><small>GEHALT</small></div>
@@ -68,11 +59,8 @@
       <mat-grid-tile><small>NEUES SALARY CAP</small></mat-grid-tile>
     </mat-grid-list>
   </ng-container>
-  <mat-card
-    *ngIf="isLoading"
-    style="display: flex; justify-content: center; align-items: center">
-    <mat-progress-spinner color="primary" mode="indeterminate">
-    </mat-progress-spinner>
+  <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
+    <mat-progress-spinner color="primary" mode="indeterminate"> </mat-progress-spinner>
   </mat-card>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

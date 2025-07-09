@@ -1,17 +1,8 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
-import { Job } from '../../../model/job';
-import {
-  MatTable,
-  MatTableDataSource,
-  MatTableModule,
-} from '@angular/material/table';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { Job } from '../../../core/model/job';
+import { MatTable, MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { EmployeeService } from '../../../features/office/services/employee.service';
 import { first } from 'rxjs';
 import { ContractModalComponent } from '../contract-modal/contract-modal.component';
@@ -104,9 +95,7 @@ export class EmployeeModalComponent implements OnInit, OnDestroy {
       .getUnemployedEmployees(this.job.name)
       .pipe(first())
       .subscribe(employees => {
-        const selectedEmployee = employees.filter(
-          employee => employee.id === selectedId
-        )[0];
+        const selectedEmployee = employees.filter(employee => employee.id === selectedId)[0];
         console.log('Open contract dialog for', selectedEmployee);
 
         const dialogRef = this.dialog

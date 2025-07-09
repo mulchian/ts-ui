@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, debounceTime, Observable } from 'rxjs';
-import { Employee } from '../../../model/employee';
+import { Employee } from '../../../core/model/employee';
 import { HttpClient } from '@angular/common/http';
-import { AuthStore } from '../../../services/auth.store';
-import { User } from '../../../model/user';
-import { TeamService } from '../../team/services/team.service';
+import { AuthStore } from '../../../core/services/auth.store';
+import { User } from '../../../core/model/user';
+import { TeamService } from '../../../core/services/team.service';
 import { tap } from 'rxjs/operators';
 
 @Injectable()
@@ -24,11 +24,7 @@ export class EmployeeService {
     });
   }
 
-  negotiateContract(
-    employee: Employee,
-    timeOfContract: string,
-    newSalary: number
-  ) {
+  negotiateContract(employee: Employee, timeOfContract: string, newSalary: number) {
     return this.http
       .post('/api/employee' + '/negotiateContract.php', {
         employeeId: employee.id,
@@ -101,13 +97,10 @@ export class EmployeeService {
   }
 
   getUnemployedEmployees(jobName: string): Observable<Employee[]> {
-    return this.http.get<Employee[]>(
-      '/api/employee' + '/getUnemployedEmployees.php',
-      {
-        params: {
-          jobName: jobName,
-        },
-      }
-    );
+    return this.http.get<Employee[]>('/api/employee' + '/getUnemployedEmployees.php', {
+      params: {
+        jobName: jobName,
+      },
+    });
   }
 }

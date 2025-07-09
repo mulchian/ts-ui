@@ -1,7 +1,7 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { CustomPreloadingStrategy } from './services/custom-preloading.strategy';
-import { authGuard, authGuardChild } from './services/auth.guard';
+import { CustomPreloadingStrategy } from './core/services/custom-preloading.strategy';
+import { authGuard, authGuardChild } from './core/services/auth.guard';
 
 const routes: Routes = [
   {
@@ -18,35 +18,30 @@ const routes: Routes = [
   },
   {
     path: 'user',
-    loadChildren: () =>
-      import('./features/user/user.module').then(m => m.UserModule),
+    loadChildren: () => import('./features/user/user.module').then(m => m.UserModule),
   },
   {
     path: 'office',
-    loadChildren: () =>
-      import('./features/office/office.module').then(m => m.OfficeModule),
+    loadChildren: () => import('./features/office/office.module').then(m => m.OfficeModule),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
     runGuardsAndResolvers: 'always',
   },
   {
     path: 'finances',
-    loadChildren: () =>
-      import('./features/finance/finance.module').then(m => m.FinanceModule),
+    loadChildren: () => import('./features/finance/finance.module').then(m => m.FinanceModule),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
   },
   {
     path: 'team',
-    loadChildren: () =>
-      import('./features/team/team.module').then(m => m.TeamModule),
+    loadChildren: () => import('./features/team/team.module').then(m => m.TeamModule),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
   },
   {
     path: 'league',
-    loadChildren: () =>
-      import('./features/team/team.module').then(m => m.TeamModule),
+    loadChildren: () => import('./features/team/team.module').then(m => m.TeamModule),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
   },

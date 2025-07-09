@@ -1,15 +1,11 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { EmployeeService } from '../../../features/office/services/employee.service';
-import { Employee } from '../../../model/employee';
-import { Job } from '../../../model/job';
-import { TeamService } from '../../../features/team/services/team.service';
+import { Employee } from '../../../core/model/employee';
+import { Job } from '../../../core/model/job';
+import { TeamService } from '../../../core/services/team.service';
 import { first, Observable } from 'rxjs';
-import { Team } from '../../../model/team';
+import { Team } from '../../../core/model/team';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared.module';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -40,7 +36,7 @@ import { LoadingService } from '../../loading/loading.service';
     MatCardModule,
     MatProgressSpinnerModule,
   ],
-  providers: [EmployeeService, TeamService],
+  providers: [EmployeeService],
 })
 export class ContractModalComponent implements OnInit, OnDestroy {
   job: Job;
@@ -114,13 +110,12 @@ export class ContractModalComponent implements OnInit, OnDestroy {
   }
 
   formatSalaryLabel(value: number): string {
-    const formatter = new Intl.NumberFormat('de-DE', {
+    return new Intl.NumberFormat('de-DE', {
       style: 'currency',
       currency: 'EUR',
       maximumFractionDigits: 0,
       minimumFractionDigits: 0,
-    });
-    return `${formatter.format(value)}`;
+    }).format(value);
   }
 
   onDismiss(reload: boolean) {
@@ -157,9 +152,7 @@ export class ContractModalComponent implements OnInit, OnDestroy {
 
   private calcContractDetails() {
     this.signingBonus =
-      Math.floor(
-        this.employee.marketValue * (0.05 * Number(this.timeOfContract))
-      ) * Number(this.timeOfContract);
+      Math.floor(this.employee.marketValue * (0.05 * Number(this.timeOfContract))) * Number(this.timeOfContract);
     this.totalOffer = this.newSalary + this.signingBonus;
 
     this.newMoral = Math.round((this.newSalary / this.maxSalary) * 100) / 100;

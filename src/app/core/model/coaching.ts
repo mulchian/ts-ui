@@ -4,7 +4,7 @@ export interface Coaching {
   gameplanNr: number;
   teamPart: string;
   down: string;
-  playRange: string;
+  playrange: string;
   gameplay1: string;
   gameplay2: string;
   rating: number;

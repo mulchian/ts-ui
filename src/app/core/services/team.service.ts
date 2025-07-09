@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
-import { Team } from '../../../model/team';
-import { AuthStore } from '../../../services/auth.store';
+import { Team } from '../model/team';
+import { AuthStore } from './auth.store';
 
 @Injectable()
 export class TeamService {
@@ -46,6 +46,7 @@ export class TeamService {
   }
 
   updateTeam() {
+    console.log('Update team');
     this.subject.next(null);
     this.loadTeam();
   }

@@ -1,0 +1,64 @@
+<div class="modal-header">
+  <h2>{{ modalHeader }}</h2>
+</div>
+<div class="grid grid-cols-3 gap-4 px-4">
+  <div class="list-container">
+    <h2 class="column-header">Freie Spieler</h2>
+    <div
+      cdkDropList
+      #playerList="cdkDropList"
+      [cdkDropListData]="players"
+      [cdkDropListConnectedTo]="[starterList, backupList]"
+      class="drop-list"
+      (cdkDropListDropped)="drop($event)">
+      <div class="player-box" *ngFor="let player of players" cdkDrag [cdkDragData]="player">
+        <app-player-card-modal
+          [position]="{ position: lineupPosition, description: '', countStarter: 0, countBackup: 0 }"
+          [player]="player"
+          [showChangeButton]="false"
+          [isSpecialTeam]="isSpecialTeam()"></app-player-card-modal>
+      </div>
+    </div>
+  </div>
+  <div class="list-container">
+    <h2 class="column-header">Starter</h2>
+    <div
+      cdkDropList
+      #starterList="cdkDropList"
+      [cdkDropListData]="starters"
+      [cdkDropListConnectedTo]="[playerList, backupList]"
+      class="drop-list"
+      (cdkDropListDropped)="drop($event)"
+      [cdkDropListEnterPredicate]="maxStartersPredicate">
+      <div class="player-box" *ngFor="let player of starters" cdkDrag [cdkDragData]="player">
+        <app-player-card-modal
+          [position]="{ position: lineupPosition, description: '', countStarter: 0, countBackup: 0 }"
+          [player]="player"
+          [showChangeButton]="false"
+          [isSpecialTeam]="isSpecialTeam()"></app-player-card-modal>
+      </div>
+    </div>
+  </div>
+  <div class="list-container">
+    <h2 class="column-header">Back Ups</h2>
+    <div
+      cdkDropList
+      #backupList="cdkDropList"
+      [cdkDropListData]="backups"
+      [cdkDropListConnectedTo]="[playerList, starterList]"
+      class="drop-list"
+      (cdkDropListDropped)="drop($event)"
+      [cdkDropListEnterPredicate]="maxBackupsPredicate">
+      <div class="player-box" *ngFor="let player of backups" cdkDrag [cdkDragData]="player">
+        <app-player-card-modal
+          [position]="{ position: lineupPosition, description: '', countStarter: 0, countBackup: 0 }"
+          [player]="player"
+          [showChangeButton]="false"
+          [isSpecialTeam]="isSpecialTeam()"></app-player-card-modal>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="flex flex-row justify-end p-2">
+  <button mat-raised-button color="primary" (click)="saveLineup()">SPEICHERN</button>
+</div>

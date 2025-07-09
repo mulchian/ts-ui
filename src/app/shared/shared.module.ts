@@ -14,12 +14,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
-  declarations: [
-    LoadingComponent,
-    TeamChipSetComponent,
-    OverlayLoadingComponent,
-    ConfirmModalComponent,
-  ],
+  declarations: [LoadingComponent, TeamChipSetComponent, OverlayLoadingComponent, ConfirmModalComponent],
   imports: [
     CommonModule,
     MatProgressSpinnerModule,
@@ -31,11 +26,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatTableModule,
     MatCheckboxModule,
   ],
-  exports: [
-    LoadingComponent,
-    OverlayLoadingComponent,
-    TeamChipSetComponent,
-    ConfirmModalComponent,
-  ],
+  exports: [LoadingComponent, OverlayLoadingComponent, TeamChipSetComponent, ConfirmModalComponent],
 })
 export class SharedModule {}

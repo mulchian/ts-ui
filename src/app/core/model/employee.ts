@@ -10,7 +10,7 @@ export interface Employee {
   ovr: number;
   talent: number;
   experience: number;
-  morale: number;
+  moral: number;
   unemployedSeasons: number;
   marketValue: number;
   salary: string;

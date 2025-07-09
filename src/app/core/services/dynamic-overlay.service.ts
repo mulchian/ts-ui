@@ -19,7 +19,7 @@ import {
   RendererFactory2,
 } from '@angular/core';
 import { DynamicOverlayContainerService } from './dynamic-overlay-container.service';
-import { OverlayLoadingComponent } from '../shared/loading/overlay-loading/overlay-loading.component';
+import { OverlayLoadingComponent } from '../../shared/loading/overlay-loading/overlay-loading.component';
 
 @Injectable({
   providedIn: 'root',
@@ -65,10 +65,7 @@ export class DynamicOverlayService extends Overlay {
   createWithDefaultConfig(containerElement: HTMLElement): OverlayRef {
     this.setContainerElement(containerElement);
     return super.create({
-      positionStrategy: this.position()
-        .global()
-        .centerHorizontally()
-        .centerVertically(),
+      positionStrategy: this.position().global().centerHorizontally().centerVertically(),
       hasBackdrop: true,
     });
   }

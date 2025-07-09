@@ -1,0 +1,71 @@
+<ng-container *ngIf="team" [ngSwitch]="teamPart">
+  <ng-container *ngSwitchCase="'offense'">
+    <div class="flex flex-row m-4 gap-4 justify-center">
+      <div *ngFor="let position of offensePositions[1]" class="basis-1/5">
+        <app-player-card-modal
+          [position]="getPosition(position)"
+          [player]="getPlayerForPosition(position)"
+          [activeLineupPos]="activeLineupPos"
+          (openChangePositionModal)="openPositionModal($event)"></app-player-card-modal>
+      </div>
+    </div>
+    <div class="flex flex-row m-4 gap-4 justify-center">
+      <div *ngFor="let position of offensePositions[2]" class="basis-1/5">
+        <app-player-card-modal
+          [position]="getPosition(position)"
+          [player]="getPlayerForPosition(position)"
+          [activeLineupPos]="activeLineupPos"
+          (openChangePositionModal)="openPositionModal($event)"></app-player-card-modal>
+      </div>
+    </div>
+    <div class="flex flex-row m-4 gap-4 justify-center">
+      <div *ngFor="let position of offensePositions[3]" class="basis-1/5">
+        <app-player-card-modal
+          [position]="getPosition(position)"
+          [player]="getPlayerForPosition(position)"
+          [activeLineupPos]="activeLineupPos"
+          (openChangePositionModal)="openPositionModal($event)"></app-player-card-modal>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'defense'">
+    <div class="flex flex-row m-4 gap-4 justify-center">
+      <div *ngFor="let position of defensePositions[1]" class="basis-1/5">
+        <app-player-card-modal
+          [position]="getPosition(position)"
+          [player]="getPlayerForPosition(position)"
+          [activeLineupPos]="activeLineupPos"
+          (openChangePositionModal)="openPositionModal($event)"></app-player-card-modal>
+      </div>
+    </div>
+    <div class="flex flex-row m-4 gap-4 justify-center">
+      <div *ngFor="let position of defensePositions[2]" class="basis-1/5">
+        <app-player-card-modal
+          [position]="getPosition(position)"
+          [player]="getPlayerForPosition(position)"
+          [activeLineupPos]="activeLineupPos"
+          (openChangePositionModal)="openPositionModal($event)"></app-player-card-modal>
+      </div>
+    </div>
+    <div class="flex flex-row m-4 gap-4 justify-center">
+      <div *ngFor="let position of defensePositions[3]" class="basis-1/5">
+        <app-player-card-modal
+          [position]="getPosition(position)"
+          [player]="getPlayerForPosition(position)"
+          [activeLineupPos]="activeLineupPos"
+          (openChangePositionModal)="openPositionModal($event)"></app-player-card-modal>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'special'">
+    <div class="flex flex-row m-4 gap-4 justify-center">
+      <div *ngFor="let position of specialPositions" class="basis-1/5">
+        <app-player-card-modal
+          [position]="getPosition(position)"
+          [player]="getPlayerForPosition(position)"
+          [isSpecialTeam]="true"
+          (openChangePositionModal)="openPositionModal($event)"></app-player-card-modal>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>

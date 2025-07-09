@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AuthStore } from '../../../services/auth.store';
+import { AuthStore } from './auth.store';
 import { BehaviorSubject, debounceTime, Observable } from 'rxjs';
-import { User } from '../../../model/user';
-import { Stadium } from '../../../model/stadium';
-import { TeamService } from '../../team/services/team.service';
+import { User } from '../model/user';
+import { Stadium } from '../model/stadium';
+import { TeamService } from './team.service';
 
 @Injectable()
 export class StadiumService {

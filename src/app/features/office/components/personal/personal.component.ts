@@ -1,18 +1,12 @@
-import {
-  AfterViewChecked,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewChecked, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgxMasonryComponent, NgxMasonryOptions } from 'ngx-masonry';
-import { Building } from '../../../../model/building';
+import { Building } from '../../../../core/model/building';
 import { first, Observable, Subject, Subscription, takeUntil } from 'rxjs';
-import { Employee } from '../../../../model/employee';
-import { Job } from '../../../../model/job';
+import { Employee } from '../../../../core/model/employee';
+import { Job } from '../../../../core/model/job';
 import { JobService } from '../../services/job.service';
 import { EmployeeService } from '../../services/employee.service';
-import { StadiumService } from '../../services/stadium.service';
+import { StadiumService } from '../../../../core/services/stadium.service';
 import { LoadingService } from '../../../../shared/loading/loading.service';
 import { OverlayRef } from '@angular/cdk/overlay';
 import { TippyInstance } from '@ngneat/helipopper';
@@ -67,22 +61,16 @@ export class PersonalComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.stadiumService.stadium$
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(stadium => {
-        if (stadium) {
-          this.officeBuilding = stadium.buildings.find(
-            building => building.name === 'Bürogebäude'
-          );
-        }
-      });
-    this.employeeService.employees$
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(employees => {
-        if (employees) {
-          this.employees = employees;
-        }
-      });
+    this.stadiumService.stadium$.pipe(takeUntil(this.unsubscribe)).subscribe(stadium => {
+      if (stadium) {
+        this.officeBuilding = stadium.buildings.find(building => building.name === 'Bürogebäude');
+      }
+    });
+    this.employeeService.employees$.pipe(takeUntil(this.unsubscribe)).subscribe(employees => {
+      if (employees) {
+        this.employees = employees;
+      }
+    });
 
     this.rowHeight = window.innerWidth <= 1150 ? '3:1' : '4:1';
   }
@@ -114,9 +102,7 @@ export class PersonalComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   onViewportAction({ target, visible }: { target: Element; visible: boolean }) {
     if (visible) {
-      const overlayRef = this.loadingService.loadingOnInOverlay(
-        <HTMLElement>target
-      );
+      const overlayRef = this.loadingService.loadingOnInOverlay(<HTMLElement>target);
       this.overlayRefs.push(overlayRef);
     }
   }
@@ -135,9 +121,7 @@ export class PersonalComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   getEmployeeForJob(job: Job): Employee | undefined {
-    return this.employees.find(
-      employee => employee != null && employee.job.id === job.id
-    );
+    return this.employees.find(employee => employee != null && employee.job.id === job.id);
   }
 
   hasFreePositions(): boolean {

@@ -18,13 +18,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
 import { SharedModule } from './shared/shared.module';
-import { TeamService } from './features/team/services/team.service';
-import { StadiumService } from './features/office/services/stadium.service';
-import {
-  popperVariation,
-  provideTippyConfig,
-  tooltipVariation,
-} from '@ngneat/helipopper';
+import { TeamService } from './core/services/team.service';
+import { StadiumService } from './core/services/stadium.service';
+import { popperVariation, provideTippyConfig, tooltipVariation } from '@ngneat/helipopper';
 
 @NgModule({
   declarations: [AppComponent],

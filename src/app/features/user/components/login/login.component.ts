@@ -1,12 +1,7 @@
 import { Component } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  NonNullableFormBuilder,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthStore } from '../../../../services/auth.store';
+import { AuthStore } from '../../../../core/services/auth.store';
 import { catchError, EMPTY } from 'rxjs';
 import { VALIDATOR_PATTERNS } from '../../../../shared/forms/validators/validator-patterns';
 
@@ -28,14 +23,7 @@ export class LoginComponent {
   ) {
     this.form = this.formBuilder.group({
       username: ['', [Validators.required]],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(VALIDATOR_PATTERNS.password),
-        ],
-      ],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(VALIDATOR_PATTERNS.password)]],
     });
   }
 
@@ -76,9 +64,6 @@ export class LoginComponent {
   }
 
   isLongErrorMessage(formControl: FormControl) {
-    return (
-      formControl.hasError('pattern') &&
-      !(formControl.hasError('minlength') || formControl.hasError('required'))
-    );
+    return formControl.hasError('pattern') && !(formControl.hasError('minlength') || formControl.hasError('required'));
   }
 }

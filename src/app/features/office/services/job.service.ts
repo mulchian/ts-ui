@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Job } from '../../../model/job';
+import { Job } from '../../../core/model/job';
 import { HttpClient } from '@angular/common/http';
 import { shareReplay } from 'rxjs/operators';
 

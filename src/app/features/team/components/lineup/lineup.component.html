@@ -1,0 +1,56 @@
+<mat-grid-list cols="5" rowHeight="5:1">
+  <mat-grid-tile [colspan]="1">
+    <button
+      mat-raised-button
+      color="primary"
+      [tp]="tplAutoLineup"
+      [tpPlacement]="'bottom'"
+      #tpAutoLineup="tippy"
+      tpVariation="popperBorder">
+      Auto-Aufstellung
+    </button>
+    <ng-template #tplAutoLineup let-hide>
+      <app-confirm-modal
+        [title]="'Auto-Aufstellung'"
+        [message]="'Möchtest du dein Team automatisch aufstellen? Dabei gehen alle Einstellungen verloren.'"
+        [confirmBtnText]="'Ja'"
+        [tooltip]="tpAutoLineup"
+        (confirm)="autoLineup()">
+      </app-confirm-modal>
+    </ng-template>
+  </mat-grid-tile>
+  <mat-grid-tile [colspan]="2">
+    <mat-button-toggle-group [(ngModel)]="teamPart" name="teamPart" aria-label="Team Part">
+      <mat-button-toggle value="offense">Offensive</mat-button-toggle>
+      <mat-button-toggle value="defense">Defensive</mat-button-toggle>
+      <mat-button-toggle value="special">Special Teams</mat-button-toggle>
+    </mat-button-toggle-group>
+  </mat-grid-tile>
+  <mat-grid-tile *ngIf="teamPart === 'offense'" [colspan]="2">
+    <mat-label ngClass="label-before-slide">TE</mat-label>
+    <mat-slide-toggle (change)="updateLineupOff($event)" [checked]="activeLineupOff === 'FB'">FB</mat-slide-toggle>
+  </mat-grid-tile>
+  <mat-grid-tile *ngIf="teamPart === 'defense'" [colspan]="2">
+    <mat-label ngClass="label-before-slide">NT</mat-label>
+    <mat-slide-toggle (change)="updateLineupDef($event)" [checked]="activeLineupDef === 'MLB'">MLB</mat-slide-toggle>
+  </mat-grid-tile>
+</mat-grid-list>
+<ng-container *ngIf="team" [ngSwitch]="teamPart">
+  <app-lineup-team-part
+    *ngSwitchCase="'offense'"
+    [team]="team"
+    [teamPart]="teamPart"
+    [activeLineupPos]="activeLineupOff"
+    (openChangePositionModal)="openChangePositionModal($event)"></app-lineup-team-part>
+  <app-lineup-team-part
+    *ngSwitchCase="'defense'"
+    [team]="team"
+    [teamPart]="teamPart"
+    [activeLineupPos]="activeLineupDef"
+    (openChangePositionModal)="openChangePositionModal($event)"></app-lineup-team-part>
+  <app-lineup-team-part
+    *ngSwitchCase="'special'"
+    [team]="team"
+    [teamPart]="teamPart"
+    (openChangePositionModal)="openChangePositionModal($event)"></app-lineup-team-part>
+</ng-container>

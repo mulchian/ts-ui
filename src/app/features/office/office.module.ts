@@ -16,7 +16,6 @@ import { TippyDirective } from '@ngneat/helipopper';
 import { InViewportDirective } from 'ng-in-viewport';
 import { MatDialogModule } from '@angular/material/dialog';
 import { A11yModule } from '@angular/cdk/a11y';
-import { StadiumService } from './services/stadium.service';
 
 @NgModule({
   declarations: [PersonalComponent, OfficeComponent, FriendlyComponent],
@@ -35,6 +34,6 @@ import { StadiumService } from './services/stadium.service';
     MatButtonModule,
   ],
   exports: [],
-  providers: [EmployeeService, JobService, StadiumService],
+  providers: [EmployeeService, JobService],
 })
 export class OfficeModule {}

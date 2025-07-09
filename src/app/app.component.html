@@ -1,9 +1,7 @@
 <mat-toolbar color="primary" class="flex-container">
   <mat-toolbar-row>
     <div class="logo" routerLink="/home">
-      <img
-        alt="Touchdown Stars"
-        src="{{ '/assets/logo_transparent_inverted.png' }}" />
+      <img alt="Touchdown Stars" src="{{ '/assets/logo_transparent_inverted.png' }}" />
       Touchdown Stars
     </div>
 
@@ -24,7 +22,7 @@
         matTooltip="Büro"
         routerLink="/office"
         routerLinkActive="menu-item-active"
-        [routerLinkActiveOptions]="{ exact: true }">
+        [routerLinkActiveOptions]="{ exact: false }">
         <mat-icon class="menu-icon">business_center</mat-icon>
       </a>
       <a
@@ -34,7 +32,7 @@
         matTooltip="Finanzen"
         routerLink="/finances"
         routerLinkActive="menu-item-active"
-        [routerLinkActiveOptions]="{ exact: true }">
+        [routerLinkActiveOptions]="{ exact: false }">
         <mat-icon class="menu-icon">wallet</mat-icon>
       </a>
       <a
@@ -44,7 +42,7 @@
         matTooltip="Team"
         routerLink="/team"
         routerLinkActive="menu-item-active"
-        [routerLinkActiveOptions]="{ exact: true }">
+        [routerLinkActiveOptions]="{ exact: false }">
         <mat-icon class="menu-icon">groups</mat-icon>
       </a>
       <a
@@ -54,19 +52,14 @@
         matTooltip="Liga"
         routerLink="/league"
         routerLinkActive="menu-item-active"
-        [routerLinkActiveOptions]="{ exact: true }">
+        [routerLinkActiveOptions]="{ exact: false }">
         <mat-icon class="menu-icon">table_chart</mat-icon>
       </a>
     </div>
     <span class="flex-span hide-xs"></span>
 
     <div class="toolbar-tools">
-      <button
-        *ngIf="loggedIn"
-        class="menu-item"
-        mat-icon-button
-        matTooltip="Logout"
-        (click)="logout()">
+      <button *ngIf="loggedIn" class="menu-item" mat-icon-button matTooltip="Logout" (click)="logout()">
         <mat-icon class="menu-icon">logout</mat-icon>
       </button>
       <button
@@ -81,31 +74,21 @@
       </button>
     </div>
 
-    <button
-      mat-button
-      class="menu-button"
-      *ngIf="loggedIn"
-      (click)="sidenav.toggle()">
+    <button mat-button class="menu-button" *ngIf="loggedIn" (click)="sidenav.toggle()">
       <mat-icon class="menu-icon">menu</mat-icon>
     </button>
   </mat-toolbar-row>
   <mat-toolbar-row>
-    <span class="flex-span-big"></span>
+    <span class="flex-span-big hide-md hide-sm hide-xs"></span>
     <mat-chip-set *ngIf="isSpecialPath('office')" class="flex-chip-set hide-xs">
-      <mat-chip [routerLink]="['office', 'personal']" routerLinkActive="active">
-        Personal
-      </mat-chip>
-      <mat-chip [routerLink]="['office', 'friendly']" routerLinkActive="active">
-        Freundschaftsspiel
-      </mat-chip>
+      <mat-chip [routerLink]="['office', 'personal']" routerLinkActive="active"> Personal </mat-chip>
+      <mat-chip [routerLink]="['office', 'friendly']" routerLinkActive="active"> Freundschaftsspiel </mat-chip>
     </mat-chip-set>
     <mat-chip-set *ngIf="isSpecialPath('team')" class="flex-chip-set hide-xs">
-      <mat-chip [routerLink]="['team', 'roster']" routerLinkActive="active">
-        Roster
-      </mat-chip>
-      <mat-chip [routerLink]="['team', 'contracts']" routerLinkActive="active">
-        Verträge
-      </mat-chip>
+      <mat-chip [routerLink]="['team', 'roster']" routerLinkActive="active"> Roster </mat-chip>
+      <mat-chip [routerLink]="['team', 'contracts']" routerLinkActive="active"> Verträge </mat-chip>
+      <mat-chip [routerLink]="['team', 'lineup']" routerLinkActive="active"> Aufstellung </mat-chip>
+      <mat-chip [routerLink]="['team', 'coaching']" routerLinkActive="active"> Coaching </mat-chip>
     </mat-chip-set>
     <!-- hier dann money stuff nach rechts -->
     <span class="flex-span hide-xs hide-sm"></span>

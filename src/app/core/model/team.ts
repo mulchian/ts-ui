@@ -7,6 +7,7 @@ import { Employee } from './employee';
 import { Conference } from './conference';
 import { Division } from './division';
 import { Coaching } from './coaching';
+import { CoachingName } from './coachingName';
 
 export interface Team {
   id: number;
@@ -23,13 +24,13 @@ export interface Team {
   fanbase: Fanbase | null;
   user: User;
   stadium: Stadium;
-  players: Player[];
+  players: Record<number, Player>;
   employees: Employee[];
   league: League;
   conference: Conference;
   division: Division;
   coachings: Coaching[];
-  coachingNames: string[] | null;
+  coachingNames: CoachingName[] | null;
   teamPicture: [] | null;
   statistics: [];
   ovr: number;

@@ -1,14 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { VALIDATOR_PATTERNS } from '../../../../shared/forms/validators/validator-patterns';
 import { confirmValidator } from '../../../../shared/forms/validators/validator';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthStore } from '../../../../services/auth.store';
+import { AuthStore } from '../../../../core/services/auth.store';
 
 @Component({
   selector: 'app-change-password',
@@ -35,17 +30,10 @@ export class ChangePasswordComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       oldPassword: ['', []],
-      password: [
-        '',
-        [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.password)],
-      ],
+      password: ['', [Validators.required, Validators.pattern(VALIDATOR_PATTERNS.password)]],
       repeatPassword: [
         '',
-        [
-          Validators.required,
-          confirmValidator('password'),
-          Validators.pattern(VALIDATOR_PATTERNS.password),
-        ],
+        [Validators.required, confirmValidator('password'), Validators.pattern(VALIDATOR_PATTERNS.password)],
       ],
     });
     this.auth.isLoggedIn$.subscribe(loggedIn => {
@@ -56,10 +44,7 @@ export class ChangePasswordComponent implements OnInit {
   ngOnInit(): void {
     if (this.isLoggedIn) {
       // user is already logged in, so we show extra field for old password
-      this.oldPasswordControl.addValidators([
-        Validators.required,
-        Validators.pattern(VALIDATOR_PATTERNS.password),
-      ]);
+      this.oldPasswordControl.addValidators([Validators.required, Validators.pattern(VALIDATOR_PATTERNS.password)]);
       this.oldPasswordControl.updateValueAndValidity();
     } else {
       // read user and valid from the get params
@@ -122,11 +107,7 @@ export class ChangePasswordComponent implements OnInit {
   isLongErrorMessage(formControl: FormControl) {
     return (
       formControl.hasError('pattern') &&
-      !(
-        formControl.hasError('notmatch') ||
-        formControl.hasError('minlength') ||
-        formControl.hasError('required')
-      )
+      !(formControl.hasError('notmatch') || formControl.hasError('minlength') || formControl.hasError('required'))
     );
   }
 }

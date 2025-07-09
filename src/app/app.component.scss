@@ -98,7 +98,7 @@ mat-nav-list a.active {
 }
 
 /* Responsive-Anpassung für xs-Bildschirme */
-@media screen and (max-width: 599px) {
+@media screen and (max-width: 640px) {
   .hide-xs,
   .flex-span-big {
     display: none; /* Verstecke auf xs-Bildschirmen */
@@ -111,12 +111,22 @@ mat-nav-list a.active {
   }
 }
 
-@media screen and (max-width: 959px) {
+@media screen and (min-width: 641px) and (max-width: 768px) {
   .hide-sm,
   .flex-span-big {
     display: none;
   }
   .team-chip-set {
     flex: 1 0 60%; /* fxFlex.sm="1 0 60%" */
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .hide-lg,
+  .flex-span-big {
+    display: none;
+  }
+  .team-chip-set {
+    flex: 1 0 50%; /* fxFlex.sm="1 0 60%" */
   }
 }

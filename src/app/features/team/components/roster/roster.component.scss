@@ -6,7 +6,6 @@ table {
   display: flex;
   align-content: center;
   align-items: center;
-  height: 50px;
 }
 
 mat-progress-bar {
@@ -14,7 +13,9 @@ mat-progress-bar {
 }
 
 .mat-mdc-progress-bar {
-  --mdc-linear-progress-track-height: 30px !important;
+  --mdc-linear-progress-active-indicator-height: 1.5rem;
+  --mdc-linear-progress-track-height: 1.5rem;
+  --mdc-linear-progress-track-shape: 0;
 }
 
 .mat-column-position,
