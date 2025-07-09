@@ -3,7 +3,7 @@
     class="flex flex-1"
     [ngClass]="{
       'player-card': isActive,
-      'deactivated-card': !isActive
+      'deactivated-card': !isActive,
     }">
     <mat-card-header *ngIf="showChangeButton">
       <mat-card-title class="text-center">{{ getIsReturner() ? 'Returner' : position?.description }}</mat-card-title>

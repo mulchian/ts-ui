@@ -120,7 +120,7 @@ export class ContractModalComponent implements OnInit, OnDestroy {
 
   onDismiss(reload: boolean) {
     console.log('dismiss contract modal');
-    this.dialogRef && this.dialogRef.close(reload);
+    this.dialogRef.close(reload);
   }
 
   private updateSalaryRange() {
