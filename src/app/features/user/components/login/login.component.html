@@ -1,50 +1,39 @@
 <form [formGroup]="form" class="login-form">
   <mat-form-field>
     <mat-label>Username</mat-label>
-    <input
-      matInput
-      autocomplete="username"
-      type="text"
-      formControlName="username" />
+    <input autocomplete="username" formControlName="username" matInput type="text" />
     <span matTextPrefix><mat-icon>person</mat-icon></span>
   </mat-form-field>
 
   <mat-form-field
     [ngClass]="{
       'has-long-error-messages': isLongErrorMessage(passwordControl),
-      'has-short-error-message': !isLongErrorMessage(passwordControl)
+      'has-short-error-message': !isLongErrorMessage(passwordControl),
     }">
     <mat-label>Passwort</mat-label>
     <input
-      matInput
-      autocomplete="current-password"
       [type]="hidePassword ? 'password' : 'text'"
-      formControlName="password" />
+      autocomplete="current-password"
+      formControlName="password"
+      matInput />
     <span matTextPrefix><mat-icon>password</mat-icon></span>
     <button
-      type="button"
-      mat-icon-button
-      matSuffix
       (click)="hidePassword = !hidePassword"
       [attr.aria-label]="'Hide password'"
-      [attr.aria-pressed]="hidePassword">
+      [attr.aria-pressed]="hidePassword"
+      mat-icon-button
+      matSuffix
+      type="button">
       <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
-    <mat-error *ngIf="passwordControl.invalid">{{
-      getWrongPasswordMessage()
-    }}</mat-error>
+    <mat-error *ngIf="passwordControl.invalid">{{ getWrongPasswordMessage() }}</mat-error>
   </mat-form-field>
 
   <ng-container *ngIf="error">
     <span class="error">{{ error }}</span>
   </ng-container>
 
-  <button
-    class="login-button"
-    mat-raised-button
-    color="primary"
-    (click)="login()"
-    [disabled]="!form.valid">
+  <button (click)="login()" [disabled]="!form.valid" class="login-button" color="primary" mat-raised-button>
     Login
   </button>
 </form>

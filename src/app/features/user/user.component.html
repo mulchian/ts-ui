@@ -1,11 +1,7 @@
 <ng-container *ngIf="!showProfile()">
   <mat-card class="login-card">
     <div class="logo-container">
-      <img
-        class="logo"
-        mat-card-image
-        src="/assets/logo_transparent_inverted.png"
-        alt="Touchdown Stars" />
+      <img alt="Touchdown Stars" class="logo" mat-card-image src="/assets/logo_transparent_inverted.png" />
     </div>
     <mat-card-content>
       <router-outlet></router-outlet>
@@ -13,29 +9,29 @@
         <div class="actions-row">
           <button
             *ngIf="isLoginPath()"
-            mat-raised-button
-            color="primary"
+            [routerLinkActiveOptions]="{ exact: true }"
             [routerLink]="['forgot-password']"
-            routerLinkActive="menu-item-active"
-            [routerLinkActiveOptions]="{ exact: true }">
+            color="primary"
+            mat-raised-button
+            routerLinkActive="menu-item-active">
             Passwort vergessen
           </button>
           <button
             *ngIf="isLoginPath()"
-            mat-raised-button
-            color="primary"
+            [routerLinkActiveOptions]="{ exact: true }"
             [routerLink]="['register']"
-            routerLinkActive="menu-item-active"
-            [routerLinkActiveOptions]="{ exact: true }">
+            color="primary"
+            mat-raised-button
+            routerLinkActive="menu-item-active">
             Registrieren
           </button>
           <button
             *ngIf="!isLoginPath() && !loggedIn"
-            mat-raised-button
-            color="primary"
+            [routerLinkActiveOptions]="{ exact: true }"
             [routerLink]="['login']"
-            routerLinkActive="menu-item-active"
-            [routerLinkActiveOptions]="{ exact: true }">
+            color="primary"
+            mat-raised-button
+            routerLinkActive="menu-item-active">
             Zurück
           </button>
         </div>

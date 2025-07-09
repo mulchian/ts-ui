@@ -1,32 +1,28 @@
 <form [formGroup]="form" class="register-form">
   <mat-form-field>
     <mat-label>Username</mat-label>
-    <input
-      matInput
-      autocomplete="username"
-      type="text"
-      formControlName="username" />
+    <input autocomplete="username" formControlName="username" matInput type="text" />
     <span matTextPrefix><mat-icon>person</mat-icon></span>
   </mat-form-field>
 
   <mat-form-field
     [ngClass]="{
       'has-long-error-messages': isLongErrorMessage(passwordControl),
-      'has-short-error-message': !isLongErrorMessage(passwordControl)
+      'has-short-error-message': !isLongErrorMessage(passwordControl),
     }">
     <mat-label>Passwort</mat-label>
     <input
-      matInput
-      autocomplete="new-password"
       [type]="hidePassword ? 'password' : 'text'"
-      formControlName="password" />
+      autocomplete="new-password"
+      formControlName="password"
+      matInput />
     <span matTextPrefix><mat-icon>password</mat-icon></span>
     <button
-      mat-icon-button
-      matSuffix
       (click)="hidePassword = !hidePassword"
       [attr.aria-label]="'Hide password'"
-      [attr.aria-pressed]="hidePassword">
+      [attr.aria-pressed]="hidePassword"
+      mat-icon-button
+      matSuffix>
       <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
     <mat-error *ngIf="passwordControl.invalid">
@@ -37,24 +33,22 @@
   <mat-form-field
     [ngClass]="{
       'has-long-error-messages': isLongErrorMessage(repeatPasswordControl),
-      'has-short-error-message': !isLongErrorMessage(repeatPasswordControl)
+      'has-short-error-message': !isLongErrorMessage(repeatPasswordControl),
     }">
     <mat-label>Passwort wiederholen</mat-label>
     <input
-      matInput
-      autocomplete="new-password"
       [type]="hideConfirmPassword ? 'password' : 'text'"
-      formControlName="repeatPassword" />
+      autocomplete="new-password"
+      formControlName="repeatPassword"
+      matInput />
     <span matTextPrefix><mat-icon>password</mat-icon></span>
     <button
-      mat-icon-button
-      matSuffix
       (click)="hideConfirmPassword = !hideConfirmPassword"
       [attr.aria-label]="'Hide password'"
-      [attr.aria-pressed]="hideConfirmPassword">
-      <mat-icon>{{
-        hideConfirmPassword ? 'visibility_off' : 'visibility'
-      }}</mat-icon>
+      [attr.aria-pressed]="hideConfirmPassword"
+      mat-icon-button
+      matSuffix>
+      <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
     <mat-error *ngIf="repeatPasswordControl.invalid">
       {{ getWrongPasswordMessage(repeatPasswordControl) }}
@@ -63,10 +57,10 @@
 
   <mat-form-field
     [ngClass]="{
-      'has-short-error-message': emailControl.invalid
+      'has-short-error-message': emailControl.invalid,
     }">
     <mat-label>E-Mail</mat-label>
-    <input matInput autocomplete="email" type="text" formControlName="email" />
+    <input autocomplete="email" formControlName="email" matInput type="text" />
     <span matTextPrefix><mat-icon>email</mat-icon></span>
     <mat-error *ngIf="emailControl.invalid">
       {{ getWrongEmailMessage(emailControl) }}
@@ -75,14 +69,10 @@
 
   <mat-form-field
     [ngClass]="{
-      'has-short-error-message': repeatEmailControl.invalid
+      'has-short-error-message': repeatEmailControl.invalid,
     }">
     <mat-label>E-Mail wiederholen</mat-label>
-    <input
-      matInput
-      autocomplete="email"
-      type="text"
-      formControlName="repeatEmail" />
+    <input autocomplete="email" formControlName="repeatEmail" matInput type="text" />
     <span matTextPrefix><mat-icon>email</mat-icon></span>
     <mat-error *ngIf="repeatEmailControl.invalid">
       {{ getWrongEmailMessage(repeatEmailControl) }}
@@ -93,12 +83,7 @@
     <span class="error">{{ error }}</span>
   </ng-container>
 
-  <button
-    class="register-button"
-    mat-raised-button
-    color="primary"
-    (click)="register()"
-    [disabled]="!form.valid">
+  <button (click)="register()" [disabled]="!form.valid" class="register-button" color="primary" mat-raised-button>
     Registrieren
   </button>
 </form>

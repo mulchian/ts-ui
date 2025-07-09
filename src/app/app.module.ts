@@ -7,7 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -20,14 +20,14 @@ import { MatChipsModule } from '@angular/material/chips';
 import { SharedModule } from './shared/shared.module';
 import { TeamService } from './core/services/team.service';
 import { StadiumService } from './core/services/stadium.service';
-import { popperVariation, provideTippyConfig, tooltipVariation } from '@ngneat/helipopper';
+import { popperVariation, provideTippyConfig, tooltipVariation } from '@ngneat/helipopper/config';
 
 @NgModule({
   declarations: [AppComponent],
+  bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
     MatMenuModule,
     MatButtonModule,
     MatIconModule,
@@ -70,7 +70,7 @@ import { popperVariation, provideTippyConfig, tooltipVariation } from '@ngneat/h
         },
       },
     }),
+    provideHttpClient(withInterceptorsFromDi()),
   ],
-  bootstrap: [AppComponent],
 })
 export class AppModule {}
