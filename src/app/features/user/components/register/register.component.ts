@@ -16,7 +16,6 @@ import { MatInput } from '@angular/material/input';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
   imports: [CommonModule, MatFormFieldModule, ReactiveFormsModule, MatIcon, MatButton, MatInput, MatIconButton],
-  providers: [AuthStore],
 })
 export class RegisterComponent {
   private readonly formBuilder = inject(NonNullableFormBuilder);

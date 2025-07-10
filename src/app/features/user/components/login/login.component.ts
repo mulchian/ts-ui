@@ -15,7 +15,6 @@ import { MatInput } from '@angular/material/input';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   imports: [CommonModule, MatFormFieldModule, ReactiveFormsModule, MatIcon, MatButton, MatInput, MatIconButton],
-  providers: [AuthStore],
 })
 export class LoginComponent {
   private readonly formBuilder = inject(NonNullableFormBuilder);

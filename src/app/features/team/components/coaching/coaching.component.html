@@ -18,9 +18,28 @@
           }
         </mat-select>
       </mat-form-field>
-      <button mat-icon-button class="edit-button">
+      <button
+        mat-icon-button
+        class="edit-button"
+        [tp]="tplRename"
+        [tpPlacement]="'bottom'"
+        #tpChangeName="tippy"
+        tpVariation="popperBorder"
+      >
         <mat-icon class="menu-icon">edit</mat-icon>
       </button>
+      <ng-template #tplRename let-hide>
+        <app-input-modal
+          (confirm)="renameOffCoaching($event)"
+          [confirmBtnText]="'Speichern'"
+          [inputLabel]="'Gameplan-Name'"
+          [inputValue]="'Gameplan ' + selectedOffCoaching"
+          [inputType]="'text'"
+          [inputPlaceholder]="'Gameplan ' + selectedOffCoaching"
+          [title]="'Gameplan umbenennen'"
+          [tooltip]="tpChangeName">
+        </app-input-modal>
+      </ng-template>
     </div>
   } @else if (teamPart === 'defense') {
     <div class="flex justify-center items-center">

@@ -15,7 +15,6 @@ import { MatButton, MatIconButton } from '@angular/material/button';
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss'],
   imports: [CommonModule, MatFormFieldModule, ReactiveFormsModule, MatIcon, MatInput, MatIconButton, MatButton],
-  providers: [AuthStore],
 })
 export class ChangePasswordComponent implements OnInit {
   isLoggedIn = false;

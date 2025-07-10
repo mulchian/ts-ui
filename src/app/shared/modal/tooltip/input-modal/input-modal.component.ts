@@ -2,17 +2,17 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDivider } from '@angular/material/divider';
 import { TippyDirective } from '@ngneat/helipopper';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-input-modal',
   templateUrl: './input-modal.component.html',
   styleUrl: './input-modal.component.scss',
-  imports: [CommonModule, MatButton, MatCardModule, MatDivider, FormsModule, MatFormFieldModule, MatInput],
+  imports: [CommonModule, MatButton, MatCardModule, FormsModule, MatFormFieldModule, MatInput, MatDivider],
 })
 export class InputModalComponent {
   @Input() title!: string;

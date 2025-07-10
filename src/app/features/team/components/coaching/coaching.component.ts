@@ -136,18 +136,25 @@ export class CoachingComponent {
   renameDefCoaching(newName: string) {
     const coachingName = this.defCoachingNames.find(name => name.gameplanNr === this.selectedDefCoaching);
     if (coachingName) {
-      coachingName.name = newName;
-      this.coachingService.saveCoachingName(coachingName).subscribe(res => {
-        if (res.coachingNameSaved) {
-          console.log('Defensive coaching name saved: ' + res.coachingNameSaved);
-          this.teamService.updateTeam();
-          this.tpChangeName?.hide();
-        }
-      });
+      this.renameCoaching(coachingName, newName);
     }
   }
 
-  renameOffCoaching() {
-    // use selectedOffCoaching
+  renameOffCoaching(newName: string) {
+    const coachingName = this.offCoachingNames.find(name => name.gameplanNr === this.selectedOffCoaching);
+    if (coachingName) {
+      this.renameCoaching(coachingName, newName);
+    }
+  }
+
+  private renameCoaching(coachingName: CoachingName, newName: string) {
+    coachingName.name = newName;
+    this.coachingService.saveCoachingName(coachingName).subscribe(res => {
+      if (res.coachingNameSaved) {
+        console.log('New coaching name saved: ' + res.coachingNameSaved);
+        this.teamService.updateTeam();
+        this.tpChangeName?.hide();
+      }
+    });
   }
 }

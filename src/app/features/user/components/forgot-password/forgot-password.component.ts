@@ -14,7 +14,6 @@ import { MatInput } from '@angular/material/input';
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss'],
   imports: [CommonModule, MatFormFieldModule, ReactiveFormsModule, MatIcon, MatButton, MatInput],
-  providers: [AuthStore],
 })
 export class ForgotPasswordComponent {
   private readonly formBuilder = inject(NonNullableFormBuilder);

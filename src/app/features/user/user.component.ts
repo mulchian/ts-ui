@@ -10,7 +10,6 @@ import { MatButton } from '@angular/material/button';
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
   imports: [CommonModule, MatCardModule, RouterModule, MatButton],
-  providers: [AuthStore],
 })
 export class UserComponent {
   protected readonly auth = inject(AuthStore);

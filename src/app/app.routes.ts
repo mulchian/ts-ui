@@ -1,9 +1,7 @@
-import { RouterModule, Routes } from '@angular/router';
-import { NgModule } from '@angular/core';
-import { CustomPreloadingStrategy } from './core/services/custom-preloading.strategy';
+import { Routes } from '@angular/router';
 import { authGuard, authGuardChild } from './core/services/auth.guard';
 
-const routes: Routes = [
+export const APP_ROUTES: Routes = [
   {
     path: '',
     redirectTo: '/home',
@@ -51,18 +49,3 @@ const routes: Routes = [
     redirectTo: '/home',
   },
 ];
-
-@NgModule({
-  imports: [
-    RouterModule.forRoot(routes, {
-      preloadingStrategy: CustomPreloadingStrategy,
-      onSameUrlNavigation: 'reload',
-      scrollPositionRestoration: 'enabled',
-      paramsInheritanceStrategy: 'always', // having paramMap of all parent routes
-      // enableTracing: true,
-    }),
-  ],
-  exports: [RouterModule],
-  providers: [CustomPreloadingStrategy],
-})
-export class AppRoutingModule {}
