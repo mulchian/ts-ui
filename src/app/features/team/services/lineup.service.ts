@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { PositionLineup } from '../../../core/model/position-lineup';
+import { PositionPlayers } from '../../../core/model/position-players';
 import { Player } from '../../../core/model/player';
 import { Observable } from 'rxjs';
 
@@ -15,7 +15,7 @@ export class LineupService {
   }
 
   getLineup(position: string) {
-    return this.http.get<PositionLineup>(this.LINEUP_URL + '/getLineup.php', {
+    return this.http.get<PositionPlayers>(this.LINEUP_URL + '/getLineup.php', {
       params: {
         position: position,
       },

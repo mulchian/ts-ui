@@ -2,8 +2,6 @@ import { Component, inject } from '@angular/core';
 import { AuthStore } from './core/services/auth.store';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { TeamService } from './core/services/team.service';
-import { StadiumService } from './core/services/stadium.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -40,7 +38,6 @@ import { TeamChipSetComponent } from './shared/team-chip-set/team-chip-set.compo
     TeamChipSetComponent,
     NgOptimizedImage,
   ],
-  providers: [TeamService, StadiumService],
 })
 export class AppComponent {
   loggedIn = false;

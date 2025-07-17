@@ -17,6 +17,7 @@ export interface Team {
   salaryCap: number;
   credits: number;
   chemie: number;
+  gameplanGeneral: number;
   gameplanOff: number;
   gameplanDef: number;
   lineupOff: string;

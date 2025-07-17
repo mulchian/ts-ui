@@ -1,6 +1,6 @@
 export interface CoachingName {
   id: number;
-  teamId: number;
+  idTeam: number;
   gameplanNr: number;
   name: string;
   teamPart: string;

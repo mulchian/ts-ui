@@ -4,9 +4,11 @@ import { APP_ROUTES } from './app.routes';
 import { CustomPreloadingStrategy } from './core/services/custom-preloading.strategy';
 import { popperVariation, provideTippyConfig, provideTippyLoader, tooltipVariation } from '@ngneat/helipopper/config';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAnimations(),
     provideRouter(
       APP_ROUTES,
       withPreloading(CustomPreloadingStrategy),

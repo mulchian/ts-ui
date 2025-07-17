@@ -6,7 +6,7 @@ import { LineupService } from '../../../features/team/services/lineup.service';
 import { first, shareReplay } from 'rxjs';
 import { Player } from '../../../core/model/player';
 import { PlayerCardModalComponent } from '../player-card-modal/player-card-modal.component';
-import { PositionLineup } from '../../../core/model/position-lineup';
+import { PositionPlayers } from '../../../core/model/position-players';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
 import { LoadingService } from '../../loading/loading.service';
@@ -85,7 +85,7 @@ export class PositionChangeModalComponent implements OnInit {
     this.lineupService
       .getLineup(position)
       .pipe(shareReplay(1))
-      .subscribe((positionLineup: PositionLineup) => {
+      .subscribe((positionLineup: PositionPlayers) => {
         console.log('PositionLineup:', positionLineup);
         // add players to the drag-and-drop lists (players, starters, backups)
         // use lineupPosition to sort players into the correct lists

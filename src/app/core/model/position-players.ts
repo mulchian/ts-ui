@@ -1,6 +1,6 @@
 import { Player } from './player';
 
-export interface PositionLineup {
+export interface PositionPlayers {
   position: Position;
   players: Player[];
 }

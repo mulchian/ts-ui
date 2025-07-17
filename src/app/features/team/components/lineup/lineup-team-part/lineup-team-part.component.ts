@@ -5,6 +5,7 @@ import { Position } from '../../../../../core/model/position';
 import { CommonModule } from '@angular/common';
 import { PlayerCardModalComponent } from '../../../../../shared/modal/player-card-modal/player-card-modal.component';
 import { Player } from '../../../../../core/model/player';
+import { LineupPosition } from '../../../../../core/model/lineup-position';
 
 @Component({
   selector: 'app-lineup-team-part',
@@ -97,10 +98,4 @@ export class LineupTeamPartComponent {
     }
     return null;
   }
-}
-
-export interface LineupPosition {
-  position: string;
-  lineupPosition: string;
-  number: number;
 }

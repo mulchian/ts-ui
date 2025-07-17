@@ -46,7 +46,6 @@ export class TeamService {
 
   updateTeam() {
     console.log('Update team');
-    this.subject.next(null);
     this.loadTeam();
   }
 }

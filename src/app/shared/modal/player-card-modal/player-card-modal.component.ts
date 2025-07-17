@@ -5,8 +5,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { NgClass } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { LineupPosition } from '../../../features/team/components/lineup/lineup-team-part/lineup-team-part.component';
 import { Position } from '../../../core/model/position';
+import { LineupPosition } from '../../../core/model/lineup-position';
 
 @Component({
   selector: 'app-player-card-modal',

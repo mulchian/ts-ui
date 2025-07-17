@@ -1,6 +1,12 @@
 <div class="grid grid-cols-2">
   <div class="flex justify-center items-center">
-    <mat-button-toggle-group [(ngModel)]="teamPart" aria-label="Team Part" hideSingleSelectionIndicator name="teamPart">
+    <mat-button-toggle-group
+      (change)="updateTeamPart()"
+      [(ngModel)]="teamPart"
+      aria-label="Team Part"
+      hideSingleSelectionIndicator
+      name="teamPart"
+    >
       <mat-button-toggle value="general">General</mat-button-toggle>
       <mat-button-toggle value="offense">Offensive</mat-button-toggle>
       <mat-button-toggle value="defense">Defensive</mat-button-toggle>
@@ -10,7 +16,7 @@
     <div class="flex justify-center items-center">
       <mat-form-field subscriptSizing="dynamic">
         <mat-label>Offense Gameplan</mat-label>
-        <mat-select [(value)]="selectedOffCoaching">
+        <mat-select [value]="selectedOffCoaching" (selectionChange)="onCoachingChange($event, 'offense')">
           @for (coachingName of offCoachingNames; track coachingName.gameplanNr) {
             <mat-option [value]="coachingName.gameplanNr">
               {{ coachingName.name }}
@@ -20,7 +26,23 @@
       </mat-form-field>
       <button
         mat-icon-button
-        class="edit-button"
+        class="option-button"
+        (click)="addGameplan('offense')"
+      >
+        <mat-icon class="menu-icon">add_2</mat-icon>
+      </button>
+      @if (offCoachingNames.length > 1) {
+        <button
+          mat-icon-button
+          class="option-button"
+          (click)="removeSelectedGameplan('offense')"
+        >
+          <mat-icon class="menu-icon">remove</mat-icon>
+        </button>
+      }
+      <button
+        mat-icon-button
+        class="option-button"
         [tp]="tplRename"
         [tpPlacement]="'bottom'"
         #tpChangeName="tippy"
@@ -33,9 +55,9 @@
           (confirm)="renameOffCoaching($event)"
           [confirmBtnText]="'Speichern'"
           [inputLabel]="'Gameplan-Name'"
-          [inputValue]="'Gameplan ' + selectedOffCoaching"
+          [inputValue]="getSelectedCoachingName('offense')"
           [inputType]="'text'"
-          [inputPlaceholder]="'Gameplan ' + selectedOffCoaching"
+          [inputPlaceholder]="getSelectedCoachingName('offense')"
           [title]="'Gameplan umbenennen'"
           [tooltip]="tpChangeName">
         </app-input-modal>
@@ -45,7 +67,7 @@
     <div class="flex justify-center items-center">
       <mat-form-field subscriptSizing="dynamic">
         <mat-label>Defensive Gameplan</mat-label>
-        <mat-select [(value)]="selectedDefCoaching">
+        <mat-select [value]="selectedDefCoaching" (selectionChange)="onCoachingChange($event, 'defense')">
           @for (coachingName of defCoachingNames; track coachingName.gameplanNr) {
             <mat-option [value]="coachingName.gameplanNr">
               {{ coachingName.name }}
@@ -55,7 +77,23 @@
       </mat-form-field>
       <button
         mat-icon-button
-        class="edit-button"
+        class="option-button"
+        (click)="addGameplan('defense')"
+      >
+        <mat-icon class="menu-icon">add_2</mat-icon>
+      </button>
+      @if (defCoachingNames.length > 1) {
+        <button
+          mat-icon-button
+          class="option-button"
+          (click)="removeSelectedGameplan('defense')"
+        >
+          <mat-icon class="menu-icon">remove</mat-icon>
+        </button>
+      }
+      <button
+        mat-icon-button
+        class="option-button"
         [tp]="tplRename"
         [tpPlacement]="'bottom'"
         #tpChangeName="tippy"
@@ -68,9 +106,60 @@
           (confirm)="renameDefCoaching($event)"
           [confirmBtnText]="'Speichern'"
           [inputLabel]="'Gameplan-Name'"
-          [inputValue]="'Gameplan ' + selectedDefCoaching"
+          [inputValue]="getSelectedCoachingName('defense')"
           [inputType]="'text'"
-          [inputPlaceholder]="'Gameplan ' + selectedDefCoaching"
+          [inputPlaceholder]="getSelectedCoachingName('defense')"
+          [title]="'Gameplan umbenennen'"
+          [tooltip]="tpChangeName">
+        </app-input-modal>
+      </ng-template>
+    </div>
+  } @else if (teamPart === 'general') {
+    <div class="flex justify-center items-center">
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label>General Gameplan</mat-label>
+        <mat-select [value]="selectedGeneralCoaching" (selectionChange)="onCoachingChange($event, 'general')">
+          @for (coachingName of generalCoachingNames; track coachingName.gameplanNr) {
+            <mat-option [value]="coachingName.gameplanNr">
+              {{ coachingName.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button
+        mat-icon-button
+        class="option-button"
+        (click)="addGameplan('general')"
+      >
+        <mat-icon class="menu-icon">add_2</mat-icon>
+      </button>
+      @if (generalCoachingNames.length > 1) {
+        <button
+          mat-icon-button
+          class="option-button"
+          (click)="removeSelectedGameplan('general')"
+        >
+          <mat-icon class="menu-icon">remove</mat-icon>
+        </button>
+      }
+      <button
+        mat-icon-button
+        class="option-button"
+        [tp]="tplRename"
+        [tpPlacement]="'bottom'"
+        #tpChangeName="tippy"
+        tpVariation="popperBorder"
+      >
+        <mat-icon class="menu-icon">edit</mat-icon>
+      </button>
+      <ng-template #tplRename let-hide>
+        <app-input-modal
+          (confirm)="renameGeneralCoaching($event)"
+          [confirmBtnText]="'Speichern'"
+          [inputLabel]="'Gameplan-Name'"
+          [inputValue]="getSelectedCoachingName('general')"
+          [inputType]="'text'"
+          [inputPlaceholder]="getSelectedCoachingName('general')"
           [title]="'Gameplan umbenennen'"
           [tooltip]="tpChangeName">
         </app-input-modal>
@@ -82,29 +171,130 @@
 @if (team) {
   @switch (teamPart) {
     @case ('general') {
-      <div class="grid grid-cols-1 grid-rows-1 gap-4 p-4">
-        <mat-card></mat-card>
+      <div class="grid lg:grid-cols-4 grid-cols-2 grid-flow-row gap-4 p-4">
+        <div>
+          <!-- Field Goal Versuch bis -->
+          <!-- here we can use a slider from 0 to 65 Yards -->
+          <!-- 0 Yards means -> never attempt a field goal -->
+          <mat-card>
+            <mat-card-header class="justify-center !pb-4">
+              <mat-card-title>Field Goal Versuch bis</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="flex justify-center items-center p-4">
+                <mat-slider
+                  class="always-on-indicator whitespace-nowrap"
+                  min="0"
+                  max="65"
+                  step="1"
+                  discrete
+                  showTickMarks
+                  [displayWith]="formatYardsLabel">
+                  <input
+                    matSliderThumb
+                    [ngModel]="fieldGoalRange$ | async"
+                    (ngModelChange)="subject.next('' + $event)"
+                  />
+                </mat-slider>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div>
+          <!-- 2-Point Conversion -->
+          @let twoPtConversion = filterGeneralCoaching('2PtCon');
+          <mat-card>
+            <mat-card-header class="justify-center !pb-4">
+              <mat-card-title>2-Point Conversion</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="flex justify-center items-center p-4">
+                <mat-form-field subscriptSizing="dynamic">
+                  <mat-label>2-Point Conversion</mat-label>
+                  <mat-select
+                    [value]="twoPtConversion"
+                    (selectionChange)="changeTwoPtConversion($event)"
+                  >
+                    <mat-option [value]="'0'">Nie</mat-option>
+                    <mat-option [value]="'1'">Immer</mat-option>
+                    <mat-option [value]="'2'">Ja, bei = 2 Punkte Abstand</mat-option>
+                    <mat-option [value]="'5'">Ja, bei = 5 Punkte Abstand</mat-option>
+                    <mat-option [value]="'8'">Ja, bei >= 8 Punkte Abstand</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div>
+          <!-- 4th Down ausspielen -->
+          @let fourthDown = filterGeneralCoaching('4thDown');
+          <mat-card>
+            <mat-card-header class="justify-center !pb-4">
+              <mat-card-title>4th Down ausspielen</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="flex justify-center items-center p-4">
+                <mat-form-field subscriptSizing="dynamic">
+                  <mat-label>4th Down ausspielen</mat-label>
+                  <mat-select
+                    [value]="fourthDown"
+                    (selectionChange)="changeFourthDown($event)"
+                  >
+                    <mat-option [value]="'Nie'">Nie</mat-option>
+                    <mat-option [value]="'Immer'">Immer</mat-option>
+                    <mat-option [value]="'GegnerischeHaelfte'">Immer in der gegnerischen Hälfte</mat-option>
+                    <mat-option [value]="'GegnerischeHaelfteInRueckstand'">Nur bei Rückstand in der gegnerischen
+                      Hälfte
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div>
+          <!-- Mit dem QB laufen -->
+          @let qbRun = filterGeneralCoaching('QBRun');
+          <mat-card>
+            <mat-card-header class="justify-center !pb-4">
+              <mat-card-title>Mit dem QB laufen</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="flex justify-center items-center p-4">
+                <mat-form-field subscriptSizing="dynamic">
+                  <mat-label>Mit dem QB laufen</mat-label>
+                  <mat-select
+                    [value]="qbRun"
+                    (selectionChange)="changeQbRun($event)"
+                  >
+                    <mat-option [value]="'1'">Ja</mat-option>
+                    <mat-option [value]="'0'">Nein</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
       </div>
     }
     @case ('offense') {
       <div class="grid md:grid-cols-3 grid-cols-1 md:grid-rows-4 grid-flow-row gap-4 p-4">
-        @for (offCoaching of offCoachings; track offCoaching.id) {
+        @for (offCoaching of offCoachings[selectedOffCoaching]; track offCoaching.id) {
           <mat-card>
-            <mat-card-header class="text-center">
+            <mat-card-header class="justify-center !pb-4">
               <mat-card-title> {{ offCoaching.down }} {{ offCoaching.playrange }}</mat-card-title>
             </mat-card-header>
             <mat-card-content>
               <div class="grid grid-rows-3">
                 <div class="grid grid-cols-2 gap-2 justify-center items-center">
                   <mat-slide-toggle
-                    #slideL
                     [checked]="offCoaching.gameplay1.split(';')[0] === 'Pass'"
                     (change)="changeGameplayType($event, offCoaching, 1)"
                     class="icon-slide-toggle">
                     <span>{{ offCoaching.gameplay1.split(';')[0] }}</span>
                   </mat-slide-toggle>
                   <mat-slide-toggle
-                    #slideR
                     [checked]="offCoaching.gameplay2.split(';')[0] === 'Pass'"
                     (change)="changeGameplayType($event, offCoaching, 2)"
                     class="icon-slide-toggle">
@@ -112,7 +302,7 @@
                   </mat-slide-toggle>
                 </div>
                 <div class="grid grid-cols-2 gap-2 justify-center items-center">
-                  <mat-form-field>
+                  <mat-form-field subscriptSizing="dynamic">
                     <mat-label>{{ offCoaching.gameplay1.split(';')[0] }}</mat-label>
                     @switch (offCoaching.gameplay1.split(';')[0]) {
                       @case ('Pass') {
@@ -120,9 +310,11 @@
                           name="gameplay1Pass"
                           [(ngModel)]="offCoaching.gameplay1"
                           (selectionChange)="changeCoachingGameplay(offCoaching)">
-                          <mat-option *ngFor="let passGameplay of passGameplays" [value]="'Pass;' + passGameplay">
-                            {{ passGameplay }}
-                          </mat-option>
+                          @for (passGameplay of passGameplays; track passGameplay) {
+                            <mat-option [value]="'Pass;' + passGameplay">
+                              {{ passGameplay }}
+                            </mat-option>
+                          }
                         </mat-select>
                       }
                       @case ('Run') {
@@ -130,14 +322,16 @@
                           name="gamepla1Run"
                           [(ngModel)]="offCoaching.gameplay1"
                           (selectionChange)="changeCoachingGameplay(offCoaching)">
-                          <mat-option *ngFor="let runGameplay of runGameplays" [value]="'Run;' + runGameplay">
-                            {{ runGameplay }}
-                          </mat-option>
+                          @for (runGameplay of runGameplays; track runGameplay) {
+                            <mat-option [value]="'Run;' + runGameplay">
+                              {{ runGameplay }}
+                            </mat-option>
+                          }
                         </mat-select>
                       }
                     }
                   </mat-form-field>
-                  <mat-form-field>
+                  <mat-form-field subscriptSizing="dynamic">
                     <mat-label>{{ offCoaching.gameplay2.split(';')[0] }}</mat-label>
                     @switch (offCoaching.gameplay2.split(';')[0]) {
                       @case ('Pass') {
@@ -145,9 +339,11 @@
                           name="gameplay2Pass"
                           [(ngModel)]="offCoaching.gameplay2"
                           (selectionChange)="changeCoachingGameplay(offCoaching)">
-                          <mat-option *ngFor="let passGameplay of passGameplays" [value]="'Pass;' + passGameplay">
-                            {{ passGameplay }}
-                          </mat-option>
+                          @for (passGameplay of passGameplays; track passGameplay) {
+                            <mat-option [value]="'Pass;' + passGameplay">
+                              {{ passGameplay }}
+                            </mat-option>
+                          }
                         </mat-select>
                       }
                       @case ('Run') {
@@ -155,9 +351,11 @@
                           name="gameplay2Run"
                           [(ngModel)]="offCoaching.gameplay2"
                           (selectionChange)="changeCoachingGameplay(offCoaching)">
-                          <mat-option *ngFor="let runGameplay of runGameplays" [value]="'Run;' + runGameplay">
-                            {{ runGameplay }}
-                          </mat-option>
+                          @for (runGameplay of runGameplays; track runGameplay) {
+                            <mat-option [value]="'Run;' + runGameplay">
+                              {{ runGameplay }}
+                            </mat-option>
+                          }
                         </mat-select>
                       }
                     }
@@ -187,7 +385,7 @@
     }
     @case ('defense') {
       <div class="grid lg:grid-cols-4 grid-cols-2 grid-flow-row gap-4 p-4">
-        @for (defCoaching of defCoachings; track defCoaching.id) {
+        @for (defCoaching of defCoachings[selectedDefCoaching]; track defCoaching.id) {
           <mat-card>
             <mat-card-header class="justify-center !pb-4">
               <mat-card-title> {{ defCoaching.down }} {{ defCoaching.playrange }}</mat-card-title>
@@ -195,7 +393,7 @@
             <mat-card-content>
               <div class="grid grid-rows-2">
                 <div class="grid grid-cols-2 gap-2 justify-center items-center">
-                  <mat-form-field>
+                  <mat-form-field subscriptSizing="dynamic">
                     <mat-label>{{ defCoaching.gameplay1.split(';')[0] }}</mat-label>
                     @switch (defCoaching.gameplay1.split(';')[0]) {
                       @case ('Pass') {
@@ -225,7 +423,7 @@
                       }
                     }
                   </mat-form-field>
-                  <mat-form-field>
+                  <mat-form-field subscriptSizing="dynamic">
                     <mat-label>{{ defCoaching.gameplay2.split(';')[0] }}</mat-label>
                     @switch (defCoaching.gameplay2.split(';')[0]) {
                       @case ('Pass') {

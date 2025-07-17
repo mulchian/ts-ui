@@ -22,6 +22,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButton } from '@angular/material/button';
 import { TippyDirective } from '@ngneat/helipopper';
 import { ConfirmModalComponent } from '../../../../shared/modal/tooltip/confirm-modal/confirm-modal.component';
+import { TeamService } from '../../../../core/services/team.service';
 
 @Component({
   selector: 'app-personal',
@@ -38,7 +39,7 @@ import { ConfirmModalComponent } from '../../../../shared/modal/tooltip/confirm-
     TippyDirective,
     ConfirmModalComponent,
   ],
-  providers: [EmployeeService, JobService, StadiumService, LoadingService],
+  providers: [TeamService, EmployeeService, JobService, StadiumService, LoadingService],
 })
 export class PersonalComponent implements OnInit, AfterViewChecked, OnDestroy {
   unsubscribe = new Subject();

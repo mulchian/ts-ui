@@ -6,7 +6,7 @@ import { LineupService } from '../../services/lineup.service';
 import { shareReplay } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PositionChangeModalComponent } from '../../../../shared/modal/position-change-modal/position-change-modal.component';
-import { LineupPosition, LineupTeamPartComponent } from './lineup-team-part/lineup-team-part.component';
+import { LineupTeamPartComponent } from './lineup-team-part/lineup-team-part.component';
 import { TippyInstance } from '@ngneat/helipopper/config';
 import { CommonModule } from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -16,6 +16,7 @@ import { ConfirmModalComponent } from '../../../../shared/modal/tooltip/confirm-
 import { MatButton } from '@angular/material/button';
 import { TippyDirective } from '@ngneat/helipopper';
 import { FormsModule } from '@angular/forms';
+import { LineupPosition } from '../../../../core/model/lineup-position';
 
 @Component({
   selector: 'app-lineup',
