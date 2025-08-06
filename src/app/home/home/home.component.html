@@ -1,7 +1,10 @@
-<div *ngIf="this.auth.user$ | async as user">
-  Willkommen {{ user.username }} bei Touchdown Stars!
-  <br />
-  Deine E-Mail-Adresse ist: {{ user.email }}
-  <br />
-  Du hast dich am {{ user.registerDate | date: 'long' }} registriert.
-</div>
+@let user = this.auth.user$ | async;
+@if (user) {
+  <div>
+    Willkommen {{ user.username }} bei Touchdown Stars!
+    <br />
+    Deine E-Mail-Adresse ist: {{ user.email }}
+    <br />
+    Du hast dich am {{ user.registerDate?.toISOString() | date: 'long' }} registriert.
+  </div>
+}

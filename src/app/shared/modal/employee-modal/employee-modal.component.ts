@@ -11,6 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
+import { TeamService } from '../../../core/services/team.service';
+import { TalentPipe } from '../../pipe/talent.pipe';
 
 @Component({
   selector: 'app-employee-modal',
@@ -24,8 +26,9 @@ import { CommonModule } from '@angular/common';
     MatDialogModule,
     MatProgressSpinnerModule,
     MatTableModule,
+    TalentPipe,
   ],
-  providers: [EmployeeService],
+  providers: [TeamService, EmployeeService],
 })
 export class EmployeeModalComponent implements OnInit, OnDestroy {
   dialogRef = inject<MatDialogRef<EmployeeModalComponent>>(MatDialogRef);
@@ -55,7 +58,6 @@ export class EmployeeModalComponent implements OnInit, OnDestroy {
 
   constructor() {
     const data = inject<DialogData>(MAT_DIALOG_DATA);
-
     this.job = data.job;
   }
 
@@ -85,7 +87,6 @@ export class EmployeeModalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('destroy contract modal');
-    // this.employeeDialogRef && this.employeeDialogRef.close();
   }
 
   openContractDialogForSelectedEmployee() {

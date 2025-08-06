@@ -5,12 +5,13 @@ import { Observable, of } from 'rxjs';
 import { Team } from '../../core/model/team';
 import { CommonModule } from '@angular/common';
 import { MatChipsModule } from '@angular/material/chips';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-team-chip-set',
   templateUrl: './team-chip-set.component.html',
   styleUrls: ['./team-chip-set.component.scss'],
-  imports: [CommonModule, MatChipsModule],
+  imports: [CommonModule, MatChipsModule, RouterLink],
   providers: [TeamService],
 })
 export class TeamChipSetComponent implements OnInit {

@@ -15,7 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSelectModule } from '@angular/material/select';
 import { SkillService } from '../../../features/team/services/skill.service';
-import { first, shareReplay } from 'rxjs';
+import { first } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { PlayerService } from '../../../features/team/services/player.service';
 
@@ -110,16 +110,16 @@ export class PlayerModalComponent implements OnInit {
   }
 
   calcSkillProgress(value: number) {
-    return +(value - Math.floor(value)).toFixed(2) * 100 || 0;
+    return Math.floor((value - Math.floor(value)) * 100);
   }
 
   updateSkill(skillName: string) {
     console.log('Update skill', skillName);
     this.skillService
       .updateSkill(this.getSkillNameKey(skillName), this.player.id)
-      .pipe(shareReplay())
-      .subscribe(isUpdated => {
-        if (isUpdated) {
+      .pipe(first())
+      .subscribe(data => {
+        if (data.isUpdated) {
           this.teamService.updateTeam();
           this.skillCards.update(cards => {
             const card = cards.find(c => c.name === skillName);
@@ -129,6 +129,8 @@ export class PlayerModalComponent implements OnInit {
             return cards;
           });
           this.player.skillpoints -= 1;
+        } else if (data.error) {
+          console.error('Error updating skill:', data.error);
         }
       });
   }
@@ -142,9 +144,11 @@ export class PlayerModalComponent implements OnInit {
         .negotiateContract(this.player, this.timeOfContract, this.newSalary)
         .pipe(first())
         .subscribe(data => {
-          console.log('Vertrag erstellt:', data);
-          if ((data as { errorMessage: string | undefined; isNegotiated: boolean }).isNegotiated) {
+          console.log('Vertrag erstellt:', data.isNegotiated);
+          if (data.isNegotiated) {
             this.teamService.updateTeam();
+          } else if (data.error) {
+            console.error('Error negotiating contract:', data.error);
           }
         });
     } else {
@@ -222,11 +226,13 @@ export class PlayerModalComponent implements OnInit {
     }
     this.playerService
       .updateMinContractMoral(this.player.id, changedMoral)
-      .pipe(shareReplay())
-      .subscribe(isUpdated => {
-        if (isUpdated) {
+      .pipe(first())
+      .subscribe(res => {
+        if (res.isUpdated) {
           this.teamService.updateTeam();
           this.player.minContractMoral = changedMoral;
+        } else if (res.error) {
+          console.error('Error updating minimum contract moral:', res.error);
         }
       });
     this.calcContractDetails();

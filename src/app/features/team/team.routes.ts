@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { RosterComponent } from './components/roster/roster.component';
 import { LineupComponent } from './components/lineup/lineup.component';
 import { CoachingComponent } from './components/coaching/coaching.component';
+import { TrainingComponent } from './components/training/training.component';
 
 export const TEAM_ROUTES: Routes = [
   {
@@ -24,5 +25,9 @@ export const TEAM_ROUTES: Routes = [
   {
     path: 'coaching',
     component: CoachingComponent,
+  },
+  {
+    path: 'training',
+    component: TrainingComponent,
   },
 ];

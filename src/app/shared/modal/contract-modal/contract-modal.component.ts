@@ -33,7 +33,7 @@ import { LoadingService } from '../../loading/loading.service';
     MatCardModule,
     MatProgressSpinnerModule,
   ],
-  providers: [EmployeeService],
+  providers: [EmployeeService, TeamService],
 })
 export class ContractModalComponent implements OnInit, OnDestroy {
   dialogRef = inject<MatDialogRef<ContractModalComponent>>(MatDialogRef);
@@ -86,8 +86,15 @@ export class ContractModalComponent implements OnInit, OnDestroy {
       this.employeeService
         .negotiateContract(this.employee, this.timeOfContract, this.newSalary)
         .pipe(first())
-        .subscribe(isNegotiated => {
-          console.log('Vertrag erstellt:', isNegotiated);
+        .subscribe(data => {
+          if (data.isNegotiated) {
+            // we need to add Employee to subject
+            this.teamService.updateTeam();
+            this.employeeService.loadEmployeesForTeam();
+          } else if (data.error) {
+            console.error('Error negotiating contract:', data.error);
+            throw new Error(data.error);
+          }
           this.loadingService.loadingOn();
           // reloading when dialog is being closed
           this.onDismiss(true);

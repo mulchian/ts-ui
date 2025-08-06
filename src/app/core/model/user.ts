@@ -1,3 +1,5 @@
+import { Moment } from 'moment-timezone';
+
 export interface User {
   id: number;
   username: string;
@@ -6,9 +8,9 @@ export interface User {
   realName: string | null;
   city: string | null;
   gender: string;
-  birthday: string | null;
-  registerDate: string | null;
-  lastActiveTime: number;
+  birthday: Moment | null;
+  registerDate: Moment;
+  lastActiveTime: Moment | null;
   admin: boolean;
   deactivated: boolean;
   activationSent: boolean;

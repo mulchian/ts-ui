@@ -31,6 +31,8 @@ mat-progress-bar {
 .mat-column-talent,
 .mat-column-energy,
 .mat-column-status,
+.mat-column-intensity,
+.mat-column-trainingCount,
 .mat-column-contract,
 .mat-column-salary {
   width: 10%;
@@ -46,4 +48,16 @@ mat-progress-bar {
 
 .mat-column-action {
   width: 13%;
+}
+
+.intensity-1 {
+  color: green;
+}
+
+.intensity-2 {
+  color: orange;
+}
+
+.intensity-3 {
+  color: red;
 }

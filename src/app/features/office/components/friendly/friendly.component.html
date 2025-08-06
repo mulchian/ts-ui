@@ -1,1 +1,211 @@
-<p>friendly works!</p>
+@let activeTeams = activeTeams$ | async;
+@if (team) {
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+    <div class="col-span-1 flex flex-col justify-center gap-4">
+      <mat-card>
+        <mat-card-header class="justify-center !pb-4">
+          <mat-card-title>Freundschaftsspiel</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="grid grid-flow-row gap-4">
+            <mat-form-field subscriptSizing="dynamic">
+              <mat-label>Gegner</mat-label>
+              <mat-select #opponentSelect [value]="activeTeams ? activeTeams[0].name : null">
+                @for (team of activeTeams; track team.id) {
+                  <mat-option [value]="team.name">
+                    {{ team.name }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <div class="flex flex-col items-center gap-4">
+              <mat-label>Heim- oder Auswärtsspiel</mat-label>
+              <mat-button-toggle-group
+                [(ngModel)]="gameLocation"
+                aria-label="Spielortsauswahl"
+              >
+                <mat-button-toggle value="home">Heim</mat-button-toggle>
+                <mat-button-toggle value="away">Auswärts</mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <mat-form-field>
+                <mat-label>Spieltag</mat-label>
+                <input
+                  [(ngModel)]="gameTime"
+                  [matDatepicker]="datepicker"
+                  [min]="minTime"
+                  matInput
+                />
+                <mat-hint>DD.MM.YYYY</mat-hint>
+                <mat-datepicker-toggle [for]="datepicker" matIconSuffix></mat-datepicker-toggle>
+                <mat-datepicker #datepicker></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Spielzeit</mat-label>
+                <input
+                  [(ngModel)]="gameTime"
+                  [matTimepickerMin]="minTime"
+                  [matTimepicker]="timepicker"
+                  [ngModelOptions]="{updateOn: 'blur'}"
+                  matInput
+                />
+                <mat-timepicker-toggle [for]="timepicker" matSuffix></mat-timepicker-toggle>
+                <mat-timepicker #timepicker></mat-timepicker>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions class="justify-center !pb-4">
+          <button
+            mat-raised-button
+            (click)="addFriendly()"
+          >
+            Einladung senden
+          </button>
+        </mat-card-actions>
+      </mat-card>
+      <mat-card>
+        <mat-card-header class="justify-center !pb-4">
+          <mat-card-title>Ergebnisse</mat-card-title>
+        </mat-card-header>
+        <mat-card-actions class="justify-center !pb-4">
+          <button
+            mat-raised-button
+            (click)="goToResults()"
+          >
+            Zu den Ergebnissen
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    <div class="col-span-1 md:col-span-2">
+      <mat-card>
+        <mat-card-header class="justify-center !pb-4">
+          <mat-card-title>anstehende Freundschaftsspiele</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (allFriendlies.data.length === 0) {
+            <p>Es sind keine Freundschaftsspiele geplant.</p>
+          } @else {
+            <table mat-table [dataSource]="allFriendlies" matSort (matSortChange)="sortFriendlies($event)">
+              <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+              <!-- id -->
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="id">ID</th>
+                <td mat-cell *matCellDef="let friendly">
+                  {{ friendly.id }}
+                </td>
+              </ng-container>
+
+              <!-- gametime -->
+              <ng-container matColumnDef="gametime">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="gametime">ANPFIFF</th>
+                <td mat-cell *matCellDef="let friendly">
+                  {{ friendly.gameTime.toISOString() | date: 'dd.MM.yyyy HH:mm' }}
+                </td>
+              </ng-container>
+
+              <!-- home -->
+              <ng-container matColumnDef="home">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="home">HEIM</th>
+                <td mat-cell *matCellDef="let friendly">
+                  {{ friendly.home }}
+                </td>
+              </ng-container>
+
+              <!-- away -->
+              <ng-container matColumnDef="away">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="away">AUSWÄRTS</th>
+                <td mat-cell *matCellDef="let friendly">
+                  {{ friendly.away }}
+                </td>
+              </ng-container>
+
+              <!-- accepted count -->
+              <ng-container matColumnDef="accepted">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="accepted">ZUSAGEN</th>
+                <td mat-cell *matCellDef="let friendly">
+                  {{ getAcceptedCount(friendly) }}
+                </td>
+              </ng-container>
+
+              <!-- action buttons -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>AKTION</th>
+                <td mat-cell *matCellDef="let friendly">
+                  @if (isCancelable(friendly)) {
+                    <button
+                      mat-stroked-button
+                      color="warn"
+                      [tp]="tplCancel"
+                      [tpPlacement]="'bottom'"
+                      #tpCancel="tippy"
+                      tpVariation="popperBorder">
+                      ABSAGEN
+                    </button>
+
+                    <ng-template #tplCancel let-hide>
+                      <app-confirm-modal
+                        [title]="'Spiel absagen'"
+                        [message]="
+                      'Möchtest du das Spiel gegen ' +
+                       (friendly.home == team.name ? friendly.away : friendly.home) +
+                       ' wirklich absagen?'
+                "
+                        [confirmBtnText]="'Absagen'"
+                        [tooltip]="tpCancel"
+                        (confirm)="declineFriendly(friendly)">
+                      </app-confirm-modal>
+                    </ng-template>
+                  } @else if (isAcceptableOrDeclinable(friendly)) {
+                    <div class="flex flex-col xl:flex-row gap-2 max-xl:pt-2">
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        (click)="acceptFriendly(friendly)">
+                        ANNEHMEN
+                      </button>
+                      <button
+                        mat-stroked-button
+                        color="warn"
+                        [tp]="tplDecline"
+                        [tpPlacement]="'bottom'"
+                        #tpDecline="tippy"
+                        tpVariation="popperBorder">
+                        ABLEHNEN
+                      </button>
+                    </div>
+
+                    <ng-template #tplDecline let-hide>
+                      <app-confirm-modal
+                        [title]="'Spiel ablehnen'"
+                        [message]="
+                        'Möchtest du das Spiel gegen ' +
+                        (friendly.home === team.name ? friendly.away : friendly.home) +
+                        ' wirklich ablehnen?'
+                      "
+                        [confirmBtnText]="'Ablehnen'"
+                        [tooltip]="tpDecline"
+                        (confirm)="declineFriendly(friendly)">
+                      </app-confirm-modal>
+                    </ng-template>
+                  } @else if (isLive(friendly)) {
+                    <button
+                      color="primary"
+                      mat-raised-button
+                      (click)="goToLive()">
+                      LIVE
+                    </button>
+                  }
+                </td>
+              </ng-container>
+            </table>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+}

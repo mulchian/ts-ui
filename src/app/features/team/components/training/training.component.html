@@ -1,0 +1,170 @@
+<div class="grid grid-flow-row gap-4">
+  <div class="grid grid-cols-5 gap-4">
+    <!-- Traininggruppen-Training - Intensitäteinstellung - Trainingsgruppe für alle einstellen -->
+    <!-- 5 mat-cards with buttons to start training, set training intensity and change training group for all players -->
+    @let groups = trainingGroups | async;
+    @for (trainingGroup of groups; track trainingGroup.id) {
+      <mat-card>
+        <mat-card-header class="justify-center !pb-4">
+          <mat-card-title class="head-with-icon">
+            {{ trainingGroup.name }}
+            <button
+              mat-icon-button
+              [tp]="tgRename"
+              [tpPlacement]="'bottom'"
+              #tgChangeName="tippy"
+              tpVariation="popperBorder"
+            >
+              <mat-icon class="menu-icon">edit</mat-icon>
+            </button>
+            <ng-template #tgRename let-hide>
+              <app-input-modal
+                (confirm)="renameTrainingGroup($event, trainingGroup)"
+                [confirmBtnText]="'Speichern'"
+                [inputLabel]="'Trainingsgruppe'"
+                [inputValue]="trainingGroup.name"
+                [inputType]="'text'"
+                [inputPlaceholder]="trainingGroup.name"
+                [title]="'Trainingsgruppe umbenennen'"
+                [tooltip]="tgChangeName">
+              </app-input-modal>
+            </ng-template>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (isTraining(trainingGroup)) {
+            <div class="timer">
+              {{ trainingGroup.remainingTime }}
+            </div>
+          } @else {
+            <div class="grid grid-cols-3 gap-4 items-center">
+              <button
+                [disabled]="trainingGroup.tgPlayerIds.length === 0"
+                matFab
+                aria-label="Start Fitness Training"
+                [tp]="tpFitness"
+                [tpPlacement]="'bottom'"
+                tpVariation="tooltipBorder"
+                (click)="startTraining(trainingGroup, 'fitness')"
+              >
+                <mat-icon>fitness_center</mat-icon>
+              </button>
+              <button
+                [disabled]="trainingGroup.tgPlayerIds.length === 0"
+                matFab
+                aria-label="Start Technique Training"
+                [tp]="tpTechnique"
+                [tpPlacement]="'bottom'"
+                tpVariation="tooltipBorder"
+                (click)="startTraining(trainingGroup, 'technique')"
+              >
+                <mat-icon>sports_football</mat-icon>
+              </button>
+              <button
+                [disabled]="trainingGroup.tgPlayerIds.length === 0"
+                matFab
+                aria-label="Start Scrimmage Training"
+                [tp]="tpScrimmage"
+                [tpPlacement]="'bottom'"
+                tpVariation="tooltipBorder"
+                (click)="startTraining(trainingGroup, 'scrimmage')">
+                <mat-icon>groups</mat-icon>
+              </button>
+            </div>
+          }
+
+          <ng-template #tpFitness let-hide>
+            <u><strong>Fitness</strong></u><br>Verbessert die physischen Fähigkeiten deiner Spieler.
+          </ng-template>
+          <ng-template #tpTechnique let-hide>
+            <u><strong>Technik</strong></u><br>Verbessert die technischen Fähigkeiten deiner Spieler.
+          </ng-template>
+          <ng-template #tpScrimmage let-hide>
+            <u><strong>Scrimmage</strong></u><br>Verbessert die Team Chemie und bringt Erfahrungspunkte.
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    } @empty {
+      <mat-card class="flex items-center justify-center h-full">
+        <mat-card-content>
+          <p class="text-center">Keine Trainingsgruppen verfügbar.</p>
+        </mat-card-content>
+      </mat-card>
+    }
+    <!-- Intensitätseinstellung -->
+    <mat-card>
+      <mat-card-header class="justify-center !pb-4">
+        <mat-card-title>Intensität</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="grid grid-cols-3 gap-4">
+          <button
+            (click)="changeIntensity(1)"
+            [disabled]="isTrainingForAll(groups)"
+            aria-label="Set intensity low"
+            color="white"
+            matFab
+          >
+            <mat-icon class="intensity-1">signal_cellular_alt_1_bar</mat-icon>
+          </button>
+          <button
+            (click)="changeIntensity(2)"
+            [disabled]="isTrainingForAll(groups)"
+            aria-label="Set intensity medium"
+            color="white"
+            matFab
+          >
+            <mat-icon class="intensity-2">signal_cellular_alt_2_bar</mat-icon>
+          </button>
+          <button
+            (click)="changeIntensity(3)"
+            [disabled]="isTrainingForAll(groups)"
+            aria-label="Set intensity high"
+            color="white"
+            matFab
+          >
+            <mat-icon class="intensity-3">signal_cellular_alt</mat-icon>
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Trainingsgruppe für alle Spieler zuweisen -->
+    <mat-card>
+      <mat-card-header class="justify-center !pb-4">
+        <mat-card-title>Trainingsgruppe</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="flex flex-col justify-center">
+          <mat-form-field appearance="fill" class="w-full" subscriptSizing="dynamic">
+            <mat-label>Trainingsgruppe</mat-label>
+            <mat-select [(value)]="selectedTrainingGroup" [disabled]="isTrainingForAll(groups)">
+              <mat-option value="TE0">Keine</mat-option>
+              @for (trainingGroup of groups; track trainingGroup.id) {
+                <mat-option [value]="trainingGroup.id" [disabled]="isTraining(trainingGroup)">
+                  {{ trainingGroup.name }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <button
+            (click)="setTrainingGroupForAll()"
+            [disabled]="isTrainingForAll(groups)"
+            class="mt-2"
+            color="primary"
+            mat-raised-button
+          >
+            ALLEN ZUWEISEN
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div>
+    <app-roster
+      (trainingGroupChanged)="reloadTrainingGroups()"
+      [needsReload]="needsReload"
+      [showingPart]="'training'"
+    ></app-roster>
+  </div>
+</div>

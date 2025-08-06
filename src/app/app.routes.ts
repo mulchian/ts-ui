@@ -26,12 +26,6 @@ export const APP_ROUTES: Routes = [
     runGuardsAndResolvers: 'always',
   },
   {
-    path: 'finances',
-    loadChildren: () => import('./features/finance/finance.routes').then(m => m.FINANCE_ROUTES),
-    canActivate: [authGuard],
-    canActivateChild: [authGuardChild],
-  },
-  {
     path: 'team',
     loadChildren: () => import('./features/team/team.routes').then(m => m.TEAM_ROUTES),
     canActivate: [authGuard],

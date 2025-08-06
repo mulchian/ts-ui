@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, catchError, debounceTime, Observable } from 'rxjs';
+import { inject, Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, debounceTime, first, Observable, Subject, takeUntil } from 'rxjs';
 import { Employee } from '../../../core/model/employee';
 import { HttpClient } from '@angular/common/http';
 import { AuthStore } from '../../../core/services/auth.store';
@@ -8,13 +8,15 @@ import { TeamService } from '../../../core/services/team.service';
 import { tap } from 'rxjs/operators';
 
 @Injectable()
-export class EmployeeService {
+export class EmployeeService implements OnDestroy {
   private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthStore);
   private readonly teamService = inject(TeamService);
 
   private subject = new BehaviorSubject<Employee[] | null>(null);
   employees$: Observable<Employee[] | null> = this.subject.asObservable();
+
+  unsubscribe$ = new Subject<void>();
 
   constructor() {
     this.auth.user$.subscribe(user => {
@@ -24,55 +26,50 @@ export class EmployeeService {
     });
   }
 
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
   negotiateContract(employee: Employee, timeOfContract: string, newSalary: number) {
     return this.http
-      .post('/api/employee' + '/negotiateContract.php', {
+      .post<{ isNegotiated: boolean; error?: string }>('/api/employee' + '/negotiateContract.php', {
         employeeId: employee.id,
         timeOfContract,
         newSalary,
       })
       .pipe(
-        tap(isNegotiated => {
-          if (isNegotiated) {
+        first(),
+        tap(data => {
+          if (data.isNegotiated) {
             // we need to add Employee to subject
             this.teamService.updateTeam();
             this.loadEmployees(null);
+          } else if (data.error) {
+            console.error('Error negotiating contract:', data.error);
+            throw new Error(data.error);
           }
-        }),
-        catchError(error => {
-          throw new Error(JSON.stringify(error));
         })
       );
   }
 
   releaseEmployee(employee: Employee) {
-    return this.http
-      .post('/api/employee' + '/releaseEmployee.php', {
-        employeeId: employee.id,
-        jobName: employee.job.name,
-      })
-      .pipe(
-        tap(data => {
-          console.log(JSON.stringify(data));
-          const isReleased = data as boolean;
-          if (isReleased) {
-            // we need to clean Employee from our Subject
-            this.teamService.updateTeam();
-            this.loadEmployees(null);
-          }
-        }),
-        catchError(error => {
-          throw new Error(JSON.stringify(error));
-        })
-      );
+    return this.http.post<{ isReleased: boolean; error?: string }>('/api/employee' + '/releaseEmployee.php', {
+      employeeId: employee.id,
+      jobName: employee.job.name,
+    });
+  }
+
+  loadEmployeesForTeam() {
+    this.loadEmployees(null);
   }
 
   private loadEmployees(user: User | null) {
     // first get team (TeamService) and check if there are employees
     // second get employees directly from database
-    this.teamService.team$.pipe(debounceTime(500)).subscribe(team => {
+    this.teamService.team$.pipe(debounceTime(250), takeUntil(this.unsubscribe$)).subscribe(team => {
       if (team) {
-        console.log('{} Employees fetched from team.', team.employees.length);
+        console.log('Employees fetched from team.', team.employees.length);
         this.subject.next(team.employees);
         // reloadCurrentRoute(this.router);
       } else if (user) {
@@ -82,6 +79,7 @@ export class EmployeeService {
               userId: user.id,
             },
           })
+          .pipe(first())
           .subscribe(employees => {
             if (employees) {
               console.log('Employees fetched from service.');

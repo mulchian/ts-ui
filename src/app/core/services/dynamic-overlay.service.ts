@@ -12,12 +12,12 @@ import { Location } from '@angular/common';
 import {
   ComponentFactoryResolver,
   DOCUMENT,
+  inject,
   Injectable,
   Injector,
   NgZone,
   Renderer2,
   RendererFactory2,
-  inject,
 } from '@angular/core';
 import { DynamicOverlayContainerService } from './dynamic-overlay-container.service';
 import { OverlayLoadingComponent } from '../../shared/loading/overlay-loading/overlay-loading.component';
@@ -28,7 +28,7 @@ import { OverlayLoadingComponent } from '../../shared/loading/overlay-loading/ov
 export class DynamicOverlayService extends Overlay {
   private readonly _dynamicOverlayContainer: DynamicOverlayContainerService;
   private readonly renderer: Renderer2;
-  private overlayRefs: OverlayRef[] = [];
+  private activeOverlays: ActiveOverlay[] = [];
 
   constructor() {
     const scrollStrategies = inject(ScrollStrategyOptions);
@@ -64,29 +64,53 @@ export class DynamicOverlayService extends Overlay {
 
   createWithDefaultConfig(containerElement: HTMLElement): OverlayRef {
     this.setContainerElement(containerElement);
+    const positionStrategy = this.position()
+      .flexibleConnectedTo(containerElement)
+      .withPositions([
+        {
+          originX: 'center',
+          originY: 'center',
+          overlayX: 'center',
+          overlayY: 'center',
+        },
+      ])
+      .withPush(false);
+
     return super.create({
-      positionStrategy: this.position().global().centerHorizontally().centerVertically(),
-      hasBackdrop: true,
+      positionStrategy,
+      hasBackdrop: false,
+      scrollStrategy: this.scrollStrategies.reposition(),
     });
   }
 
   showOverlay(nativeElement: HTMLElement): OverlayRef {
     const overlayRef = this.createWithDefaultConfig(nativeElement);
     overlayRef.attach(new ComponentPortal(OverlayLoadingComponent));
-    this.overlayRefs.push(overlayRef);
+    this.activeOverlays.push({ overlayRef, targetElement: nativeElement });
     return overlayRef;
   }
 
-  hideOverlay(overlayRef: OverlayRef) {
+  hideOverlay(overlayRef: OverlayRef, targetElement?: HTMLElement): void {
+    if (targetElement) {
+      targetElement.classList.remove('opacity-50', 'pointer-events-none');
+    }
     overlayRef.detach();
   }
 
   hideAllOverlays() {
-    this.overlayRefs.forEach(overlayRef => overlayRef.detach());
+    this.activeOverlays.forEach(activeOverlay => {
+      activeOverlay.targetElement.classList.remove('opacity-50', 'pointer-events-none');
+      activeOverlay.overlayRef.detach();
+    });
   }
 
   private setContainerElement(containerElement: HTMLElement): void {
     this.renderer.setStyle(containerElement, 'transform', 'translateZ(0)');
     this._dynamicOverlayContainer.setContainerElement(containerElement);
   }
+}
+
+interface ActiveOverlay {
+  overlayRef: OverlayRef;
+  targetElement: HTMLElement;
 }

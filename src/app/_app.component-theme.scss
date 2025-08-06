@@ -16,4 +16,8 @@
   mat-chip.active {
     background-color: mat.m2-get-color-from-palette($primary-palette, 300) !important;
   }
+
+  mat-chip {
+    background-color: mat.m2-get-color-from-palette($primary-palette, 100) !important;
+  }
 }

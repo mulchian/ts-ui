@@ -37,7 +37,7 @@
       </td>
     </ng-container>
 
-    @if (showRoster) {
+    @if (showingPart === 'roster' || showingPart === 'training') {
       <!-- energy -->
       <ng-container matColumnDef="energy">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="energy">ENERGIE</th>
@@ -56,61 +56,108 @@
           </section>
         </td>
       </ng-container>
+    }
 
-      <!-- status -->
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="status">STATUS</th>
-        <td mat-cell *matCellDef="let player">
-          {{ player.status?.description }}
-        </td>
-      </ng-container>
-    } @else {
-      <!-- moral -->
-      <ng-container matColumnDef="moral">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="moral">MORAL</th>
-        <td mat-cell *matCellDef="let player">
-          {{ player.moral | percent }}
-        </td>
-      </ng-container>
+    @switch (showingPart) {
+      @case ('roster') {
+        <!-- status -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="status">STATUS</th>
+          <td mat-cell *matCellDef="let player">
+            {{ player.status?.description }}
+          </td>
+        </ng-container>
+      }
+      @case ('training') {
+        <!-- intensity -->
+        <ng-container matColumnDef="intensity">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="intensity">INTENSITÄT</th>
+          <td mat-cell *matCellDef="let player" class="!text-center">
+            <button
+              mat-icon-button
+              aria-label="change intensity"
+              (click)="changeIntensity(player)"
+            >
+              <mat-icon
+                class="scale-150 !m-0"
+                [ngClass]="'intensity-' + player.intensity"
+              >{{ player.intensity | intensityPipe }}
+              </mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-      <!-- salary -->
-      <ng-container matColumnDef="salary">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="salary">GEHALT</th>
-        <td mat-cell *matCellDef="let player">
-          {{ player.contract?.salary | currency: 'EUR' : 'symbol' : '.0' }}
-        </td>
-      </ng-container>
+        <!-- training count -->
+        <ng-container matColumnDef="trainingCount">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="trainingCount">TRAININGS</th>
+          <td mat-cell *matCellDef="let player">
+            {{ player.numberOfTrainings }} / 3
+          </td>
+        </ng-container>
 
-      <!-- contract -->
-      <ng-container matColumnDef="contract">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="contract">VERTRAG</th>
-        <td mat-cell *matCellDef="let player">
-          {{ player.contract?.endOfContract | saisonCount }}
-          @if (player.contract?.endOfContract === 0) {
-            <br />
-            <button mat-raised-button color="primary" (click)="openContractTab(player)">NEUER VERTRAG</button>
-          }
-        </td>
-      </ng-container>
+        <!-- training group -->
+          <!-- mat-select for training group 1, 2 and 3 -->
+        <ng-container matColumnDef="trainingGroup">
+          @let tgs = trainingGroups | async;
+          <th mat-header-cell *matHeaderCellDef>TRAININGSGRUPPE</th>
+          <td mat-cell *matCellDef="let player">
+            <mat-select [(value)]="player.trainingGroup" (selectionChange)="updateTrainingGroup($event, player)"
+            [disabled]="isTraining(tgs, player)">
+              <mat-option value="TE0">Keine</mat-option>
+              @for (trainingGroup of tgs; track trainingGroup.id) {
+                <mat-option [value]="trainingGroup.id">{{ trainingGroup.name }}</mat-option>
+              }
+            </mat-select>
+          </td>
+        </ng-container>
+      }
+      @case ('contracts') {
+        <!-- moral -->
+        <ng-container matColumnDef="moral">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="moral">MORAL</th>
+          <td mat-cell *matCellDef="let player">
+            {{ player.moral | percent }}
+          </td>
+        </ng-container>
 
-      <!-- action -->
-      <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef>AKTION</th>
-        <td mat-cell *matCellDef="let player">
-          <button
-            mat-stroked-button
-            color="warn"
-            [tp]="tplConfirm"
-            [tpPlacement]="'bottom'"
-            #tpRelease="tippy"
-            tpVariation="popperBorder">
-            ENTLASSEN
-          </button>
+        <!-- salary -->
+        <ng-container matColumnDef="salary">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="salary">GEHALT</th>
+          <td mat-cell *matCellDef="let player">
+            {{ player.contract?.salary | currency: 'EUR' : 'symbol' : '.0' }}
+          </td>
+        </ng-container>
 
-          <ng-template #tplConfirm let-hide>
-            <app-confirm-modal
-              [title]="'Spieler entlassen'"
-              [message]="
+        <!-- contract -->
+        <ng-container matColumnDef="contract">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="contract">VERTRAG</th>
+          <td mat-cell *matCellDef="let player">
+            {{ player.contract?.endOfContract | saisonCount }}
+            @if (player.contract?.endOfContract === 0) {
+              <br />
+              <button mat-raised-button color="primary" (click)="openContractTab(player)">NEUER VERTRAG</button>
+            }
+          </td>
+        </ng-container>
+
+        <!-- action -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>AKTION</th>
+          <td mat-cell *matCellDef="let player">
+            <button
+              mat-stroked-button
+              color="warn"
+              [tp]="tplConfirm"
+              [tpPlacement]="'bottom'"
+              #tpRelease="tippy"
+              tpVariation="popperBorder">
+              ENTLASSEN
+            </button>
+
+            <ng-template #tplConfirm let-hide>
+              <app-confirm-modal
+                [title]="'Spieler entlassen'"
+                [message]="
                 'Willst du deinen ' +
                 player.type?.position?.description +
                 ' ' +
@@ -119,13 +166,14 @@
                 player.lastName +
                 ' wirklich entlassen?'
               "
-              [confirmBtnText]="'Entlassen'"
-              [tooltip]="tpRelease"
-              (confirm)="releasePlayer(player)">
-            </app-confirm-modal>
-          </ng-template>
-        </td>
-      </ng-container>
+                [confirmBtnText]="'Entlassen'"
+                [tooltip]="tpRelease"
+                (confirm)="releasePlayer(player)">
+              </app-confirm-modal>
+            </ng-template>
+          </td>
+        </ng-container>
+      }
     }
   </table>
 }

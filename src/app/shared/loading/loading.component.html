@@ -1,4 +1,5 @@
-@if (loadingService.loading$ | async) {
+@let isLoading = loadingService.loading$ | async;
+@if (isLoading) {
   <div class="spinner-container">
     <mat-spinner></mat-spinner>
   </div>

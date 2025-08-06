@@ -1,28 +1,26 @@
-import { AfterViewChecked, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { NgxMasonryComponent, NgxMasonryModule, NgxMasonryOptions } from 'ngx-masonry';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Building } from '../../../../core/model/building';
-import { first, Observable, Subject, Subscription, takeUntil } from 'rxjs';
+import { first, Observable, Subject, takeUntil } from 'rxjs';
 import { Employee } from '../../../../core/model/employee';
 import { Job } from '../../../../core/model/job';
 import { JobService } from '../../services/job.service';
 import { EmployeeService } from '../../services/employee.service';
-import { StadiumService } from '../../../../core/services/stadium.service';
-import { LoadingService } from '../../../../shared/loading/loading.service';
-import { OverlayRef } from '@angular/cdk/overlay';
+import { StadiumService } from '../../services/stadium.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EmployeeModalComponent } from '../../../../shared/modal/employee-modal/employee-modal.component';
 import { ContractModalComponent } from '../../../../shared/modal/contract-modal/contract-modal.component';
-import { NavigationEnd, Router } from '@angular/router';
 import { TippyInstance } from '@ngneat/helipopper/config';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
-import { InViewportDirective } from 'ng-in-viewport';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButton } from '@angular/material/button';
 import { TippyDirective } from '@ngneat/helipopper';
 import { ConfirmModalComponent } from '../../../../shared/modal/tooltip/confirm-modal/confirm-modal.component';
 import { TeamService } from '../../../../core/services/team.service';
+import { LoadingService } from '../../../../shared/loading/loading.service';
+import { InViewportDirective } from 'ng-in-viewport';
+import { OverlayRef } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-personal',
@@ -30,108 +28,78 @@ import { TeamService } from '../../../../core/services/team.service';
   styleUrls: ['./personal.component.scss'],
   imports: [
     CommonModule,
-    NgxMasonryModule,
     MatCardModule,
     MatDivider,
     MatGridListModule,
-    InViewportDirective,
     MatButton,
     TippyDirective,
     ConfirmModalComponent,
+    InViewportDirective,
   ],
-  providers: [TeamService, EmployeeService, JobService, StadiumService, LoadingService],
+  providers: [TeamService, EmployeeService, JobService, StadiumService],
 })
-export class PersonalComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class PersonalComponent implements OnInit, OnDestroy {
   unsubscribe = new Subject();
-  @ViewChild(NgxMasonryComponent)
-  masonry: NgxMasonryComponent | undefined;
-  masonryOptions: NgxMasonryOptions = {
-    gutter: 20,
-  };
-  rowHeight = '4:1';
   @ViewChild('tpRelease')
   tpRelease: TippyInstance | undefined;
-  overlayRefs: OverlayRef[] = [];
   officeBuilding: Building | undefined;
   employees: Employee[] = [];
+
+  officeCard: HTMLElement | undefined;
+  officeCardOverlayRef: OverlayRef | undefined;
+
   private readonly loadingService = inject(LoadingService);
   private readonly jobService = inject(JobService);
   private readonly employeeService = inject(EmployeeService);
   private readonly stadiumService = inject(StadiumService);
+  private readonly teamService = inject(TeamService);
   private readonly dialog = inject(MatDialog);
-  private readonly router = inject(Router);
-  private readonly navigationSubscription: Subscription;
 
-  constructor() {
-    this.navigationSubscription = this.router.events.subscribe((e: unknown) => {
-      if (e instanceof NavigationEnd) {
-        this.loadingService.loadingOn();
-        this.ngOnInit();
-        this.ngAfterViewChecked();
-        setTimeout(() => {
-          this.loadingService.loadingOff();
-        }, 750);
-      }
-    });
-  }
+  constructor() {}
 
-  get jobs(): Observable<Job[] | null> {
+  get jobs$(): Observable<Job[] | null> {
     return this.jobService.jobs$;
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.stadiumService.stadium$.pipe(takeUntil(this.unsubscribe)).subscribe(stadium => {
       if (stadium) {
         this.officeBuilding = stadium.buildings.find(building => building.name === 'Bürogebäude');
+        setTimeout(() => {
+          if (this.officeCardOverlayRef) {
+            this.loadingService.loadingOffInOverlay(this.officeCardOverlayRef, this.officeCard);
+          }
+        }, 500);
       }
     });
     this.employeeService.employees$.pipe(takeUntil(this.unsubscribe)).subscribe(employees => {
       if (employees) {
         this.employees = employees;
+        setTimeout(() => {
+          this.loadingService.loadingOffInOverlayForAll();
+        }, 500);
       }
     });
-
-    this.rowHeight = window.innerWidth <= 1150 ? '3:1' : '4:1';
   }
 
   ngOnDestroy(): void {
-    // avoid memory leaks here by cleaning up after ourselves. If we
-    // don't then we will continue to run our initialiseInvites()
-    // method on every navigationEnd event.
-    if (this.navigationSubscription) {
-      this.navigationSubscription.unsubscribe();
-    }
     this.unsubscribe.next(true);
     this.unsubscribe.complete();
   }
 
-  ngAfterViewChecked() {
-    if (this.masonry) {
-      this.masonry.reloadItems();
-      this.masonry.layout();
-    }
-    if (this.officeBuilding) {
-      this.onMasonryComplete();
-    }
-  }
-
-  onResize(event: Event) {
-    this.rowHeight = (<Window>event.target)?.innerWidth <= 1150 ? '2:1' : '4:1';
-  }
-
   onViewportAction({ target, visible }: { target: Element; visible: boolean }) {
     if (visible) {
-      const overlayRef = this.loadingService.loadingOnInOverlay(<HTMLElement>target);
-      this.overlayRefs.push(overlayRef);
+      const card = target.closest('mat-card') as HTMLElement;
+      card.classList.add('opacity-50', 'pointer-events-none');
+      this.loadingService.loadingOnInOverlay(card);
     }
   }
 
-  onMasonryComplete() {
-    if (this.overlayRefs.length > 0) {
-      this.overlayRefs.forEach(overlayRef => {
-        this.loadingService.loadingOffInOverlay(overlayRef);
-      });
-      this.overlayRefs = [];
+  onViewportActionOfficeCard({ target, visible }: { target: Element; visible: boolean }) {
+    if (visible) {
+      this.officeCard = target.closest('mat-card') as HTMLElement;
+      this.officeCard.classList.add('opacity-50', 'pointer-events-none');
+      this.officeCardOverlayRef = this.loadingService.loadingOnInOverlay(this.officeCard);
     }
   }
 
@@ -161,11 +129,14 @@ export class PersonalComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.employeeService
       .releaseEmployee(employee)
       .pipe(first())
-      .subscribe(isReleased => {
-        if (isReleased) {
-          this.router.navigateByUrl(this.router.url);
-        } else {
-          console.log('Error on release employee');
+      .subscribe(data => {
+        if (data.isReleased) {
+          // we need to clean Employee from our Subject
+          this.teamService.updateTeam();
+          this.employeeService.loadEmployeesForTeam();
+        } else if (data.error) {
+          console.error('Error releasing employee:', data.error);
+          throw new Error(data.error);
         }
         this.tpRelease?.hide();
       });

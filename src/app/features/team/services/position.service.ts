@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Position } from '../../../core/model/position';
-import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
+import { BehaviorSubject, first, Observable } from 'rxjs';
 
 @Injectable()
 export class PositionService {
@@ -18,7 +18,7 @@ export class PositionService {
   private loadAllPositions() {
     this.http
       .get<Position[]>(this.POSITION_URL + '/getAllPositions.php')
-      .pipe(shareReplay())
+      .pipe(first())
       .subscribe(positions => {
         this.subject.next(positions);
       });

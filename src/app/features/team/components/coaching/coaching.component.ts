@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { Team } from '../../../../core/model/team';
 import { CoachingName } from '../../../../core/model/coachingName';
 import { TeamService } from '../../../../core/services/team.service';
@@ -17,7 +17,7 @@ import { TippyDirective } from '@ngneat/helipopper';
 import { TippyInstance } from '@ngneat/helipopper/config';
 import { InputModalComponent } from '../../../../shared/modal/tooltip/input-modal/input-modal.component';
 import { LoadingService } from '../../../../shared/loading/loading.service';
-import { BehaviorSubject, debounceTime, Observable } from 'rxjs';
+import { BehaviorSubject, debounceTime, Observable, Subject, take, takeUntil } from 'rxjs';
 import { SessionStorageService } from '../../../../core/services/session-storage.service';
 
 @Component({
@@ -41,7 +41,7 @@ import { SessionStorageService } from '../../../../core/services/session-storage
   ],
   providers: [TeamService, CoachingService],
 })
-export class CoachingComponent {
+export class CoachingComponent implements OnDestroy {
   team: Team | undefined;
   teamPart: 'general' | 'offense' | 'defense';
   runGameplays = ['Inside Run', 'Outside Run rechts', 'Outside Run links'];
@@ -61,13 +61,14 @@ export class CoachingComponent {
   tpChangeName: TippyInstance | undefined;
   protected subject = new BehaviorSubject<string>('30');
   fieldGoalRange$: Observable<string> = this.subject.asObservable();
+  unsubscribe$ = new Subject<void>();
   private readonly teamService = inject(TeamService);
   private readonly coachingService = inject(CoachingService);
   private readonly loadingService = inject(LoadingService);
   private readonly sessionStorageService = inject(SessionStorageService);
 
   constructor() {
-    this.teamService.team$.subscribe(team => {
+    this.teamService.team$.pipe(takeUntil(this.unsubscribe$)).subscribe(team => {
       if (team) {
         this.team = team;
         this.loadCoachings();
@@ -88,23 +89,32 @@ export class CoachingComponent {
 
     this.teamPart = this.sessionStorageService.getSelectedCoachingTeamPart();
 
-    this.fieldGoalRange$.pipe(debounceTime(1000)).subscribe(newRange => {
+    this.fieldGoalRange$.pipe(debounceTime(1000), takeUntil(this.unsubscribe$)).subscribe(newRange => {
       console.log('Field goal range changed:', newRange);
       const selectedGeneralCoaching = this.generalCoachings[this.selectedGeneralCoaching].filter(
         coaching => coaching.down === '1st' && coaching.gameplay1.startsWith('FGRange')
       )[0];
       if (selectedGeneralCoaching?.gameplay1.split(';')[1] != newRange) {
-        this.coachingService.changeFieldGoalRange(selectedGeneralCoaching, newRange).subscribe(res => {
-          if (res.fieldGoalRangeUpdated) {
-            console.log('Field goal range updated successfully');
-          } else {
-            console.error('Error updating field goal range:', res.error);
-          }
-        });
+        this.coachingService
+          .changeFieldGoalRange(selectedGeneralCoaching, newRange)
+          .pipe(take(1))
+          .subscribe(res => {
+            if (res.fieldGoalRangeUpdated) {
+              console.log('Field goal range updated successfully');
+            } else {
+              console.error('Error updating field goal range:', res.error);
+            }
+          });
       } else {
         console.log('Field goal range not changed, no update needed');
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    console.log('CoachingComponent destroyed');
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   updateTeamPart() {
@@ -188,24 +198,27 @@ export class CoachingComponent {
       }
     }
 
-    this.coachingService.createNewGameplan(teamPart, newGameplanNr).subscribe(res => {
-      if (res.gameplanCreated) {
-        console.log('New gameplan created: ' + res.gameplanCreated);
-        this.teamService.updateTeam();
-        switch (teamPart) {
-          case 'offense':
-            this.selectedOffCoaching = newGameplanNr;
-            break;
-          case 'defense':
-            this.selectedDefCoaching = newGameplanNr;
-            break;
+    this.coachingService
+      .createNewGameplan(teamPart, newGameplanNr)
+      .pipe(take(1))
+      .subscribe(res => {
+        if (res.gameplanCreated) {
+          console.log('New gameplan created: ' + res.gameplanCreated);
+          this.teamService.updateTeam();
+          switch (teamPart) {
+            case 'offense':
+              this.selectedOffCoaching = newGameplanNr;
+              break;
+            case 'defense':
+              this.selectedDefCoaching = newGameplanNr;
+              break;
+          }
+          this.loadingService.loadingOff();
+        } else if (res.error) {
+          console.error('Error creating new gameplan: ' + res.error);
+          // Handle error, e.g., show a notification to the user
         }
-        this.loadingService.loadingOff();
-      } else if (res.error) {
-        console.error('Error creating new gameplan: ' + res.error);
-        // Handle error, e.g., show a notification to the user
-      }
-    });
+      });
   }
 
   renameDefCoaching(newName: string) {
@@ -242,12 +255,15 @@ export class CoachingComponent {
         break;
     }
 
-    this.coachingService.updateActiveGameplan(teamPart, event.value).subscribe(res => {
-      if (res.gameplanUpdated) {
-        console.log('Offensive gameplan updated: ' + res.gameplanUpdated);
-        this.teamService.updateTeam();
-      }
-    });
+    this.coachingService
+      .updateActiveGameplan(teamPart, event.value)
+      .pipe(take(1))
+      .subscribe(res => {
+        if (res.gameplanUpdated) {
+          console.log('Offensive gameplan updated: ' + res.gameplanUpdated);
+          this.teamService.updateTeam();
+        }
+      });
   }
 
   removeSelectedGameplan(teamPart: 'offense' | 'defense' | 'general') {
@@ -277,23 +293,26 @@ export class CoachingComponent {
       return;
     }
 
-    this.coachingService.removeGameplan(teamPart, gameplanNr).subscribe(res => {
-      if (res.gameplanRemoved) {
-        console.log('Gameplan removed: ' + res.gameplanRemoved);
-        this.teamService.updateTeam();
-        switch (teamPart) {
-          case 'offense':
-            this.selectedOffCoaching = 1;
-            break;
-          case 'defense':
-            this.selectedDefCoaching = 1;
-            break;
+    this.coachingService
+      .removeGameplan(teamPart, gameplanNr)
+      .pipe(take(1))
+      .subscribe(res => {
+        if (res.gameplanRemoved) {
+          console.log('Gameplan removed: ' + res.gameplanRemoved);
+          this.teamService.updateTeam();
+          switch (teamPart) {
+            case 'offense':
+              this.selectedOffCoaching = 1;
+              break;
+            case 'defense':
+              this.selectedDefCoaching = 1;
+              break;
+          }
+        } else if (res.error) {
+          console.error('Error removing gameplan: ' + res.error);
         }
-      } else if (res.error) {
-        console.error('Error removing gameplan: ' + res.error);
-      }
-      this.loadingService.loadingOff();
-    });
+        this.loadingService.loadingOff();
+      });
   }
 
   getSelectedCoachingName(teamPart: 'general' | 'offense' | 'defense'): string {
@@ -434,27 +453,33 @@ export class CoachingComponent {
 
   private saveCoaching(coaching: Coaching) {
     console.log(coaching);
-    this.coachingService.saveCoaching(coaching).subscribe(res => {
-      if (res.coachingSaved) {
-        console.log('coachingSaved: ' + res.coachingSaved);
-        this.teamService.updateTeam();
-      }
-    });
+    this.coachingService
+      .saveCoaching(coaching)
+      .pipe(take(1))
+      .subscribe(res => {
+        if (res.coachingSaved) {
+          console.log('coachingSaved: ' + res.coachingSaved);
+          this.teamService.updateTeam();
+        }
+      });
   }
 
   private renameCoaching(coachingName: CoachingName, newName: string) {
     const oldName = coachingName.name;
     coachingName.name = newName;
-    this.coachingService.saveCoachingName(coachingName).subscribe(res => {
-      if (res.coachingNameSaved) {
-        console.log('New coaching name saved: ' + res.coachingNameSaved);
-        this.teamService.updateTeam();
-        this.tpChangeName?.hide();
-      } else {
-        console.error('Error saving coaching name: ' + res.coachingNameSaved);
-        coachingName.name = oldName; // revert to old name if saving failed
-        this.tpChangeName?.hide();
-      }
-    });
+    this.coachingService
+      .saveCoachingName(coachingName)
+      .pipe(take(1))
+      .subscribe(res => {
+        if (res.coachingNameSaved) {
+          console.log('New coaching name saved: ' + res.coachingNameSaved);
+          this.teamService.updateTeam();
+          this.tpChangeName?.hide();
+        } else {
+          console.error('Error saving coaching name: ' + res.coachingNameSaved);
+          coachingName.name = oldName; // revert to old name if saving failed
+          this.tpChangeName?.hide();
+        }
+      });
   }
 }

@@ -1,0 +1,74 @@
+@if (team) {
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="col-span-1">
+      <!-- STADIUM -->
+      <!--
+      Two parts -
+      1. Mat-Card with stadium overview
+        - Stadium Name (with rename option)
+        - Stadium capacity
+        - Stadium running costs
+        - all other buildings accumulated running costs
+        - accumulated costs (stadium and buildings together)
+
+      2. Stadium
+        - Shaped like a stadium with 8 blocks around the field. (3 on top, 3 on bottom, 1 on each side)
+        - the blocks are for the fans
+        - these blocks can be upgraded to have more seats
+      -->
+      <div class="grid grid-cols-3 gap-2 p-4">
+        <div class="col-span-3">
+          <mat-card>
+            <mat-card-header class="justify-center !pb-4">
+              <mat-card-title class="!flex items-center">
+                {{ stadium?.name }}
+                <button class="scale-75" mat-icon-button><mat-icon class="scale-75">edit</mat-icon></button>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <!--
+              - Stadium Name (with rename option)
+              - Stadium capacity
+              - Stadium running costs
+              - all other buildings accumulated running costs
+              - accumulated costs (stadium and buildings together)
+               -->
+              <div class="grid ">
+
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+    <div class="col-span-1 lg:col-span-2">
+      <div class="columns-1 lg:columns-2 gap-4 p-4">
+        @let buildings = stadium?.buildings;
+        @if (buildings) {
+          @for (building of buildings; track building.id) {
+            <mat-card class="mb-4 break-inside-avoid">
+              <mat-card-header class="justify-center !pb-4">
+                <mat-card-title>{{ building.name }}</mat-card-title>
+              </mat-card-header>
+              <mat-divider></mat-divider>
+              <mat-card-content>
+                <div class="pt-4">
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">{{ building.description }}</div>
+                    <div>Stufe</div>
+                    <div>{{ building.level }} / {{ building.maxLevel }}</div>
+                    <div class="break-words hyphens-auto" lang="de">Instandhaltungskosten</div>
+                    <div>{{ '1000' | currency: 'EUR' : 'symbol' : '1.0-0' }}</div>
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <!-- button for upgrade with price or countdown with building time -->
+              </mat-card-actions>
+            </mat-card>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}

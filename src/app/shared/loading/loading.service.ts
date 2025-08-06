@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { concatMap, finalize, tap } from 'rxjs/operators';
 import { DynamicOverlayService } from '../../core/services/dynamic-overlay.service';
@@ -65,8 +65,8 @@ export class LoadingService {
     this.loadingInOverlaySubject.next(false);
   }
 
-  loadingOffInOverlay(overlayRef: OverlayRef) {
-    this.overlayService.hideOverlay(overlayRef);
+  loadingOffInOverlay(overlayRef: OverlayRef, targetElement?: HTMLElement) {
+    this.overlayService.hideOverlay(overlayRef, targetElement);
     this.loadingInOverlaySubject.next(false);
   }
 }

@@ -1,9 +1,9 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TeamService } from '../../../../core/services/team.service';
 import { Team } from '../../../../core/model/team';
 import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { LineupService } from '../../services/lineup.service';
-import { shareReplay } from 'rxjs';
+import { first, Subject, takeUntil } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PositionChangeModalComponent } from '../../../../shared/modal/position-change-modal/position-change-modal.component';
 import { LineupTeamPartComponent } from './lineup-team-part/lineup-team-part.component';
@@ -36,19 +36,21 @@ import { LineupPosition } from '../../../../core/model/lineup-position';
   ],
   providers: [TeamService, LineupService],
 })
-export class LineupComponent implements OnInit {
+export class LineupComponent implements OnInit, OnDestroy {
+  private readonly dialog = inject(MatDialog);
+  private readonly teamService = inject(TeamService);
+  private readonly lineupService = inject(LineupService);
+
   team: Team | undefined;
   teamPart: 'offense' | 'defense' | 'special' = 'offense';
   activeLineupOff = 'TE';
   activeLineupDef = 'NT';
   @ViewChild('tpAutoLineup')
   tpAutoLineup: TippyInstance | undefined;
-  private readonly dialog = inject(MatDialog);
-  private readonly teamService = inject(TeamService);
-  private readonly lineupService = inject(LineupService);
+  unsubscribe$ = new Subject<void>();
 
   constructor() {
-    this.teamService.team$.subscribe(team => {
+    this.teamService.team$.pipe(takeUntil(this.unsubscribe$)).subscribe(team => {
       if (team) {
         this.team = team;
         this.initializeLineupSettings();
@@ -58,6 +60,12 @@ export class LineupComponent implements OnInit {
 
   ngOnInit() {
     console.log('LineupComponent initialized');
+  }
+
+  ngOnDestroy() {
+    console.log('LineupComponent destroyed');
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   updateLineupOff(event: MatSlideToggleChange) {
@@ -79,10 +87,10 @@ export class LineupComponent implements OnInit {
   updateLineupPosition(lineupPosition: string) {
     this.lineupService
       .updateLineupPosition(lineupPosition)
-      .pipe(shareReplay())
-      .subscribe(isUpdated => {
-        if (isUpdated) {
-          console.log(isUpdated);
+      .pipe(first())
+      .subscribe(res => {
+        if (res.isUpdated) {
+          console.log(res.isUpdated);
           this.activeLineupOff = lineupPosition === 'FB' ? 'FB' : 'TE';
           this.activeLineupDef = lineupPosition === 'MLB' ? 'MLB' : 'NT';
         }
@@ -92,7 +100,7 @@ export class LineupComponent implements OnInit {
   autoLineup() {
     this.lineupService
       .autoLineup()
-      .pipe(shareReplay())
+      .pipe(first())
       .subscribe(response => {
         if (response.playersLinedUp) {
           this.teamService.updateTeam();

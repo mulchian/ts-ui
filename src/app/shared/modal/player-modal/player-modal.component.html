@@ -2,7 +2,7 @@
 <div class="general-information">
   <mat-grid-list cols="9" rowHeight="2:1">
     <mat-grid-tile [colspan]="1" [rowspan]="2">
-      <img src="/assets/ts_profile.png" alt="TS Profile" style="width: 48px; height: 48px" />
+      <img alt="TS Profile" src="/assets/ts_profile.png" style="width: 48px; height: 48px" />
     </mat-grid-tile>
     <mat-grid-tile [colspan]="2" [rowspan]="1">{{ player.firstName }} {{ player.lastName }}</mat-grid-tile>
     <mat-grid-tile [colspan]="2" [rowspan]="1">{{ player.type.position.description }}</mat-grid-tile>
@@ -38,7 +38,7 @@
 </div>
 
 <!-- afterwards tabs for more data -->
-<mat-tab-group animationDuration="0ms" dynamicHeight [(selectedIndex)]="currentTabIndex">
+<mat-tab-group [(selectedIndex)]="currentTabIndex" animationDuration="0ms" dynamicHeight>
   <mat-tab label="Allgemein">
     <div class="mat-tab-content">
       <mat-grid-list cols="2" rowHeight="20:1">
@@ -47,10 +47,11 @@
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">
           <div class="right-align">
-            <ng-container *ngIf="player.teamName; else unemployed">
+            @if (player.teamName) {
               {{ player.teamName }}
-            </ng-container>
-            <ng-template #unemployed>Keinem Team zugeordnet.</ng-template>
+            } @else {
+              Keinem Team zugeordnet.
+            }
           </div>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="2" [rowspan]="1">
@@ -72,10 +73,11 @@
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">
           <div class="right-align">
-            <ng-container *ngIf="player.draftPosition; else freeAgent">
+            @if (player.draftPosition) {
               {{ getDraftPosition(player.draftPosition) }}
-            </ng-container>
-            <ng-template #freeAgent>Free Agent</ng-template>
+            } @else {
+              Free Agent
+            }
           </div>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="2" [rowspan]="1">
@@ -159,24 +161,26 @@
             </section>
           </mat-card-content>
         </mat-card>
-        <mat-card *ngFor="let skillCard of skillCards()">
-          <mat-card-header>
-            <div class="skill-head-container">
-              <mat-card-title>{{ skillCard.name }}</mat-card-title>
-              <ng-container *ngIf="player.skillpoints > 0">
-                <button mat-raised-button class="add-skill" (click)="updateSkill(skillCard.name)">
-                  <mat-icon>add</mat-icon>
-                </button>
-              </ng-container>
-            </div>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="skill-content">
-              <p>{{ skillCard.value }}</p>
-              <mat-progress-bar mode="determinate" value="{{ skillCard.progress }}"></mat-progress-bar>
-            </div>
-          </mat-card-content>
-        </mat-card>
+        @for (skillCard of skillCards(); track skillCard.name) {
+          <mat-card>
+            <mat-card-header>
+              <div class="skill-head-container">
+                <mat-card-title>{{ skillCard.name }}</mat-card-title>
+                @if (player.skillpoints >= 1) {
+                  <button mat-raised-button class="add-skill" (click)="updateSkill(skillCard.name)">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                }
+              </div>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="skill-content">
+                <p>{{ skillCard.value }}</p>
+                <mat-progress-bar mode="determinate" value="{{ skillCard.progress }}"></mat-progress-bar>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
       </div>
     </ng-container>
   </mat-tab>
@@ -189,18 +193,18 @@
             <div class="salary-range-container">
               <span class="text-small min">{{ minSalary | currency: 'EUR' : 'symbol' : '.0' }}</span>
               <mat-slider
-                min="{{ minSalary }}"
-                max="{{ maxSalary }}"
-                step="{{ salaryStep }}"
+                [displayWith]="formatSalary"
                 discrete
+                max="{{ maxSalary }}"
+                min="{{ minSalary }}"
                 showTickMarks
-                [displayWith]="formatSalary">
+                step="{{ salaryStep }}">
                 <input
-                  matSliderThumb
-                  id="salaryRange"
-                  [value]="newSalary"
+                  (input)="changeSalary()"
                   [(ngModel)]="newSalary"
-                  (input)="changeSalary()" />
+                  [value]="newSalary"
+                  id="salaryRange"
+                  matSliderThumb />
               </mat-slider>
               <span class="text-small max">{{ maxSalary | currency: 'EUR' : 'symbol' : '.0' }}</span>
             </div>
@@ -210,7 +214,7 @@
           <mat-divider style="width: 100%"></mat-divider>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1"
-          >{{ signingBonus | currency: 'EUR' : 'symbol' : '.0' }}
+        >{{ signingBonus | currency: 'EUR' : 'symbol' : '.0' }}
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">{{ moral | percent }}</mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">SIGNING BONUS</mat-grid-tile>
@@ -219,10 +223,10 @@
           <mat-divider style="width: 100%"></mat-divider>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1"
-          >{{ overallOffer | currency: 'EUR' : 'symbol' : '.0' }}
+        >{{ overallOffer | currency: 'EUR' : 'symbol' : '.0' }}
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1"
-          >{{ newSalaryCap | currency: 'EUR' : 'symbol' : '.0' }}
+        >{{ newSalaryCap | currency: 'EUR' : 'symbol' : '.0' }}
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">GESAMTANGEBOT</mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">NEUES SALARY CAP</mat-grid-tile>
@@ -232,7 +236,7 @@
         <mat-grid-tile [colspan]="1" [rowspan]="3">
           <mat-form-field appearance="fill">
             <mat-label>LAUFZEIT</mat-label>
-            <mat-select [(value)]="timeOfContract" (selectionChange)="onSalaryTimeChange()">
+            <mat-select (selectionChange)="onSalaryTimeChange()" [(value)]="timeOfContract">
               <mat-option value="1">1 Saison</mat-option>
               <mat-option value="2">2 Saisons</mat-option>
               <mat-option value="3">3 Saisons</mat-option>
@@ -242,7 +246,7 @@
           </mat-form-field>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="3">
-          <button mat-raised-button color="primary" (click)="signContract()">VERLÄNGERN</button>
+          <button (click)="signContract()" color="primary" mat-raised-button>VERLÄNGERN</button>
         </mat-grid-tile>
       </mat-grid-list>
     </div>

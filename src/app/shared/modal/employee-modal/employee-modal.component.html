@@ -49,7 +49,7 @@
     <!-- Talent Column -->
     <ng-container matColumnDef="talent">
       <th mat-header-cell *matHeaderCellDef>TALENT</th>
-      <td mat-cell *matCellDef="let employee">{{ employee.talent }}</td>
+      <td mat-cell *matCellDef="let employee">{{ employee.talent | talentPipe }}</td>
     </ng-container>
 
     <!-- Experience Column -->

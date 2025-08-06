@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { MatTable, MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Player } from '../../../../core/model/player';
 import { TeamService } from '../../../../core/services/team.service';
@@ -11,9 +11,15 @@ import { CommonModule } from '@angular/common';
 import { TalentPipe } from '../../../../shared/pipe/talent.pipe';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { SaisonCountPipe } from '../../../../shared/pipe/saison-count.pipe';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { TippyDirective } from '@ngneat/helipopper';
 import { ConfirmModalComponent } from '../../../../shared/modal/tooltip/confirm-modal/confirm-modal.component';
+import { MatIcon } from '@angular/material/icon';
+import { IntensityPipe } from '../../../../shared/pipe/intensity.pipe';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { TrainingGroup, TrainingService } from '../../services/training.service';
+import { Subject, take, takeUntil } from 'rxjs';
+import moment from 'moment-timezone';
 
 @Component({
   selector: 'app-roster',
@@ -24,15 +30,25 @@ import { ConfirmModalComponent } from '../../../../shared/modal/tooltip/confirm-
     MatTableModule,
     MatSortModule,
     MatProgressBar,
+    MatSelectModule,
     MatButton,
+    MatIcon,
     TippyDirective,
     TalentPipe,
     SaisonCountPipe,
+    IntensityPipe,
     ConfirmModalComponent,
+    MatIconButton,
   ],
-  providers: [TeamService, SkillService],
+  providers: [TeamService, SkillService, TrainingService],
 })
-export class RosterComponent implements OnInit {
+export class RosterComponent implements OnInit, OnChanges, OnDestroy {
+  private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
+  private readonly teamService = inject(TeamService);
+  private readonly skillService = inject(SkillService);
+  private readonly trainingService = inject(TrainingService);
+
   sortedPositions: string[] = [
     'QB',
     'RB',
@@ -56,27 +72,34 @@ export class RosterComponent implements OnInit {
   players = new MatTableDataSource<Player>();
   skillNames: Record<string, string> = {};
   salaryCap = 0;
-  @ViewChild(MatTable)
-  playerTable: MatTable<Element> | undefined;
-  showRoster = true;
+  @ViewChild(MatTable) playerTable: MatTable<Element> | undefined;
+  destroy$ = new Subject<void>();
 
-  private readonly dialog = inject(MatDialog);
-  private readonly router = inject(Router);
-  private readonly teamService = inject(TeamService);
-  private readonly skillService = inject(SkillService);
+  @Input() showingPart: 'roster' | 'contracts' | 'training' = 'roster';
+  @Input() needsReload: boolean = false;
+  @Output() trainingGroupChanged = new EventEmitter<boolean>();
 
-  constructor() {
-    this.showRoster = this.router.url.endsWith('roster');
-    if (this.showRoster) {
-      this.displayedColumns.push('energy', 'skillpoints', 'status');
-    } else {
-      this.displayedColumns.push('moral', 'salary', 'contract', 'action');
-    }
-  }
+  constructor() {}
 
   ngOnInit() {
+    switch (this.router.url.split('/').pop()) {
+      case 'roster':
+        this.displayedColumns.push('energy', 'skillpoints', 'status');
+        this.showingPart = 'roster';
+        break;
+      case 'contracts':
+        this.displayedColumns.push('moral', 'salary', 'contract', 'action');
+        this.showingPart = 'contracts';
+        break;
+      default:
+        if (this.showingPart === 'training') {
+          this.displayedColumns.push('energy', 'skillpoints', 'intensity', 'trainingCount', 'trainingGroup');
+        }
+        break;
+    }
+
     // take players from team
-    this.teamService.team$.subscribe(team => {
+    this.teamService.team$.pipe(takeUntil(this.destroy$)).subscribe(team => {
       if (team?.players) {
         this.salaryCap = team.salaryCap;
         this.players.data = Object.values(team.players);
@@ -84,28 +107,64 @@ export class RosterComponent implements OnInit {
         this.playerTable?.renderRows();
       }
     });
-    this.skillService.skillNames$.subscribe(skillNames => {
+    this.skillService.skillNames$.pipe(takeUntil(this.destroy$)).subscribe(skillNames => {
       this.skillNames = skillNames || {};
     });
+    this.trainingService.updateTrainingGroups();
+  }
+
+  ngOnChanges() {
+    if (this.needsReload) {
+      this.teamService
+        .loadTeam()
+        .pipe(take(1))
+        .subscribe(team => {
+          if (team?.players) {
+            this.salaryCap = team.salaryCap;
+            this.players.data = Object.values(team.players);
+            this.sortPlayers({ active: 'pos', direction: 'asc' });
+            this.playerTable?.renderRows();
+          }
+        });
+      this.trainingService.updateTrainingGroups();
+      this.needsReload = false;
+    }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  get trainingGroups() {
+    return this.trainingService.trainingGroups$;
   }
 
   openPlayerDialog(event: MouseEvent, player: Player) {
-    let selectedTabIndex = 0;
-    const column = (event.target as HTMLTableCellElement).cellIndex;
-    if ((event.target as HTMLElement).className.includes('button')) {
-      return;
+    let column = '';
+    const target = event.target as HTMLElement;
+    // search for clicked column with mouse event
+    // first look for the actually clicked <td> or <mat-cell>
+    const cell = target.closest('td, mat-cell');
+    if (cell) {
+      // with the clicked cell we look for the column name
+      const rowElement = cell.parentElement;
+      const cells = Array.from(rowElement?.children || []);
+      const columnIndex = cells.indexOf(cell);
+      column = this.displayedColumns[columnIndex];
+      console.log('clicked column:', column);
+
+      if (['action', 'intensity', 'trainingGroup'].includes(column)) {
+        return;
+      }
     }
+
     console.log('openPlayerDialog', player);
-    if (!this.showRoster && (column === 6 || column === 7)) {
-      // column contract -> open contract tab
+    let selectedTabIndex = 0;
+    if (['salary', 'contract'].includes(column)) {
       selectedTabIndex = 3;
     }
-    if (
-      this.showRoster &&
-      ((event.target as HTMLProgressElement).className.includes('progress') ||
-        (event.target as HTMLElement).parentElement?.className.includes('progress'))
-    ) {
-      // open skill tab
+    if (column === 'skillpoints') {
       selectedTabIndex = 2;
     }
     this.openDialog(player, selectedTabIndex);
@@ -164,10 +223,48 @@ export class RosterComponent implements OnInit {
           return a.contract && b.contract ? this.compare(a.contract.salary, b.contract.salary, isAsc) : 0;
         case 'contract':
           return a.contract && b.contract ? this.compare(a.contract.endOfContract, b.contract.endOfContract, isAsc) : 0;
+        case 'intensity':
+          return this.compare(a.intensity, b.intensity, isAsc);
+        case 'trainingCount':
+          return this.compare(a.numberOfTrainings, b.numberOfTrainings, isAsc);
         default:
           return 0;
       }
     });
+  }
+
+  changeIntensity(player: Player) {
+    const newIntensity = (player.intensity + 1) % 3 === 0 ? 3 : (player.intensity + 1) % 3;
+    console.log('changeIntensity to', newIntensity);
+    this.trainingService
+      .changeIntensity(newIntensity, player.id)
+      .pipe(take(1))
+      .subscribe(res => {
+        if (res.intensityChanged) {
+          console.log('Intensity changed for player', player.firstName, player.lastName, 'to', newIntensity);
+          player.intensity = newIntensity;
+          this.trainingGroupChanged.emit(true);
+        } else if (res.error) {
+          console.error('Error changing intensity:', res.error);
+        }
+      });
+  }
+
+  updateTrainingGroup(event: MatSelectChange, player: Player) {
+    console.log('updateTrainingGroup for player', player.firstName, player.lastName, 'to', event.value);
+    this.trainingService
+      .changeTrainingGroup(event.value, player.id)
+      .pipe(take(1))
+      .subscribe(res => {
+        if (res.trainingGroupChanged) {
+          console.log('Training group changed for player', player.firstName, player.lastName, 'to', event.value);
+          player.trainingGroup = event.value;
+          this.trainingService.updateTrainingGroups();
+          this.trainingGroupChanged.emit(true);
+        } else if (res.error) {
+          console.error('Error changing training group:', res.error);
+        }
+      });
   }
 
   private openDialog(player: Player, selectedTabIndex: number) {
@@ -204,5 +301,16 @@ export class RosterComponent implements OnInit {
 
   private compare(a: number | string, b: number | string, isAsc: boolean) {
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  isTraining(trainingGroups: TrainingGroup[] | null, player: Player) {
+    const playerTrainingGroup = trainingGroups?.find(tg => tg.id === player.trainingGroup);
+    if (playerTrainingGroup) {
+      if (playerTrainingGroup.trainingTimeToCount === null) {
+        return false;
+      }
+      return playerTrainingGroup.trainingTimeToCount.isAfter(moment());
+    }
+    return false;
   }
 }

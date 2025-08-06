@@ -5,6 +5,23 @@ import { CustomPreloadingStrategy } from './core/services/custom-preloading.stra
 import { popperVariation, provideTippyConfig, provideTippyLoader, tooltipVariation } from '@ngneat/helipopper/config';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
+
+const DATE_FORMATS = {
+  parse: {
+    dateInput: 'DD.MM.YYYY',
+    timeInput: 'HH:mm',
+  },
+  display: {
+    dateInput: 'DD.MM.YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+    timeInput: 'HH:mm',
+    timeOptionLabel: 'HH:mm',
+  },
+};
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +38,9 @@ export const appConfig: ApplicationConfig = {
       })
     ),
     CustomPreloadingStrategy,
+    provideMomentDateAdapter(),
+    { provide: MAT_DATE_FORMATS, useValue: DATE_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: 'de-DE' },
     { provide: LOCALE_ID, useValue: 'de-DE' },
     provideTippyLoader(() => import('tippy.js')),
     provideTippyConfig({
@@ -30,6 +50,10 @@ export const appConfig: ApplicationConfig = {
         popper: popperVariation,
         popperBorder: {
           ...popperVariation,
+          theme: 'light-border',
+        },
+        tooltipBorder: {
+          ...tooltipVariation,
           theme: 'light-border',
         },
         material: {

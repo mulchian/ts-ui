@@ -1,27 +1,29 @@
-<ngx-masonry [ordered]="true" [options]="masonryOptions" class="masonry">
-  <div ngxMasonryItem class="masonry-item">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>Bürogebäude</mat-card-title>
-      </mat-card-header>
-      <mat-divider></mat-divider>
-      <mat-card-content>
-        <div class="card-content">
-          <div class="grid grid-cols-2 gap-4">
-            <div>Stufe</div>
-            <div>{{ officeBuilding?.level }} / {{ officeBuilding?.maxLevel }}</div>
-            <div>Personal</div>
-            <div>{{ employees.length }} / {{ officeBuilding?.level }}</div>
-            <div>Gehalt</div>
-            <div>{{ calcEmployeeSalary() | currency: 'EUR' : 'symbol' : '1.0-0' }}</div>
-          </div>
+<div class="columns-3 xl:columns-4 gap-6 p-6 w-screen">
+  <mat-card class="mb-4 break-inside-avoid">
+    <mat-card-header class="justify-center !pb-4">
+      <mat-card-title>Bürogebäude</mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content
+      inViewport
+      [inViewportOptions]="{ threshold: [0] }"
+      (inViewportAction)="onViewportActionOfficeCard($event)">
+      <div class="card-content">
+        <div class="grid grid-cols-2 gap-4">
+          <div>Stufe</div>
+          <div>{{ officeBuilding?.level }} / {{ officeBuilding?.maxLevel }}</div>
+          <div>Personal</div>
+          <div>{{ employees.length }} / {{ officeBuilding?.level }}</div>
+          <div>Gehalt</div>
+          <div>{{ calcEmployeeSalary() | currency: 'EUR' : 'symbol' : '1.0-0' }}</div>
         </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-  <div ngxMasonryItem class="masonry-item" *ngFor="let job of jobs | async">
-    <mat-card>
-      <mat-card-header>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  @let jobs = jobs$ | async;
+  @for (job of jobs; track job.id) {
+    <mat-card class="mb-4 break-inside-avoid">
+      <mat-card-header class="justify-center !pb-4">
         <mat-card-title>{{ job.name }}</mat-card-title>
       </mat-card-header>
       <mat-divider></mat-divider>
@@ -99,5 +101,5 @@
         </div>
       </mat-card-content>
     </mat-card>
-  </div>
-</ngx-masonry>
+  }
+</div>

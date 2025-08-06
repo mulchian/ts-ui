@@ -6,12 +6,13 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class LineupService {
+  LINEUP_URL = '/api/lineup';
   private http = inject(HttpClient);
 
-  LINEUP_URL = '/api/lineup';
-
   updateLineupPosition(lineupPosition: string) {
-    return this.http.post(this.LINEUP_URL + '/updateLineupPosition.php', { lineupPosition });
+    return this.http.post<{
+      isUpdated: boolean;
+    }>(this.LINEUP_URL + '/updateLineupPosition.php', { lineupPosition });
   }
 
   getLineup(position: string) {

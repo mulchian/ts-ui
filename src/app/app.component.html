@@ -29,15 +29,6 @@
           [routerLinkActiveOptions]="{ exact: false }"
           class="menu-item"
           mat-icon-button
-          matTooltip="Finanzen"
-          routerLink="/finances"
-          routerLinkActive="menu-item-active">
-          <mat-icon class="menu-icon">wallet</mat-icon>
-        </a>
-        <a
-          [routerLinkActiveOptions]="{ exact: false }"
-          class="menu-item"
-          mat-icon-button
           matTooltip="Team"
           routerLink="/team"
           routerLinkActive="menu-item-active">
@@ -85,6 +76,8 @@
     @if (isSpecialPath('office')) {
       <mat-chip-set class="flex-chip-set hide-xs">
         <mat-chip [routerLink]="['office', 'personal']" routerLinkActive="active">Personal</mat-chip>
+        <mat-chip [routerLink]="['office', 'finances']" routerLinkActive="active">Finanzen</mat-chip>
+        <mat-chip [routerLink]="['office', 'infrastructure']" routerLinkActive="active">Stadion</mat-chip>
         <mat-chip [routerLink]="['office', 'friendly']" routerLinkActive="active">Freundschaftsspiel</mat-chip>
       </mat-chip-set>
     }

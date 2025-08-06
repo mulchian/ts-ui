@@ -1,10 +1,11 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable } from 'rxjs';
 import { User } from '../model/user';
 import { map, shareReplay, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../../shared/loading/loading.service';
 import { Router } from '@angular/router';
+import moment from 'moment-timezone';
 
 const AUTH_DATA = 'auth_data';
 
@@ -40,6 +41,14 @@ export class AuthStore {
   login(username: string, password: string): Observable<User> {
     this.loadingService.loadingOn();
     return this.http.post<User>('/api/user/login.php', { username, password }).pipe(
+      map(user => {
+        return {
+          ...user,
+          birthday: moment.tz(user.birthday, 'Europe/Berlin'),
+          registerDate: moment.tz(user.registerDate, 'Europe/Berlin'),
+          lastActiveTime: moment.tz(user.lastActiveTime, 'Europe/Berlin'),
+        };
+      }),
       tap(user => {
         this.loadingService.loadingOff();
         if (user.id) {

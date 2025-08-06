@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, first, Observable } from 'rxjs';
 import { Job } from '../../../core/model/job';
 import { HttpClient } from '@angular/common/http';
 import { shareReplay } from 'rxjs/operators';
@@ -18,7 +18,7 @@ export class JobService {
   private loadJobs() {
     this.http
       .get<Job[]>('/api/job' + '/getJobs.php')
-      .pipe(shareReplay())
+      .pipe(first(), shareReplay())
       .subscribe(jobs => {
         this.subject.next(jobs);
       });
