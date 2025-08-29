@@ -17,7 +17,7 @@ import { TeamService } from '../../../core/services/team.service';
   templateUrl: './position-change-modal.component.html',
   styleUrls: ['./position-change-modal.component.scss'],
   imports: [CommonModule, CdkDropList, CdkDrag, PlayerCardModalComponent, MatGridListModule, MatButtonModule],
-  providers: [LineupService],
+  providers: [TeamService, LineupService],
 })
 export class PositionChangeModalComponent implements OnInit {
   dialogRef = inject<MatDialogRef<PositionChangeModalComponent>>(MatDialogRef);
@@ -30,9 +30,9 @@ export class PositionChangeModalComponent implements OnInit {
   countPlayers = 0;
   countStarters = 0;
   countBackups = 0;
+  private readonly loadingService = inject(LoadingService);
   private readonly teamService = inject(TeamService);
   private readonly lineupService = inject(LineupService);
-  private readonly loadingService = inject(LoadingService);
 
   constructor() {
     const data = inject<DialogData>(MAT_DIALOG_DATA);

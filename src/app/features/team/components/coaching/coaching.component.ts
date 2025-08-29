@@ -57,7 +57,7 @@ export class CoachingComponent implements OnDestroy {
   generalCoachings: Record<number, Coaching[]> = { 1: [] };
   offCoachings: Record<number, Coaching[]> = { 1: [] };
   defCoachings: Record<number, Coaching[]> = { 1: [] };
-  @ViewChild('tpChangeName')
+  @ViewChild('tplRename')
   tpChangeName: TippyInstance | undefined;
   protected subject = new BehaviorSubject<string>('30');
   fieldGoalRange$: Observable<string> = this.subject.asObservable();

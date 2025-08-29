@@ -1,0 +1,38 @@
+.info-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  font-size: 2rem;
+}
+
+.stadium-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 9; /* 1920:1080 */
+}
+
+.stadium-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.card-slot {
+  /* sorgt für Abstand unter dem Stadion */
+}
+
+.action-card {
+  overflow: hidden;
+}
+
+mat-slider {
+  width: 80%;
+  margin: 0;
+}

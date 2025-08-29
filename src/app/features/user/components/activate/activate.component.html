@@ -1,0 +1,41 @@
+<form [formGroup]="form" class="activate-form">
+  @if (newActivationNeed) {
+    <mat-form-field
+      [ngClass]="{
+      hasShortErrorMessages: emailControl.invalid,
+    }">
+      <mat-label>E-Mail</mat-label>
+      <input autocomplete="email" formControlName="email" matInput type="text" />
+      <span matTextPrefix><mat-icon>email</mat-icon></span>
+      @if (emailControl.invalid) {
+        <mat-error>
+          {{ getWrongEmailMessage(emailControl) }}
+        </mat-error>
+      }
+    </mat-form-field>
+  }
+
+  @if (message) {
+    <span [ngClass]="successful ? 'success' : 'error'">{{ message }}</span>
+  }
+
+  @if (newActivationNeed) {
+    <button
+      (click)="requestNewActivationLink()"
+      [disabled]="!form.valid"
+      class="activate-button"
+      color="primary"
+      mat-raised-button>
+      neuen Aktivierungslink anfordern
+    </button>
+  }
+  @if (activated) {
+    <button
+      [routerLink]="['/team/create']"
+      class="activate-button"
+      color="primary"
+      mat-raised-button>
+      Zur Teamerstellung
+    </button>
+  }
+</form>

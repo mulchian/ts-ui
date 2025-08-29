@@ -1,1 +1,233 @@
-<p>finance works!</p>
+<mat-tab-group class="pt-2" mat-align-tabs="start" mat-stretch-tabs="false">
+  <mat-tab label="Budget">
+    @let summary = financeSummary();
+    @if (summary) {
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-width">
+        <!-- left-top: incomes -->
+        <div class="col-span-1 row-span-1">
+          <mat-card>
+            <mat-card-header class="justify-center !pb-4">
+              <mat-card-title class="text-center">Einnahmen</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-4">Kartenverkauf (Liga)</div>
+                <div class="pr-4 text-right">{{ getTicketSales('league') | currency: 'EUR' : 'symbol' : '1.0-0' }}</div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Kartenverkauf (Friendlies)</div>
+                <div class="pr-4 text-right">{{ getTicketSales('friendly') | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Sponsoren</div>
+                <div class="pr-4 text-right">{{ calcSponsorFinances() | currency: 'EUR' : 'symbol' : '1.0-0' }}</div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Kredit</div>
+                <div class="pr-4 text-right">{{ calcLoanFinances('credit') | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Wetteinnahmen</div>
+                <div class="pr-4 text-right">{{ calcBetFinances('credit') | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- right: chart + side totals -->
+        <div class="col-span-1 row-span-2">
+          <mat-card>
+            <mat-card-header class="!pb-4">
+              <mat-card-title class="text-center">Entwicklung (Netto / Tag)</mat-card-title>
+              <div class="flex justify-end fixed right-4">
+                <mat-button-toggle-group
+                  class="small-btn-toggle-group"
+                  (change)="daysToShow.set($event.value); reload()"
+                  [value]="daysToShow()"
+                  hideSingleSelectionIndicator>
+                  <mat-button-toggle [value]="7">7d</mat-button-toggle>
+                  <mat-button-toggle [value]="14">14d</mat-button-toggle>
+                  <mat-button-toggle [value]="28">28d</mat-button-toggle>
+                </mat-button-toggle-group>
+              </div>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="grid grid-flow-row gap-2">
+                <svg class="chart" viewBox="0 0 520 200" preserveAspectRatio="none" role="img"
+                     aria-label="Bilanz Verlauf">
+                  <polyline [attr.points]="polylinePoints()" class="line"></polyline>
+                  <g>
+                    @for (d of days(); track d.date; let i = $index) {
+                      <ng-container>
+                        <text
+                          [attr.x]="8 + i * ((520 - 16) / (days().length - 1))"
+                          y="196"
+                          text-anchor="middle"
+                        >
+                          {{ d.date | date:'EEE' }}
+                        </text>
+                      </ng-container>
+                    }
+                  </g>
+                </svg>
+              </div>
+
+              <!-- saldo from table -->
+              <div class="grid grid-cols-2 gap-2 pt-4">
+                <div class="pl-4">Einnahmen</div>
+                <div
+                  class="pr-4 text-right pos">{{ summary.totals.income | currency: summary.totals.currency : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Ausgaben</div>
+                <div
+                  class="pr-4 text-right neg">{{ summary.totals.expense | currency: summary.totals.currency : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Bilanz</div>
+                <div class="pr-4 text-right"
+                     [class]="netClass(summary.totals.net)">{{ summary.totals.net | currency: summary.totals.currency : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Übernahme aus letzter Saison</div>
+                <div
+                  class="pr-4 text-right">{{ summary.totals.carryOver | currency: summary.totals.currency : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">aktueller Kontostand</div>
+                <div
+                  class="pr-4 text-right">{{ summary.totals.currentBalance | currency: summary.totals.currency : 'symbol' : '1.0-0' }}
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- left-bottom: expenses -->
+        <div class="col-span-1 row-span-1">
+          <mat-card>
+            <mat-card-header class="justify-center !pb-4">
+              <mat-card-title class="text-center">Ausgaben</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-4">Instandhaltung (Stadion)</div>
+                <div
+                  class="pr-4 text-right">{{ calcStadiumCosts('maintenance', 'stand', 'debit') | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Instandhaltung (Gebäude)</div>
+                <div
+                  class="pr-4 text-right">{{ calcStadiumCosts('maintenance', 'building', 'debit') | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Ausbau (Tribüne)</div>
+                <div
+                  class="pr-4 text-right">{{ calcStadiumCosts('construction', 'stand', 'debit') | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Ausbau (Gebäude)</div>
+                <div
+                  class="pr-4 text-right">{{ calcStadiumCosts('construction', 'building', 'debit') | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Kredit (Rückzahlung)</div>
+                <div class="pr-4 text-right">{{ calcLoanFinances('debit') | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Kredit (Zinsen)</div>
+                <div
+                  class="pr-4 text-right">{{ calcLoanFinances('debit', 'interest') | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Scouting</div>
+                <div
+                  class="pr-4 text-right">{{ calcScoutingCosts() | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+                <mat-divider class="col-span-2"></mat-divider>
+                <div class="pl-4">Wettausgaben</div>
+                <div
+                  class="pr-4 text-right">{{ calcBetFinances('debit') | currency: 'EUR' : 'symbol' : '1.0-0' }}
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    }
+  </mat-tab>
+  <mat-tab label="Salary Cap">
+    <div class="max-width">
+      Salary Cap ist noch nicht implementiert.
+    </div>
+  </mat-tab>
+  <mat-tab label="TS-Coins">
+    <div class="max-width">
+      Coins sind noch nicht implementiert.
+    </div>
+  </mat-tab>
+  <mat-tab label="Buchungen">
+    <div class="grid grid-flow-row max-width">
+      <div class="flex justify-end py-2">
+        <mat-button-toggle-group
+          (change)="accountToShow.set($event.value); applyFilter()"
+          [value]="accountToShow()"
+          class="small-btn-toggle-group"
+          hideSingleSelectionIndicator>
+          <mat-button-toggle [value]="'budget'">Budget</mat-button-toggle>
+          <mat-button-toggle [value]="'salarycap'">Salary Cap</mat-button-toggle>
+          <mat-button-toggle [value]="'coins'">TS-Coins</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+
+      <table (matSortChange)="sortBookings($event)" [dataSource]="bookings" mat-table matSort>
+        <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+
+        <!-- account -->
+        <ng-container matColumnDef="account">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header="account">KONTO</th>
+          <td *matCellDef="let booking" mat-cell>
+            {{ booking.account }}
+          </td>
+        </ng-container>
+
+        <!-- time -->
+        <ng-container matColumnDef="time">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header="time">DATUM</th>
+          <td *matCellDef="let booking" mat-cell>
+            {{ booking.bookingTime | date: 'dd.MM.yyyy HH:mm' }}
+          </td>
+        </ng-container>
+
+        <!-- category -->
+        <ng-container matColumnDef="category">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header="category">KATEGORIE</th>
+          <td *matCellDef="let booking" mat-cell>
+            {{ booking.category | translate: 'bookingCategory': 'de' }}
+          </td>
+        </ng-container>
+
+        <!-- note -->
+        <ng-container matColumnDef="note">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header="note">TRANSAKTION</th>
+          <td *matCellDef="let booking" mat-cell>
+            {{ booking.note }}
+          </td>
+        </ng-container>
+
+        <!-- amount -->
+        <ng-container matColumnDef="amount">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header="amount">BETRAG</th>
+          <td *matCellDef="let booking" [class]="netClass(booking.amount * (booking.direction === 'debit' ? -1 : 1))" mat-cell>
+            {{ ((booking.direction === 'debit' ? -1 : 1) * booking.amount) | currency: booking.currency : 'symbol' : '1.0-0' }}
+          </td>
+        </ng-container>
+
+        <!-- no data row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">Keine Buchungen vorhanden.</td>
+        </tr>
+      </table>
+    </div>
+  </mat-tab>
+</mat-tab-group>

@@ -10,23 +10,23 @@
             {{ trainingGroup.name }}
             <button
               mat-icon-button
-              [tp]="tgRename"
+              [tp]="tpRename"
               [tpPlacement]="'bottom'"
-              #tgChangeName="tippy"
               tpVariation="popperBorder"
             >
               <mat-icon class="menu-icon">edit</mat-icon>
             </button>
-            <ng-template #tgRename let-hide>
+            <ng-template #tpRename let-hide>
               <app-input-modal
                 (confirm)="renameTrainingGroup($event, trainingGroup)"
+                (cancel)="hide()"
                 [confirmBtnText]="'Speichern'"
                 [inputLabel]="'Trainingsgruppe'"
-                [inputValue]="trainingGroup.name"
+                [inputValue]=""
                 [inputType]="'text'"
                 [inputPlaceholder]="trainingGroup.name"
                 [title]="'Trainingsgruppe umbenennen'"
-                [tooltip]="tgChangeName">
+                >
               </app-input-modal>
             </ng-template>
           </mat-card-title>

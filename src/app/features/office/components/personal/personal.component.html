@@ -13,7 +13,7 @@
           <div>Stufe</div>
           <div>{{ officeBuilding?.level }} / {{ officeBuilding?.maxLevel }}</div>
           <div>Personal</div>
-          <div>{{ employees.length }} / {{ officeBuilding?.level }}</div>
+          <div>{{ employees.length }} / {{ officeEffect?.value }}</div>
           <div>Gehalt</div>
           <div>{{ calcEmployeeSalary() | currency: 'EUR' : 'symbol' : '1.0-0' }}</div>
         </div>

@@ -1,0 +1,68 @@
+<table mat-table [dataSource]="standings" matSort (matSortChange)="sortStandings($event)">
+  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+  <!-- Rank -->
+  <ng-container matColumnDef="rank">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header="rank">#</th>
+    <td mat-cell *matCellDef="let standing">
+      {{ isConferenceMode ? standing.rankConf : standing.rankDiv }}
+    </td>
+  </ng-container>
+
+  <!-- Trend -->
+  <ng-container matColumnDef="trend">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header="trend"></th>
+    <td mat-cell *matCellDef="let standing">
+      <mat-icon [ngClass]="trendClass(standing)" inline>{{ trendIcon(standing) }}</mat-icon>
+    </td>
+  </ng-container>
+
+  <!-- Team -->
+  <ng-container matColumnDef="team">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header="team">Team</th>
+    <td mat-cell *matCellDef="let standing">
+      {{ standing.teamName }}
+    </td>
+  </ng-container>
+
+  <!-- OVR -->
+  <ng-container matColumnDef="ovr">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header="ovr">OVR</th>
+    <td mat-cell *matCellDef="let standing">
+      {{ standing.ovr }}
+    </td>
+  </ng-container>
+
+  <!-- Record -->
+  <ng-container matColumnDef="record">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header="record">W-L-T</th>
+    <td mat-cell *matCellDef="let standing">
+      {{ standing.wins }}-{{ standing.losses }}-{{ standing.ties }}
+    </td>
+  </ng-container>
+
+  <!-- Rate -->
+  <ng-container matColumnDef="rate">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header="rate">RATE</th>
+    <td mat-cell *matCellDef="let standing">
+      {{ (rate(standing) | number:'1.3-3') }}
+    </td>
+  </ng-container>
+
+  <!-- Points -->
+  <ng-container matColumnDef="points">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header="points">POINTS</th>
+    <td mat-cell *matCellDef="let standing">
+      {{ standing.ptsFor + ' : ' + standing.ptsAgainst }}
+    </td>
+  </ng-container>
+
+  <!-- Diff -->
+  <ng-container matColumnDef="dif">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header="dif">DIF</th>
+    <td mat-cell *matCellDef="let standing">
+      {{ dif(standing) }}
+    </td>
+  </ng-container>
+</table>

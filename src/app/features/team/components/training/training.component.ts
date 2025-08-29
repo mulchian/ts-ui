@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { RosterComponent } from '../roster/roster.component';
 import { TrainingGroup, TrainingService } from '../../services/training.service';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button';
@@ -16,8 +16,9 @@ import { first, Observable, take } from 'rxjs';
 import moment from 'moment-timezone';
 
 @Component({
-  selector: 'app-training.component',
+  selector: 'app-training',
   imports: [
+    CommonModule,
     RosterComponent,
     AsyncPipe,
     TippyDirective,
@@ -37,8 +38,8 @@ import moment from 'moment-timezone';
 export class TrainingComponent implements OnInit, OnDestroy {
   selectedTrainingGroup: 'TE0' | 'TE1' | 'TE2' | 'TE3' = 'TE1';
   needsReload = false;
-  @ViewChild('tgChangeName')
-  tgChangeName: TippyInstance | undefined;
+  @ViewChild('tpRename')
+  tpChangeName: TippyInstance | undefined;
   private readonly trainingService = inject(TrainingService);
   private readonly loadingService = inject(LoadingService);
 
@@ -82,11 +83,11 @@ export class TrainingComponent implements OnInit, OnDestroy {
     if (!trainingGroup.trainingTimeToCount) {
       return false;
     }
-    return trainingGroup.trainingTimeToCount.isAfter(moment());
+    return trainingGroup.trainingTimeToCount.isAfter(moment.tz('Europe/Berlin'));
   }
 
   isTrainingForAll(groups: TrainingGroup[] | null) {
-    return groups?.every(group => group.trainingTimeToCount?.isAfter(moment()));
+    return groups?.every(group => group.trainingTimeToCount?.isAfter(moment.tz('Europe/Berlin')));
   }
 
   startTraining(trainingGroup: TrainingGroup, trainingPart: 'fitness' | 'technique' | 'scrimmage') {
@@ -116,7 +117,7 @@ export class TrainingComponent implements OnInit, OnDestroy {
         if (res.trainingGroupNameChanged) {
           console.log('Training group renamed to', newName);
           this.reloadTrainingGroups();
-          this.tgChangeName?.hide();
+          this.tpChangeName?.hide();
         } else if (res.error) {
           console.error('Error renaming training group:', res.error);
         }
@@ -169,7 +170,7 @@ export class TrainingComponent implements OnInit, OnDestroy {
   }
 
   private updateRemainingTime(trainingGroup: TrainingGroup) {
-    const secondsLeft = trainingGroup.trainingTimeToCount?.diff(moment(), 'seconds');
+    const secondsLeft = trainingGroup.trainingTimeToCount?.diff(moment.tz('Europe/Berlin'), 'seconds');
 
     if (secondsLeft === undefined || secondsLeft <= 0) {
       trainingGroup.remainingTime = '00:00';

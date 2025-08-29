@@ -6,6 +6,7 @@ import { authGuard } from '../../core/services/auth.guard';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { UserComponent } from './user.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
+import { ActivateComponent } from './components/activate/activate.component';
 
 export const USER_ROUTES: Routes = [
   {
@@ -38,6 +39,10 @@ export const USER_ROUTES: Routes = [
       {
         path: 'change-password',
         component: ChangePasswordComponent,
+      },
+      {
+        path: 'activate',
+        component: ActivateComponent,
       },
       {
         path: '**',

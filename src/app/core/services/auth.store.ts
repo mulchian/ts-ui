@@ -38,25 +38,30 @@ export class AuthStore {
     });
   }
 
-  login(username: string, password: string): Observable<User> {
+  login(username: string, password: string) {
     this.loadingService.loadingOn();
-    return this.http.post<User>('/api/user/login.php', { username, password }).pipe(
-      map(user => {
-        return {
-          ...user,
-          birthday: moment.tz(user.birthday, 'Europe/Berlin'),
-          registerDate: moment.tz(user.registerDate, 'Europe/Berlin'),
-          lastActiveTime: moment.tz(user.lastActiveTime, 'Europe/Berlin'),
-        };
+    return this.http.post<{ user: User; error?: string }>('/api/user/login.php', { username, password }).pipe(
+      map(response => {
+        if (response.user) {
+          return {
+            ...response,
+            user: {
+              ...response.user,
+              birthday: moment.tz(response.user.birthday, 'Europe/Berlin'),
+              registerDate: moment.tz(response.user.registerDate, 'Europe/Berlin'),
+              lastActiveTime: moment.tz(response.user.lastActiveTime, 'Europe/Berlin'),
+            },
+          };
+        }
+        return response;
       }),
-      tap(user => {
+      tap(response => {
         this.loadingService.loadingOff();
-        if (user.id) {
-          this.subject.next(user);
-          localStorage.setItem(AUTH_DATA, JSON.stringify(user));
+        if (response.user) {
+          this.saveUserInSession(response.user);
         } else {
           // PHP is sending an error message instead of an user-object
-          throw new Error(JSON.stringify(user));
+          throw new Error(response.error);
         }
       }),
       catchError(err => {
@@ -86,43 +91,113 @@ export class AuthStore {
     }
   }
 
-  register(username: string, email: string, password: string): Observable<User> {
-    return this.http.post<User>('/api/user/register.php', { username, email, password }).pipe(
-      tap(user => {
-        if (user.id) {
-          this.subject.next(user);
-          localStorage.setItem(AUTH_DATA, JSON.stringify(user));
-        } else {
-          // PHP is sending an error message instead of a user-object
-          throw new Error(JSON.stringify(user));
-        }
-      }),
-      catchError(err => {
-        throw err;
-      }),
-      shareReplay()
-    );
+  register(username: string, email: string, password: string, activationLink: string) {
+    return this.http
+      .post<{
+        registered: boolean;
+        user?: User;
+        error?: string;
+      }>('/api/user/register.php', { username, email, password, activationLink })
+      .pipe(
+        map(response => {
+          if (response.registered && response.user) {
+            return {
+              ...response,
+              user: {
+                ...response.user,
+                birthday: moment.tz(response.user.birthday, 'Europe/Berlin'),
+                registerDate: moment.tz(response.user.registerDate, 'Europe/Berlin'),
+                lastActiveTime: moment.tz(response.user.lastActiveTime, 'Europe/Berlin'),
+              },
+            };
+          } else {
+            return response;
+          }
+        }),
+        tap(response => {
+          if (response.registered && response.user) {
+            this.saveUserInSession(response.user);
+          } else {
+            console.error('Registration failed:', response.error);
+          }
+        }),
+        catchError(err => {
+          throw err;
+        }),
+        shareReplay()
+      );
+  }
+
+  activateUser(idUser: number) {
+    return this.http
+      .post<{ activated: boolean; user?: User; error?: string }>('/api/user/activate.php', { idUser })
+      .pipe(
+        map(response => {
+          if (response.activated && response.user) {
+            return {
+              ...response,
+              user: {
+                ...response.user,
+                birthday: moment.tz(response.user.birthday, 'Europe/Berlin'),
+                registerDate: moment.tz(response.user.registerDate, 'Europe/Berlin'),
+                lastActiveTime: moment.tz(response.user.lastActiveTime, 'Europe/Berlin'),
+              },
+            };
+          } else {
+            return response;
+          }
+        }),
+        tap(response => {
+          if (response.activated && response.user) {
+            this.saveUserInSession(response.user);
+          } else {
+            console.error('Registration failed:', response.error);
+          }
+        })
+      );
+  }
+
+  requestNewActivationLink(email: string, link: string) {
+    return this.http.post<boolean>('/api/user/requestNewActivationLink.php', {
+      email,
+      activationLink: link,
+    });
   }
 
   requestNewPasswort(username: string, email: string, link: string) {
-    return this.http
-      .post<boolean>('/api/user/requestNewPassword.php', {
-        username,
-        email,
-        activationLink: link,
-      })
-      .pipe(shareReplay());
+    return this.http.post<boolean>('/api/user/requestNewPassword.php', {
+      username,
+      email,
+      activationLink: link,
+    });
   }
 
   changePassword(userId: number, password: string) {
-    return this.http.post<boolean>('/api/user/changePassword.php', { userId, password }).pipe(shareReplay());
+    return this.http.post<boolean>('/api/user/changePassword.php', { userId, password });
+  }
+
+  private saveUserInSession(user: User) {
+    this.subject.next(user);
+    const userToStore = {
+      ...user,
+      birthday: user.birthday?.toISOString() ?? null,
+      registerDate: user.registerDate.toISOString(),
+      lastActiveTime: user.lastActiveTime?.toISOString() ?? null,
+    };
+    localStorage.setItem(AUTH_DATA, JSON.stringify(userToStore));
   }
 
   private loadStorageUser() {
     const storageUser = localStorage.getItem(AUTH_DATA);
     let user: User | null = null;
     if (storageUser) {
-      user = <User>JSON.parse(storageUser);
+      const rawUser = <User>JSON.parse(storageUser);
+      user = {
+        ...rawUser,
+        birthday: moment.tz(rawUser.birthday, 'Europe/Berlin'),
+        registerDate: moment.tz(rawUser.registerDate, 'Europe/Berlin'),
+        lastActiveTime: moment.tz(rawUser.lastActiveTime, 'Europe/Berlin'),
+      };
       // TODO: lastActiveTIme needs to be updated in frontend and backend
       // is lastActiveTime longer than 48 hours we need to login again
       // if (user.lastActiveTime < Date.now() - 172800000) {

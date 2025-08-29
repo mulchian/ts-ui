@@ -1,0 +1,16 @@
+.mat-column-rank,
+.mat-column-trend {
+  width: 5%;
+}
+.mat-column-team {
+  width: 35%;
+  min-width: 280px;
+}
+.mat-column-record,
+.mat-column-ovr,
+.mat-column-rate,
+.mat-column-points,
+.mat-column-dif {
+  width: 10%;
+  white-space: nowrap;
+}

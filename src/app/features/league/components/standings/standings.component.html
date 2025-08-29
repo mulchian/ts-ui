@@ -1,0 +1,67 @@
+@if (leagues && selectedLeague) {
+  <div class="grid grid-flow-row">
+    <div class="inline-grid grid-flow-col gap-4 p-4 md:justify-end md:items-end">
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label>League</mat-label>
+        <mat-select
+          [value]="selectedLeague"
+          [panelWidth]="((selectedLeague.country.length + 9) * 10 + 30) + 'px'"
+          (selectionChange)="onLeagueChanged($event)"
+        >
+          @for (league of leagues; track league) {
+            <mat-option [value]="league">{{ league.country }} - Liga {{ league.leagueNumber }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-button-toggle-group
+        [value]="viewMode"
+        (change)="onViewModeChanged($event)"
+      >
+        <mat-button-toggle value="Conference">Conference</mat-button-toggle>
+        <mat-button-toggle value="Division">Division</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      @if (viewMode === 'Division') {
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Conference wählen</mat-label>
+          <mat-select
+            [value]="selectedConference"
+            (selectionChange)="onConferenceChanged($event)"
+          >
+            @for (conference of conferences; track conference) {
+              <mat-option [value]="conference">{{ conference }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    </div>
+
+    @if (selectedStandings) {
+      @if (viewMode === 'Conference') {
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          @for (conference of conferences; track conference) {
+            <app-standings-table
+              [title]="'Conference ' + conference"
+              [standings]="getStandingsByConference(selectedStandings, conference)"
+              [isConferenceMode]="true"
+            >
+            </app-standings-table>
+          }
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          @for (division of divisions; track division) {
+            <app-standings-table
+              [title]="'Division ' + division"
+              [standings]="getStandingsByDivision(selectedStandings, division)"
+              [isConferenceMode]="false"
+            >
+            </app-standings-table>
+          }
+        </div>
+      }
+    }
+  </div>
+}
+

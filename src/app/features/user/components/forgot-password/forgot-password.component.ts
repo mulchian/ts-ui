@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { MatInput } from '@angular/material/input';
+import { first } from 'rxjs';
 
 @Component({
   selector: 'app-forgot-password',
@@ -50,15 +51,18 @@ export class ForgotPasswordComponent {
     const link = this.router.url.replace('forgot-password', 'change-password');
     console.log(link);
 
-    this.auth.requestNewPasswort(val.username, val.email, link).subscribe((requested: boolean) => {
-      if (requested) {
-        this.successful = true;
-        this.message =
-          'Eine E-Mail mit einem Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.';
-      } else {
-        this.successful = false;
-        this.message = 'Die Kombination aus User und E-Mail-Adresse ist nicht bekannt.';
-      }
-    });
+    this.auth
+      .requestNewPasswort(val.username, val.email, link)
+      .pipe(first())
+      .subscribe((requested: boolean) => {
+        if (requested) {
+          this.successful = true;
+          this.message =
+            'Eine E-Mail mit einem Link zum Zurücksetzen des Passworts wurde an die angegebene E-Mail-Adresse gesendet.';
+        } else {
+          this.successful = false;
+          this.message = 'Die Kombination aus User und E-Mail-Adresse ist nicht bekannt.';
+        }
+      });
   }
 }

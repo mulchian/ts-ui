@@ -309,7 +309,7 @@ export class RosterComponent implements OnInit, OnChanges, OnDestroy {
       if (playerTrainingGroup.trainingTimeToCount === null) {
         return false;
       }
-      return playerTrainingGroup.trainingTimeToCount.isAfter(moment());
+      return playerTrainingGroup.trainingTimeToCount.isAfter(moment.tz('Europe/Berlin'));
     }
     return false;
   }

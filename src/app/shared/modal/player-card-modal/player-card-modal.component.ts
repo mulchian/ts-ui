@@ -3,7 +3,7 @@ import { Player } from '../../../core/model/player';
 import { TalentPipe } from '../../pipe/talent.pipe';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { Position } from '../../../core/model/position';
 import { LineupPosition } from '../../../core/model/lineup-position';
@@ -12,7 +12,7 @@ import { LineupPosition } from '../../../core/model/lineup-position';
   selector: 'app-player-card-modal',
   templateUrl: './player-card-modal.component.html',
   styleUrls: ['./player-card-modal.component.scss'],
-  imports: [MatCardModule, MatButtonModule, MatGridListModule, NgClass, TalentPipe],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatGridListModule, TalentPipe],
   providers: [],
 })
 export class PlayerCardModalComponent {

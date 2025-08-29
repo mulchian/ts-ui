@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Building } from '../../../../core/model/building';
+import { Building, BuildingEffect } from '../../../../core/model/building';
 import { first, Observable, Subject, takeUntil } from 'rxjs';
 import { Employee } from '../../../../core/model/employee';
 import { Job } from '../../../../core/model/job';
@@ -43,6 +43,7 @@ export class PersonalComponent implements OnInit, OnDestroy {
   @ViewChild('tpRelease')
   tpRelease: TippyInstance | undefined;
   officeBuilding: Building | undefined;
+  officeEffect: BuildingEffect | undefined;
   employees: Employee[] = [];
 
   officeCard: HTMLElement | undefined;
@@ -65,6 +66,12 @@ export class PersonalComponent implements OnInit, OnDestroy {
     this.stadiumService.stadium$.pipe(takeUntil(this.unsubscribe)).subscribe(stadium => {
       if (stadium) {
         this.officeBuilding = stadium.buildings.find(building => building.name === 'Bürogebäude');
+        const officeBuildingLevel = this.officeBuilding?.buildingLevels.find(
+          bl => bl.level === this.officeBuilding?.level
+        );
+        this.officeEffect = officeBuildingLevel?.buildingEffects?.find(effect =>
+          effect.name.startsWith('Maximale Mitarbeiter')
+        );
         setTimeout(() => {
           if (this.officeCardOverlayRef) {
             this.loadingService.loadingOffInOverlay(this.officeCardOverlayRef, this.officeCard);
@@ -108,8 +115,8 @@ export class PersonalComponent implements OnInit, OnDestroy {
   }
 
   hasFreePositions(): boolean {
-    if (this.employees && this.officeBuilding) {
-      return this.officeBuilding.level > this.employees.length;
+    if (this.employees && this.officeEffect) {
+      return this.officeEffect.value > this.employees.length;
     }
     return false;
   }

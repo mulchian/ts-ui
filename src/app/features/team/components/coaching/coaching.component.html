@@ -45,7 +45,6 @@
         class="option-button"
         [tp]="tplRename"
         [tpPlacement]="'bottom'"
-        #tpChangeName="tippy"
         tpVariation="popperBorder"
       >
         <mat-icon class="menu-icon">edit</mat-icon>
@@ -53,13 +52,14 @@
       <ng-template #tplRename let-hide>
         <app-input-modal
           (confirm)="renameOffCoaching($event)"
+          (cancel)="hide()"
           [confirmBtnText]="'Speichern'"
           [inputLabel]="'Gameplan-Name'"
-          [inputValue]="getSelectedCoachingName('offense')"
+          [inputValue]=""
           [inputType]="'text'"
           [inputPlaceholder]="getSelectedCoachingName('offense')"
           [title]="'Gameplan umbenennen'"
-          [tooltip]="tpChangeName">
+          >
         </app-input-modal>
       </ng-template>
     </div>
@@ -96,7 +96,6 @@
         class="option-button"
         [tp]="tplRename"
         [tpPlacement]="'bottom'"
-        #tpChangeName="tippy"
         tpVariation="popperBorder"
       >
         <mat-icon class="menu-icon">edit</mat-icon>
@@ -104,13 +103,14 @@
       <ng-template #tplRename let-hide>
         <app-input-modal
           (confirm)="renameDefCoaching($event)"
+          (cancel)="hide()"
           [confirmBtnText]="'Speichern'"
           [inputLabel]="'Gameplan-Name'"
-          [inputValue]="getSelectedCoachingName('defense')"
+          [inputValue]=""
           [inputType]="'text'"
           [inputPlaceholder]="getSelectedCoachingName('defense')"
           [title]="'Gameplan umbenennen'"
-          [tooltip]="tpChangeName">
+          >
         </app-input-modal>
       </ng-template>
     </div>
@@ -147,7 +147,6 @@
         class="option-button"
         [tp]="tplRename"
         [tpPlacement]="'bottom'"
-        #tpChangeName="tippy"
         tpVariation="popperBorder"
       >
         <mat-icon class="menu-icon">edit</mat-icon>
@@ -155,13 +154,14 @@
       <ng-template #tplRename let-hide>
         <app-input-modal
           (confirm)="renameGeneralCoaching($event)"
+          (cancel)="hide()"
           [confirmBtnText]="'Speichern'"
           [inputLabel]="'Gameplan-Name'"
-          [inputValue]="getSelectedCoachingName('general')"
+          [inputValue]=""
           [inputType]="'text'"
           [inputPlaceholder]="getSelectedCoachingName('general')"
           [title]="'Gameplan umbenennen'"
-          [tooltip]="tpChangeName">
+          >
         </app-input-modal>
       </ng-template>
     </div>

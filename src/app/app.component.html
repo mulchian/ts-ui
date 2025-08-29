@@ -1,7 +1,7 @@
 <mat-toolbar class="flex-container" color="primary">
   <mat-toolbar-row>
     <div class="logo" routerLink="/home">
-      <img alt="Touchdown Stars" height="24" width="43" ngSrc="{{ '/assets/logo_transparent_inverted.png' }}" />
+      <img alt="Touchdown Stars" height="24" ngSrc="{{ '/assets/logo_transparent_inverted.png' }}" width="43" />
       Touchdown Stars
     </div>
 
@@ -90,6 +90,11 @@
         <mat-chip [routerLink]="['team', 'training']" routerLinkActive="active">Training</mat-chip>
       </mat-chip-set>
     }
+    @if (isSpecialPath('league')) {
+      <mat-chip-set class="flex-chip-set hide-xs">
+        <mat-chip [routerLink]="['league', 'results']" routerLinkActive="active">Results</mat-chip>
+      </mat-chip-set>
+    }
     <!-- hier dann money stuff nach rechts -->
     <span class="flex-span hide-xs hide-sm"></span>
     <app-team-chip-set class="team-chip-set"></app-team-chip-set>
@@ -139,6 +144,16 @@
           (click)="sidenav.toggle()"
         >Liga</a
         >
+        @if (isLive()) {
+          <a
+            mat-list-item
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLink="/live"
+            (click)="sidenav.toggle()"
+          >Live</a
+          >
+        }
       </mat-nav-list>
     }
   </mat-sidenav>

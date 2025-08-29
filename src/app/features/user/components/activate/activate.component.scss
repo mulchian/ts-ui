@@ -1,0 +1,25 @@
+.activate-form {
+  display: flex;
+  flex-direction: column;
+
+  .activate-button {
+    margin-top: 50px;
+    padding: 20px;
+    width: 60%;
+    left: 20%;
+  }
+}
+
+span mat-icon {
+  margin-right: 10px;
+}
+
+.error {
+  color: red;
+  font-size: 20px;
+}
+
+.success {
+  color: black;
+  font-size: 20px;
+}

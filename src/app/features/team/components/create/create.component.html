@@ -1,0 +1,50 @@
+@if (activated) {
+  <mat-card class="create-card">
+    <div class="logo-container">
+      <img alt="Touchdown Stars" class="logo" mat-card-image src="/assets/logo_transparent_inverted.png" />
+    </div>
+    <mat-card-content>
+      <form [formGroup]="createTeamForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="fill">
+          <mat-label><mat-icon>groups</mat-icon></mat-label>
+          <input matInput formControlName="name" autocomplete="off" />
+          <mat-hint align="start">Zahlen, Buchstaben, Leerzeichen. Max. 40 Zeichen.</mat-hint>
+
+          <!-- async validator busy indicator -->
+          @if (this.createTeamForm.controls.name.pending) {
+            <mat-hint align="end">Prüfe Verfügbarkeit…</mat-hint>
+          }
+
+          @for (msg of errorsFor('name', 'Teamname'); track msg) {
+            <mat-error>{{ msg }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label><mat-icon>filter_alt</mat-icon></mat-label>
+          <input matInput formControlName="abbreviation" maxlength="3" />
+          <mat-hint>1–3 Zeichen, A–Z/a–z/0–9.</mat-hint>
+
+          @for (msg of errorsFor('abbreviation','Kürzel'); track msg) {
+            <mat-error>{{ msg }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label><mat-icon>explore</mat-icon></mat-label>
+          <mat-select formControlName="conference">
+            @for (conference of conferences; track conference) {
+              <mat-option [value]="conference">{{ conference }}</mat-option>
+            }
+          </mat-select>
+          @for (msg of errorsFor('conference','Conference'); track msg) {
+            <mat-error>{{ msg }}</mat-error>
+          }
+        </mat-form-field>
+
+        <button type="submit" mat-raised-button color="primary" [disabled]="createTeamForm.invalid">Team Erstellen
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+}

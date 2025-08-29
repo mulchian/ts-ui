@@ -1,5 +1,179 @@
 @if (showOverview()) {
-  Büro Übersicht folgt...
+  <!--
+    overview points:
+     - personal - how many employees from max | salary costs
+     - finanzen - saldo overview
+     - stadium - current capacity / max capacity | daily costs | current running upgrades
+     - friendlies - last friendly (result) | next friendlies (show max. 3) | button to results
+   -->
+
+  <div class="columns-1 md:columns-2 lg:columns-3 gap-4 p-4">
+    <mat-card class="mb-4 break-inside-avoid">
+      <mat-card-header class="justify-center !pb-4">
+        <mat-card-title class="text-center">Personal</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="grid grid-cols-2 gap-4">
+          <div>Mitarbeiter</div>
+          <div>{{ employeeCount() }} / {{ officeEffect?.value }}</div>
+          <div>Gehalt</div>
+          <div>{{ employeeSalary() | currency: 'EUR' : 'symbol' : '1.0-0' }}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="mb-4 break-inside-avoid">
+      <mat-card-header class="justify-center !pb-4">
+        <mat-card-title class="text-center">Finanzen</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @let summary = financeSummary();
+        @if (summary) {
+          <div class="grid grid-cols-2 gap-2 pt-4">
+            <div class="pl-4">Einnahmen</div>
+            <div
+              class="pr-4 text-right">{{ summary.totals.income | currency: summary.totals.currency : 'symbol' : '1.0-0' }}
+            </div>
+            <mat-divider class="col-span-2"></mat-divider>
+            <div class="pl-4">Ausgaben</div>
+            <div
+              class="pr-4 text-right">{{ summary.totals.expense | currency: summary.totals.currency : 'symbol' : '1.0-0' }}
+            </div>
+            <mat-divider class="col-span-2"></mat-divider>
+            <div class="pl-4">Bilanz</div>
+            <div
+              class="pr-4 text-right">{{ summary.totals.net | currency: summary.totals.currency : 'symbol' : '1.0-0' }}
+            </div>
+            <mat-divider class="col-span-2"></mat-divider>
+            <div class="pl-4">Übernahme aus letzter Saison</div>
+            <div
+              class="pr-4 text-right">{{ summary.totals.carryOver | currency: summary.totals.currency : 'symbol' : '1.0-0' }}
+            </div>
+            <mat-divider class="col-span-2"></mat-divider>
+            <div class="pl-4">aktueller Kontostand</div>
+            <div
+              class="pr-4 text-right">{{ summary.totals.currentBalance | currency: summary.totals.currency : 'symbol' : '1.0-0' }}
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="mb-4 break-inside-avoid">
+      <mat-card-header class="justify-center !pb-4">
+        <mat-card-title class="text-center">Freundschaftsspiele</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (friendlies && friendlies.length > 0) {
+          <div class="grid grid-cols-4 gap-2 justify-center items-center py-2">
+            <div class="font-bold">Anpfiff</div>
+            <div class="font-bold">Heim</div>
+            <div class="font-bold">Auswärts</div>
+            <div class="text-lg font-bold text-center">Ergebnis</div>
+            @for (friendly of friendlies; track friendly.id) {
+              <div class="text-sm">
+                {{ friendly.gameTime.toISOString() | date: 'dd.MM.yyyy HH:mm' }}
+              </div>
+              <div class="text-sm">{{ friendly.home }}</div>
+              <div class="text-sm">{{ friendly.away }}</div>
+              <div class="text-sm text-center">
+                @if (friendly.result) {
+                  {{ friendly.result.split(';')[0] }} : {{ friendly.result.split(';')[1] }}
+                } @else {
+                  {{ getAcceptedCount(friendly) }} Zusagen
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="text-center">Es sind keine Freundschaftsspiele geplant.</p>
+        }
+      </mat-card-content>
+      <mat-card-actions class="justify-center">
+        <button
+          mat-raised-button
+          color="primary"
+          [routerLink]="['/league', 'results']"
+          [queryParams]="{friendly: true}"
+        >
+          Zu den Ergebnissen
+        </button>
+      </mat-card-actions>
+    </mat-card>
+    <mat-card class="mb-4 break-inside-avoid">
+      <mat-card-header class="justify-center !pb-4">
+        <mat-card-title class="text-center">Stadion</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="pl-4">Kapazität</div>
+          <div class="pr-4 text-right">{{ getStadiumCapacity() }} Plätze</div>
+          <mat-divider class="col-span-2"></mat-divider>
+          <div class="pt-4 col-span-2 text-center text-base break-words hyphens-auto" lang="de">tägliche
+            Instandhaltungskosten
+          </div>
+          <div class="pl-4 break-words hyphens-auto" lang="de">Stadion</div>
+          <div class="pr-4 text-right">
+            {{ getStadiumMaintenanceCost() | currency: 'EUR' : 'symbol' : '1.0-0' }}
+          </div>
+          <mat-divider class="col-span-2"></mat-divider>
+          <div class="pl-4 break-words hyphens-auto" lang="de">Gebäude</div>
+          <div class="pr-4 text-right">
+            {{ getBuildingsMaintenanceCost() | currency: 'EUR' : 'symbol' : '1.0-0' }}
+          </div>
+          <mat-divider class="col-span-2"></mat-divider>
+          <div class="pl-4 break-words hyphens-auto" lang="de">Gesamt</div>
+          <div class="pr-4 text-right">
+            {{ getTotalMaintenanceCost() | currency: 'EUR' : 'symbol' : '1.0-0' }}
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="mb-4 break-inside-avoid">
+      <mat-card-header class="justify-center !pb-4">
+        <mat-card-title class="text-center">Ausbau</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @let runningBuildingUpgrades = getRunningBuildingUpgrades();
+        @if (runningBuildingUpgrades && runningBuildingUpgrades.length > 0) {
+          <div class="grid grid-cols-3 gap-4 justify-center items-center py-2">
+            <div class="font-bold">Gebäude</div>
+            <div class="font-bold">Stufe</div>
+            <div class="font-bold">Verbleibende Zeit</div>
+            @for (upgrade of runningBuildingUpgrades; track upgrade.id) {
+              <div class="">{{ upgrade.name }}</div>
+              <div class="text-sm">
+                {{ upgrade.level }} &rarr; {{ (upgrade.level + 1) }}
+              </div>
+              <div class="text-sm">
+                {{ upgrade.remainingTime }}
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="text-center">Keine laufenden Gebäude-Upgrades</div>
+        }
+        <mat-divider></mat-divider>
+        @let runningStandUpgrades = getRunningStandUpgrades();
+        @if (runningStandUpgrades && runningStandUpgrades.length > 0) {
+          <div class="grid grid-cols-3 gap-4 justify-center items-center py-2">
+            <div class="font-bold">Tribüne</div>
+            <div class="font-bold">Kapazität</div>
+            <div class="font-bold">Verbleibende Zeit</div>
+            @for (upgrade of runningStandUpgrades; track upgrade.id) {
+              <div class="text-lg">{{ upgrade.name }}</div>
+              <div class="text-sm">
+                {{ upgrade.capacity }} &rarr; {{ (upgrade.capacity + upgrade.upgradeAmount) }}
+              </div>
+              <div class="text-sm">
+                {{ upgrade.remainingTime }}
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="text-center">Keine laufenden Tribünen-Upgrades</div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
 } @else {
   <router-outlet></router-outlet>
 }

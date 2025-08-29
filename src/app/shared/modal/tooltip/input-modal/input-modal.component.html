@@ -9,10 +9,15 @@
   </mat-form-field>
 </mat-card-content>
 <mat-card-actions>
-  <button (click)="onConfirm()" color="warn" mat-raised-button>
+  <button
+    (click)="onConfirm()"
+    [disabled]="!inputValue || inputValue.length < 3"
+    color="warn"
+    mat-raised-button
+    class="px-2">
     {{ confirmBtnText | uppercase }}
   </button>
-  <button (click)="tooltip.hide()" mat-raised-button>
+  <button (click)="onCancel()" mat-raised-button class="px-2">
     {{ 'Abbrechen' | uppercase }}
   </button>
 </mat-card-actions>

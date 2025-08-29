@@ -44,13 +44,15 @@ export class LoginComponent {
       .login(val.username, val.password)
       .pipe(
         catchError(error => {
-          this.handleError(JSON.parse(error.message));
+          this.handleError(error.message);
           return EMPTY;
         })
       )
-      .subscribe(() => {
-        console.log('Login successful!');
-        this.router.navigateByUrl('/home');
+      .subscribe(response => {
+        if (response.user) {
+          console.log('Login successful!');
+          this.router.navigateByUrl('/home');
+        }
       });
   }
 

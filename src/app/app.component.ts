@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { AuthStore } from './core/services/auth.store';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
@@ -15,6 +15,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoadingComponent } from './shared/loading/loading.component';
 import { TeamChipSetComponent } from './shared/team-chip-set/team-chip-set.component';
+import { EventService } from './features/office/services/event.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -38,14 +40,26 @@ import { TeamChipSetComponent } from './shared/team-chip-set/team-chip-set.compo
     TeamChipSetComponent,
     NgOptimizedImage,
   ],
+  providers: [EventService],
 })
 export class AppComponent {
+  isLive = signal<boolean>(false);
   loggedIn = false;
+  unsubscribe$ = new Subject<void>();
   private readonly auth = inject(AuthStore);
   private readonly route = inject(ActivatedRoute);
+  private readonly eventService = inject(EventService);
 
   constructor() {
     this.auth.isLoggedIn$.subscribe((loggedIn: boolean) => (this.loggedIn = loggedIn));
+    this.eventService.liveGames$.pipe(takeUntil(this.unsubscribe$)).subscribe(liveGames => {
+      console.log('Live games updated in AppComponent:', liveGames);
+      if (liveGames && liveGames.length > 0) {
+        this.isLive.set(true);
+      } else {
+        this.isLive.set(false);
+      }
+    });
   }
 
   logout() {

@@ -58,9 +58,11 @@ export class RegisterComponent {
 
   register() {
     const val = this.form.value;
+    const link = this.router.url.replace('register', 'activate');
+    console.log(link);
 
     this.auth
-      .register(val.username, val.email, val.password)
+      .register(val.username, val.email, val.password, link)
       .pipe(
         catchError(error => {
           this.handleError(JSON.parse(error.message));
@@ -68,9 +70,14 @@ export class RegisterComponent {
         })
       )
       .subscribe(() => {
-        console.log('Register successful!');
-        // navigate to team creation
-        this.router.navigateByUrl('/team/create');
+        console.log('Registration successful!');
+        this.router.navigateByUrl('/team/create').then(navigationSucceed => {
+          if (navigationSucceed) {
+            console.log('Navigation to team creation successful.');
+          } else {
+            console.error('Navigation to team creation failed.');
+          }
+        });
       });
   }
 

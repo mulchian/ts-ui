@@ -1,4 +1,14 @@
-import { FormControl } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+
+export function noWhitespaceValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+    if (typeof value === 'string' && value.trim().length === 0) {
+      return { whitespace: true };
+    }
+    return null;
+  };
+}
 
 export function confirmValidator(controlName: string) {
   let confirmControl: FormControl;

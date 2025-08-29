@@ -30,13 +30,15 @@ export const APP_ROUTES: Routes = [
     loadChildren: () => import('./features/team/team.routes').then(m => m.TEAM_ROUTES),
     canActivate: [authGuard],
     canActivateChild: [authGuardChild],
+    runGuardsAndResolvers: 'always',
   },
-  // {
-  // path: 'league',
-  // loadChildren: () => import('./features/league/league.routes').then(m => m.LEAGUE_ROUTES),
-  // canActivate: [authGuard],
-  // canActivateChild: [authGuardChild],
-  // },
+  {
+    path: 'league',
+    loadChildren: () => import('./features/league/league.routes').then(m => m.LEAGUE_ROUTES),
+    canActivate: [authGuard],
+    canActivateChild: [authGuardChild],
+    runGuardsAndResolvers: 'always',
+  },
   {
     path: '**',
     // component: PageNotFoundComponent

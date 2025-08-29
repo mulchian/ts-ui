@@ -7,12 +7,16 @@ export interface Building {
   level: number;
   maxLevel: number;
   description: string;
-  upgradeTime: Moment;
+  upgradeTime: Moment | null;
   buildingLevels: BuildingLevel[];
+  // these properties are used for the UI to show the countdown for the upgrade
+  intervalId: any | undefined;
+  remainingTime: string | undefined;
 }
 
 export interface BuildingLevel {
   id: number;
+  idBuilding: number;
   level: number;
   buildTime: number;
   price: number;

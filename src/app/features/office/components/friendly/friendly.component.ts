@@ -20,7 +20,7 @@ import { TippyDirective } from '@ngneat/helipopper';
 import { ConfirmModalComponent } from '../../../../shared/modal/tooltip/confirm-modal/confirm-modal.component';
 import { GameEvent } from '../../../../core/model/game-event';
 import { EventService } from '../../services/event.service';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-friendly',
@@ -41,6 +41,7 @@ import { Router } from '@angular/router';
     MatSortModule,
     TippyDirective,
     ConfirmModalComponent,
+    RouterLink,
   ],
   providers: [TeamService, EventService],
 })
@@ -56,7 +57,6 @@ export class FriendlyComponent implements OnInit, OnDestroy {
   minTime: Moment;
   unsubscribe$ = new Subject<void>();
   protected readonly moment = moment;
-  private readonly router = inject(Router);
   private readonly teamService = inject(TeamService);
   private readonly eventService = inject(EventService);
 
@@ -149,44 +149,7 @@ export class FriendlyComponent implements OnInit, OnDestroy {
   }
 
   isLive(friendly: GameEvent) {
-    const liveStart = friendly.gameTime.clone().subtract(1, 'h');
-    const liveEnd = friendly.gameTime.clone().add(3, 'h');
-    return (
-      friendly.result === null &&
-      moment().isBetween(liveStart, liveEnd) &&
-      friendly.homeAccepted &&
-      friendly.awayAccepted
-    );
-  }
-
-  goToLive() {
-    this.router
-      .navigateByUrl('/live')
-      .then(success => {
-        if (success) {
-          console.log('Navigation to live successful');
-        } else {
-          console.warn('Navigation to live failed');
-        }
-      })
-      .catch(err => {
-        console.error('Router-Error:', err);
-      });
-  }
-
-  goToResults() {
-    this.router
-      .navigateByUrl('/league/results?friendly=true')
-      .then(success => {
-        if (success) {
-          console.log('Navigation to results successful');
-        } else {
-          console.warn('Navigation to results failed');
-        }
-      })
-      .catch(err => {
-        console.error('Router-Error:', err);
-      });
+    return this.eventService.isLive(friendly);
   }
 
   getAcceptedCount(friendly: any) {
@@ -197,21 +160,11 @@ export class FriendlyComponent implements OnInit, OnDestroy {
   }
 
   isCancelable(friendly: GameEvent) {
-    const gameTime = friendly.gameTime.clone();
-    const nowInOneHour = moment().add(1, 'h');
-    const selfHasAccepted =
-      (friendly.home === this.team?.name && friendly.homeAccepted) ||
-      (friendly.awayAccepted && friendly.away === this.team?.name);
-    return selfHasAccepted && gameTime.subtract(20, 'm').isAfter(nowInOneHour);
+    return this.eventService.isCancelable(friendly, this.team?.name ?? '');
   }
 
   isAcceptableOrDeclinable(friendly: GameEvent) {
-    const isHome = friendly.home === this.team?.name;
-    const isAccepted = isHome ? friendly.homeAccepted : friendly.awayAccepted;
-    const isOpponentAccepted = isHome ? friendly.awayAccepted : friendly.homeAccepted;
-    const gameTime = friendly.gameTime.clone();
-    const nowInOneHour = moment().add(1, 'h');
-    return isOpponentAccepted && !isAccepted && gameTime.subtract(20, 'm').isAfter(nowInOneHour);
+    return this.eventService.isAcceptableOrDeclinable(friendly, this.team?.name ?? '');
   }
 
   sortFriendlies(sort: Sort) {
@@ -247,37 +200,20 @@ export class FriendlyComponent implements OnInit, OnDestroy {
       .subscribe(friendlies => {
         Promise.resolve().then(() => {
           queueMicrotask(() => {
-            this.filterAndDeleteOldFriendlies(friendlies);
+            const friendliesToDelete = this.eventService.filterAndDeleteOldFriendlies(
+              friendlies,
+              this.team?.name ?? ''
+            );
+            this.allFriendlies.data = this.allFriendlies.data.filter(
+              friendly => !friendliesToDelete.includes(friendly)
+            );
+            this.friendlyTable?.renderRows();
           });
         });
         this.allFriendlies.data = friendlies;
         this.sortFriendlies({ active: 'gametime', direction: 'asc' });
         this.friendlyTable?.renderRows();
       });
-  }
-
-  private filterAndDeleteOldFriendlies(friendlies: GameEvent[]) {
-    if (friendlies?.length > 0) {
-      const friendliesToDelete = friendlies.filter((friendly: GameEvent) => {
-        return !this.isLive(friendly) && !this.isCancelable(friendly) && !this.isAcceptableOrDeclinable(friendly);
-      });
-      if (friendliesToDelete.length > 0) {
-        console.log(`Found ${friendliesToDelete.length} old friendlies to delete.`);
-        this.allFriendlies.data = this.allFriendlies.data.filter(friendly => !friendliesToDelete.includes(friendly));
-        this.friendlyTable?.renderRows();
-
-        friendliesToDelete.forEach(friendly => {
-          this.eventService
-            .declineFriendly(friendly)
-            .pipe(first())
-            .subscribe(res => {
-              if (res.declined) {
-                console.log(`Friendly with ID ${friendly.id} has been deleted.`);
-              }
-            });
-        });
-      }
-    }
   }
 
   private compare(a: number | string, b: number | string, isAsc: boolean) {

@@ -1,0 +1,36 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin color($theme) {
+  // Get the color config from the theme.
+  $color-config: mat.m2-get-color-config($theme);
+
+  // Get the primary color palette from the color-config.
+  $primary-palette: map.get($color-config, 'primary');
+  // Get the accent color palette from the color-config.
+  $accent-palette: map.get($color-config, 'accent');
+
+  $green-palette: mat.m2-define-palette(mat.$m2-green-palette);
+  $red-palette: mat.m2-define-palette(mat.$m2-red-palette);
+
+  .accent-text {
+    color: mat.m2-get-color-from-palette($accent-palette, 500);
+  }
+
+  .pos {
+    color: mat.m2-get-color-from-palette($green-palette, 500);
+  }
+  .neg {
+    color: mat.m2-get-color-from-palette($red-palette, 500);
+  }
+
+  .chart {
+    .line {
+      stroke: mat.m2-get-color-from-palette($accent-palette, 500);
+    }
+  }
+
+  .small-btn-toggle-group {
+    @include mat.button-toggle-density(-4); // -4 is the smallest density value
+  }
+}

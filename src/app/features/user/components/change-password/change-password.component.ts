@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { first } from 'rxjs';
 
 @Component({
   selector: 'app-change-password',
@@ -83,15 +84,18 @@ export class ChangePasswordComponent implements OnInit {
     const val = this.form.value;
 
     if (val.password && val.password === val.repeatPassword) {
-      this.auth.changePassword(this.userId, val.password).subscribe(changed => {
-        if (changed) {
-          this.successful = true;
-          this.message = 'Passwort erfolgreich geändert.';
-        } else {
-          this.successful = false;
-          this.message = 'Passwort konnte nicht geändert werden.';
-        }
-      });
+      this.auth
+        .changePassword(this.userId, val.password)
+        .pipe(first())
+        .subscribe(changed => {
+          if (changed) {
+            this.successful = true;
+            this.message = 'Passwort erfolgreich geändert.';
+          } else {
+            this.successful = false;
+            this.message = 'Passwort konnte nicht geändert werden.';
+          }
+        });
     }
   }
 
